@@ -1,4 +1,5 @@
-extends Area2D
+#extends Area2D
+extends RigidBody2D
 
 @export var max_detached_speed = 100 # How fast the player will move (pixels/sec).
 @export var acceleration_mult : int = 1
@@ -8,8 +9,7 @@ var screen_size # Size of the game window.
 var velocity : Vector2
 var detached_speed : float
 var rotation_direction : float
-signal hit
-
+signal collision
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -56,12 +56,7 @@ func _process(delta: float) -> void:
 	velocity.y += detached_speed * sin(rotation_direction)
 
 	rotation = rotation_direction
-	position += velocity * delta
-	position = position.clamp(Vector2.ZERO, screen_size)
+	#position += velocity * delta
+	move_and_collide(velocity * delta)
+	#position = position.clamp(Vector2.ZERO, screen_size)
 	print("position = ",position, " velocity = ", velocity.length(), "speed = ", detached_speed)	
-
-func _on_body_entered(body: Node2D) -> void:
-	hide() # Player disappears after being hit.
-	hit.emit()
-	# Must be deferred as we can't change physics properties on a physics callback.
-	get_node("CollisionShape2D").set_deferred("disabled", true)

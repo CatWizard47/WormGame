@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="BATTLEWORM"
+run/main_scene="uid://cguedbnnbe6xm"
 config/features=PackedStringArray("4.7", "Forward Plus")
 run/max_fps=240
 config/icon="res://icon.svg"

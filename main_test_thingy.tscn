@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://cguedbnnbe6xm"]
+
+[ext_resource type="PackedScene" uid="uid://b82ds00m4tjr2" path="res://player.tscn" id="1_dmddy"]
+[ext_resource type="Texture2D" uid="uid://0onp0vfkh7ua" path="res://1569567959007.jpg" id="2_7mw3d"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gft63"]
+size = Vector2(675.4075, 653.5239)
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_o40nt"]
+a = Vector2(0, 1)
+b = Vector2(1, 718)
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_7mw3d"]
+a = Vector2(-3, -1)
+b = Vector2(481, -3)
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_j1uhe"]
+a = Vector2(478, 720)
+b = Vector2(1, 718)
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_ty0pc"]
+a = Vector2(481, -2)
+b = Vector2(481, 721)
+
+[node name="Main_test_thingy" type="Node" unique_id=1334854990]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1897842446]
+collision_layer = 6
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="StaticBody2D" unique_id=906317545]
+position = Vector2(158.99998, 137.99997)
+scale = Vector2(0.13917525, 0.14383562)
+texture = ExtResource("2_7mw3d")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1105486317]
+position = Vector2(158.00002, 138)
+scale = Vector2(0.13917525, 0.14383562)
+shape = SubResource("RectangleShape2D_gft63")
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="." unique_id=1592483971]
+collision_layer = 6
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2" unique_id=1098804950]
+shape = SubResource("SegmentShape2D_o40nt")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D2" unique_id=1558308302]
+shape = SubResource("SegmentShape2D_7mw3d")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D2" unique_id=783659043]
+shape = SubResource("SegmentShape2D_j1uhe")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="StaticBody2D2" unique_id=1082226766]
+shape = SubResource("SegmentShape2D_ty0pc")
+
+[node name="Player" parent="." unique_id=399082900 instance=ExtResource("1_dmddy")]
