@@ -55,3 +55,4 @@ shape = SubResource("SegmentShape2D_j1uhe")
 shape = SubResource("SegmentShape2D_ty0pc")
 
 [node name="Player" parent="." unique_id=399082900 instance=ExtResource("1_dmddy")]
+traction_Coefficient = 0.2

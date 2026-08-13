@@ -1,15 +1,14 @@
 #extends Area2D
 extends RigidBody2D
 
-@export var max_detached_speed = 100 # How fast the player will move (pixels/sec).
+@export var max_engine_power = 100 # How fast the player will move (pixels/sec).
 @export var acceleration_mult : int = 1
-@export var traction_maintained_percentage: float = 0.975 #MUST BE SMOL
+@export var traction_Coefficient : float = 0.975 #MUST BE SMOL
 @export var max_velocity: int = 20
 var screen_size # Size of the game window.
 var velocity : Vector2
-var detached_speed : float
+var engine_power : float
 var rotation_direction : float
-signal collision
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -37,26 +36,24 @@ func _process(delta: float) -> void:
 			rotation_direction = 2*PI
 	
 	if(Input.is_action_pressed("move_backward") or Input.is_action_pressed("move_forward")):		
-		if Input.is_action_pressed("move_backward") and detached_speed > -max_detached_speed:
-			detached_speed -=1 * acceleration_mult
+		if Input.is_action_pressed("move_backward") and engine_power > -max_engine_power:
+			engine_power -=1 * acceleration_mult
 			
-		if Input.is_action_pressed("move_forward") and detached_speed < max_detached_speed:
-			detached_speed +=1 * acceleration_mult
+		if Input.is_action_pressed("move_forward") and engine_power < max_engine_power:
+			engine_power +=1 * acceleration_mult
 	else:
-		detached_speed = 0 
+		engine_power = 0 
 		
-	velocity.x = velocity.x * traction_maintained_percentage 
-	velocity.y = velocity.y * traction_maintained_percentage  
 	if velocity.length() <= 1:
 		velocity = Vector2.ZERO
 	elif velocity.length() >= max_velocity:
 		velocity = velocity.normalized()*max_velocity * 0.99
+	else:
+		velocity -= velocity.normalized() * traction_Coefficient * mass * 9.81
 	
-	velocity.x += detached_speed * cos(rotation_direction)
-	velocity.y += detached_speed * sin(rotation_direction)
+	velocity.x += engine_power * cos(rotation_direction)
+	velocity.y += engine_power * sin(rotation_direction)
 
 	rotation = rotation_direction
-	#position += velocity * delta
 	move_and_collide(velocity * delta)
-	#position = position.clamp(Vector2.ZERO, screen_size)
-	print("position = ",position, " velocity = ", velocity.length(), "speed = ", detached_speed)	
+	print("position = ",position, " velocity = ", velocity.length(), "speed = ", engine_power)	
