@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://b82ds00m4tjr2"]
+
+[ext_resource type="Script" uid="uid://m4n14id8pcxq" path="res://player.gd" id="1_4flbx"]
+[ext_resource type="Texture2D" uid="uid://djhqqbscywfcj" path="res://Test_sprite.png" id="2_onrkg"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_onrkg"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_onrkg")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Player" type="Area2D" unique_id=399082900]
+script = ExtResource("1_4flbx")
+max_velocity = 100
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=743409537]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1243741245]
+sprite_frames = SubResource("SpriteFrames_onrkg")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
