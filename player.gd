@@ -1,4 +1,3 @@
-#extends Area2D
 extends RigidBody2D
 
 @export var max_engine_power = 100 
@@ -11,7 +10,6 @@ var engine_power : float
 var rotation_direction : float
 
 func _ready() -> void:
-	rotation_direction = 3*PI/2
 	screen_size = get_viewport_rect().size
 	position = screen_size/2
 
@@ -47,9 +45,8 @@ func _process(delta: float) -> void:
 		velocity = Vector2.ZERO
 	elif velocity.length() >= max_velocity:
 		velocity = velocity.normalized()*max_velocity * 0.99
-	else:
-		velocity -= velocity.normalized() * traction_Coefficient * mass * 9.81
 	
+	velocity -= velocity.normalized() * traction_Coefficient * mass * 9.81
 	velocity.x += engine_power * cos(rotation_direction)
 	velocity.y += engine_power * sin(rotation_direction)
 

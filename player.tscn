@@ -1,10 +1,11 @@
 [gd_scene format=3 uid="uid://b82ds00m4tjr2"]
 
 [ext_resource type="Script" uid="uid://m4n14id8pcxq" path="res://player.gd" id="1_4flbx"]
-[ext_resource type="Texture2D" uid="uid://djhqqbscywfcj" path="res://Test_sprite.png" id="2_onrkg"]
+[ext_resource type="Texture2D" uid="uid://dxl8likyr37n8" path="res://hull_test.png" id="2_onrkg"]
+[ext_resource type="PackedScene" uid="uid://bkhtrtgemtxcv" path="res://player_main_turret.tscn" id="3_i3pqv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_onrkg"]
-size = Vector2(130, 72)
+size = Vector2(127, 58)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_onrkg"]
 animations = [{
@@ -23,9 +24,13 @@ script = ExtResource("1_4flbx")
 max_velocity = 100
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=743409537]
+position = Vector2(0.5, 0)
 shape = SubResource("RectangleShape2D_onrkg")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1243741245]
 sprite_frames = SubResource("SpriteFrames_onrkg")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=56069536]
+
+[node name="player_main_turret" parent="." unique_id=444234207 instance=ExtResource("3_i3pqv")]
+position = Vector2(20, 0)

@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://bkhtrtgemtxcv"]
+
+[ext_resource type="Script" uid="uid://nohwwevcrjud" path="res://player_main_turret.gd" id="1_ugf5t"]
+[ext_resource type="Texture2D" uid="uid://dx1ixm2nc617e" path="res://Turret_test.png" id="2_qktiv"]
+[ext_resource type="Texture2D" uid="uid://fstf5teixiud" path="res://GUN_test.png" id="3_axrt5"]
+
+[node name="player_main_turret" type="Node2D" unique_id=444234207]
+position = Vector2(215, 253)
+script = ExtResource("1_ugf5t")
+
+[node name="TurretSprite" type="Sprite2D" parent="." unique_id=429079524]
+texture = ExtResource("2_qktiv")
+
+[node name="GunSprite" type="Sprite2D" parent="." unique_id=405094552]
+position = Vector2(14, 0)
+texture = ExtResource("3_axrt5")
