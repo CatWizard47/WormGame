@@ -1,16 +1,15 @@
 #extends Area2D
 extends RigidBody2D
 
-@export var max_engine_power = 100 # How fast the player will move (pixels/sec).
+@export var max_engine_power = 100 
 @export var acceleration_mult : int = 1
-@export var traction_Coefficient : float = 0.975 #MUST BE SMOL
+@export var traction_Coefficient : float = 0.02 #MUST BE SMOL
 @export var max_velocity: int = 20
-var screen_size # Size of the game window.
+var screen_size # Size of the game window. # temp
 var velocity : Vector2
 var engine_power : float
 var rotation_direction : float
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	rotation_direction = 3*PI/2
 	screen_size = get_viewport_rect().size
@@ -56,4 +55,4 @@ func _process(delta: float) -> void:
 
 	rotation = rotation_direction
 	move_and_collide(velocity * delta)
-	print("position = ",position, " velocity = ", velocity.length(), "speed = ", engine_power)	
+	#print("position = ",position, " velocity = ", velocity.length(), "speed = ", engine_power)	
