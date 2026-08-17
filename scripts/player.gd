@@ -20,8 +20,7 @@ func start(pos):
 	get_node("CollisionShape2D").disabled = false
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _movement(delta: float) -> void:
 	if Input.is_action_pressed("move_right"):
 		rotation_direction += 0.05
 		if rotation_direction >= 2*PI:
@@ -53,4 +52,9 @@ func _process(delta: float) -> void:
 	rotation = rotation_direction
 	move_and_collide(velocity * delta)
 	get_node("player_main_turret").main_body_rotation=rotation_direction
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	_movement(delta)
 	#print("position = ",position, " velocity = ", velocity.length(), "speed = ", engine_power)	
