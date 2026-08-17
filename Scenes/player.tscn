@@ -33,4 +33,4 @@ sprite_frames = SubResource("SpriteFrames_onrkg")
 [node name="Camera2D" type="Camera2D" parent="." unique_id=56069536]
 
 [node name="player_main_turret" parent="." unique_id=444234207 instance=ExtResource("3_i3pqv")]
-position = Vector2(20, 0)
+position = Vector2(21, 0)

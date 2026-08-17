@@ -1,27 +1,31 @@
 extends Node2D
 
-var mouse_position: Vector2
-var desired_rotation: float
 @export var rotation_speed : float = 0.01
 @export var start_rotation_radian: float = 0 # 0rad = aligned with hull #
 @export var accuracy_margin_radian: float = 0.01
-@export var rotation_limit_radian: float = PI/2 # must be within [PI, 0), above PI to ignore 
+@export var rotation_limit_radian: float = PI+1 # must be within [PI, 0), above PI to ignore 
 var left_rotation_limit: float
 var right_rotation_limit: float
+var mouse_position: Vector2
+var desired_rotation: float
+var rotation_flag: bool
+
 
 # Called when the node enters the scene tree for the first time.
-func _ready() -> void: #sumthing wrung here, need to test
+func _ready() -> void: 
+	rotation_flag = false 
 	rotation = start_rotation_radian
-	if start_rotation_radian >= 0:
-		left_rotation_limit = start_rotation_radian - rotation_limit_radian
-		right_rotation_limit = start_rotation_radian + rotation_limit_radian
-		if right_rotation_limit <= -PI:
-			right_rotation_limit += 2 * PI
-	else:
-		left_rotation_limit = start_rotation_radian + rotation_limit_radian
-		right_rotation_limit = start_rotation_radian - rotation_limit_radian
-		if left_rotation_limit >= PI:
-			right_rotation_limit -= 2 * PI
+	left_rotation_limit = start_rotation_radian - rotation_limit_radian
+	right_rotation_limit = start_rotation_radian + rotation_limit_radian
+	if right_rotation_limit > PI:
+		right_rotation_limit -= 2 * PI
+	if start_rotation_radian >= PI:	#might need better cond, 
+		right_rotation_limit = left_rotation_limit + 2 * rotation_limit_radian
+		rotation_flag = true	
+	elif start_rotation_radian <= -PI:
+		left_rotation_limit = right_rotation_limit - 2 * rotation_limit_radian
+		rotation_flag = true
+
 
 
 func rotation_drive_check() -> bool:
@@ -39,14 +43,9 @@ func _rotate() -> void:
 		else:
 			rotation -=rotation_speed
 			rotation = clampf(rotation,left_rotation_limit * 0.99,right_rotation_limit * 0.99)
-		if abs(rotation) > PI: 
-			rotation = -signf(rotation)*PI
-	else:
-		global_rotation = desired_rotation
-	#print("check1 = ", rotation_drive_check(), " check2 = ",rotation_limit_check())
-	#print("cond = ", desired_rotation - global_rotation, "  desired = " ,desired_rotation)
-	#print("global = ", global_rotation, "  local = " ,rotation)
-	#print(left_rotation_limit, "  ",rotation," ", right_rotation_limit)
+	print("cond = ", desired_rotation - global_rotation, "  desired = " ,desired_rotation)
+	print("global = ", global_rotation, "  local = " ,rotation)
+	print(left_rotation_limit, "  ",rotation," ", right_rotation_limit)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void: 
