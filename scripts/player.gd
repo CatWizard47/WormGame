@@ -51,7 +51,6 @@ func _movement(delta: float) -> void:
 
 	rotation = rotation_direction
 	move_and_collide(velocity * delta)
-	get_node("player_main_turret").main_body_rotation=rotation_direction
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
