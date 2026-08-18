@@ -51,7 +51,7 @@ func _rotate() -> void:
 	print(left_rotation_limit, "  ",rotation," ", right_rotation_limit)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void: 
+func _physics_process(_delta: float) -> void: 
 	_rotate()
 	if Input.is_action_pressed("M1_clicked"): 
 		print("Shootat:") 

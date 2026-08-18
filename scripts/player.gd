@@ -4,6 +4,7 @@ extends RigidBody2D
 @export var acceleration_mult : int = 1
 @export var traction_Coefficient : float = 0.02 #MUST BE SMOL
 @export var max_velocity: int = 20
+@export var leg_reach: int = 20
 var screen_size # Size of the game window. # temp
 var velocity : Vector2
 var engine_power : float
@@ -54,6 +55,6 @@ func _movement(delta: float) -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	_movement(delta)
 	#print("position = ",position, " velocity = ", velocity.length(), "speed = ", engine_power)	
