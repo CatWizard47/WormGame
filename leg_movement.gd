@@ -1,10 +1,12 @@
 extends Sprite2D
-var leg_reach: int = 10 
+@export var step_time: float
+@export var leg_reach: int = 50 
 var foot_placement: Vector2
-var foot: Sprite2D
-var arm: Sprite2D
+var foot: RigidBody2D
+var arm: Node2D
 var step_happening_flag: bool = false
-var inverted_orientation_flag: bool = false 
+var inverted_orientation_flag: bool = false
+var step_cooldown_flag: bool  = true
 var parent_velocity: Vector2
 
 func setup(reach: int, time: float) -> void:
@@ -14,28 +16,26 @@ func setup(reach: int, time: float) -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	parent_velocity = get_parent().velocity
-	if(!step_happening_flag):
-		#foot.global_position = foot_placement
-		#if inverted_orientation_flag:
-		#	pass
-		#else:
-		#	pass
+	if(step_happening_flag and step_cooldown_flag):
+		foot_placement = global_position + parent_velocity/2.0
 		foot.global_position = foot_placement
-	else:
-		if inverted_orientation_flag:
-			foot_placement = global_position + parent_velocity/2.0 + parent_velocity.orthogonal() / 2.0
-		else:
-			foot_placement = global_position + parent_velocity/2.0 - parent_velocity.orthogonal() / 2.0 
-		foot.global_position = foot_placement
-		if foot_placement.length()>= leg_reach:
-			step_happening_flag = false
+		step_happening_flag = false
+		step_cooldown_flag = false
+		get_node("step_timer").start()
 		print(foot_placement)
+	
+	foot.global_position = foot_placement
+		#foot.move_and_collide(foot_placement)
+		#if foot.position.y < position.y - leg_reach/2.0 or foot.position.y > position.y + leg_reach/2.0:
+	if (foot.global_position - global_position).length() >=leg_reach:
+		step_happening_flag = true
+	
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	arm = get_node("leg_arm")
-	foot = get_node("leg_arm/leg_foot")
+	arm = get_node("leg_node")
+	foot = get_node("leg_node/leg_foot")
 	if(rotation < 0):
 		inverted_orientation_flag = true #left side of the hull
 		arm.position.x += leg_reach / 2.0
@@ -45,8 +45,8 @@ func _ready() -> void:
 		arm.position.x += leg_reach / 2.0
 		foot.position.x += leg_reach
 	foot_placement = global_position 
-	pass 
+	get_node("step_timer").wait_time = step_time
 
 
 func _on_step_timer_timeout() -> void:
-	step_happening_flag = true
+	step_cooldown_flag = true
