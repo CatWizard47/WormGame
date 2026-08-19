@@ -9,11 +9,12 @@ var inverted_orientation_flag: bool = false
 var step_cooldown_flag: bool  = true
 var parent_velocity: Vector2
 
-func setup(reach: int, time: float) -> void:
-	leg_reach = reach
-	get_node("Step_timer").wait_time = time	
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _animate_leg_arm() -> void:
+	arm.global_position = ( foot.global_position + global_position ) / 2.0
+	arm.global_rotation = atan2( (global_position - foot.global_position).y , (global_position - foot.global_position).x)
+	arm.scale.x = (global_position - foot.global_position).length() /10
+
 func _process(delta: float) -> void:
 	parent_velocity = get_parent().velocity
 	if(step_happening_flag and step_cooldown_flag):
@@ -22,19 +23,18 @@ func _process(delta: float) -> void:
 		step_happening_flag = false
 		step_cooldown_flag = false
 		get_node("step_timer").start()
-		print(foot_placement)
-	
+		#print(foot_placement)
 	foot.global_position = foot_placement
-		#foot.move_and_collide(foot_placement)
-		#if foot.position.y < position.y - leg_reach/2.0 or foot.position.y > position.y + leg_reach/2.0:
-	if (foot.global_position - global_position).length() >=leg_reach:
+	if (foot.global_position - global_position).length() >= leg_reach:
 		step_happening_flag = true
+		#print("test")
+	_animate_leg_arm()
 	
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	arm = get_node("leg_node")
+	arm = get_node("leg_node/leg_arm_sprite")
 	foot = get_node("leg_node/leg_foot")
 	if(rotation < 0):
 		inverted_orientation_flag = true #left side of the hull
