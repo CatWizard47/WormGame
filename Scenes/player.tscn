@@ -36,18 +36,18 @@ sprite_frames = SubResource("SpriteFrames_onrkg")
 [node name="player_main_turret" parent="." unique_id=444234207 instance=ExtResource("3_i3pqv")]
 position = Vector2(21, 0)
 
-[node name="leg_node_1" parent="." unique_id=448767190 instance=ExtResource("4_vgqql")]
-position = Vector2(22, -35)
+[node name="leg_node" parent="." unique_id=448767190 instance=ExtResource("4_vgqql")]
+position = Vector2(27, -35)
 rotation = -1.5707964
 
-[node name="leg_node_2" parent="." unique_id=1639404080 instance=ExtResource("4_vgqql")]
-position = Vector2(22, 35)
+[node name="leg_node2" parent="." unique_id=1266184637 instance=ExtResource("4_vgqql")]
+position = Vector2(27, 35)
 rotation = 1.5707964
 
-[node name="leg_node_4" parent="." unique_id=637226011 instance=ExtResource("4_vgqql")]
-position = Vector2(-43, 35)
-rotation = 1.5707964
-
-[node name="leg_node_3" parent="." unique_id=342190037 instance=ExtResource("4_vgqql")]
-position = Vector2(-43, -35)
+[node name="leg_node3" parent="." unique_id=1801677250 instance=ExtResource("4_vgqql")]
+position = Vector2(-50, -35)
 rotation = -1.5707964
+
+[node name="leg_node4" parent="." unique_id=1682249993 instance=ExtResource("4_vgqql")]
+position = Vector2(-50, 35)
+rotation = 1.5707964

@@ -14,3 +14,8 @@ texture = ExtResource("3_ttqad")
 
 [node name="leg_foot" type="Sprite2D" parent="leg_arm" unique_id=1914037164]
 texture = ExtResource("4_n3tqo")
+
+[node name="Step_timer" type="Timer" parent="." unique_id=1124852769]
+autostart = true
+
+[connection signal="timeout" from="Step_timer" to="." method="_on_step_timer_timeout"]

@@ -46,9 +46,9 @@ func _rotate() -> void:
 			if abs(rotation) > PI:
 				rotation = -signf(rotation) * PI
 			
-	print("cond = ", desired_rotation - global_rotation, "  desired = " ,desired_rotation)
-	print("global = ", global_rotation, "  local = " ,rotation)
-	print(left_rotation_limit, "  ",rotation," ", right_rotation_limit)
+	#print("cond = ", desired_rotation - global_rotation, "  desired = " ,desired_rotation)
+	#print("global = ", global_rotation, "  local = " ,rotation)
+	#print(left_rotation_limit, "  ",rotation," ", right_rotation_limit)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(_delta: float) -> void: 
