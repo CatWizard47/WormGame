@@ -16,6 +16,7 @@ texture = ExtResource("3_ttqad")
 texture = ExtResource("4_n3tqo")
 
 [node name="Step_timer" type="Timer" parent="." unique_id=1124852769]
+wait_time = 0.25
 autostart = true
 
 [connection signal="timeout" from="Step_timer" to="." method="_on_step_timer_timeout"]
