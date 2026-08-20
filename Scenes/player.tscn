@@ -23,7 +23,6 @@ animations = [{
 collision_mask = 6
 script = ExtResource("1_6t5aa")
 max_engine_power = 50
-max_velocity = 100
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=743409537]
 position = Vector2(0.5, 0)
@@ -38,17 +37,12 @@ sprite_frames = SubResource("SpriteFrames_onrkg")
 position = Vector2(21, 0)
 
 [node name="leg_node" parent="." unique_id=448767190 instance=ExtResource("4_vgqql")]
-position = Vector2(27, -35)
-rotation = -1.5707964
+position = Vector2(104, -1)
 
-[node name="leg_node2" parent="." unique_id=1266184637 instance=ExtResource("4_vgqql")]
-position = Vector2(27, 35)
+[node name="leg_node2" parent="." unique_id=1246549833 instance=ExtResource("4_vgqql")]
+position = Vector2(18, 47)
 rotation = 1.5707964
 
-[node name="leg_node3" parent="." unique_id=1801677250 instance=ExtResource("4_vgqql")]
-position = Vector2(-50, -35)
+[node name="leg_node3" parent="." unique_id=1587300611 instance=ExtResource("4_vgqql")]
+position = Vector2(18, -50)
 rotation = -1.5707964
-
-[node name="leg_node4" parent="." unique_id=1682249993 instance=ExtResource("4_vgqql")]
-position = Vector2(-50, 35)
-rotation = 1.5707964

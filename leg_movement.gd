@@ -35,12 +35,16 @@ func _process(delta: float) -> void:
 	parent_rotation = get_parent().rotation
 	if(step_happening_flag and step_cooldown_flag):
 		_find_foot_placement()
+	foot.move_and_collide((foot_placement - foot.global_position).normalized())
+	#print(foot.to_local(foot_placement) * 10.0 , "foot_placement ", foot_placement)
 	#foot.global_position = foot_placement # und fix zis
-	foot.move_and_collide(foot_placement - foot.global_position)
-	print(foot.to_local(foot_placement) * 10.0 , "foot_placement ", foot_placement)
 	if (foot.global_position - global_position).length() >= leg_reach:
 		step_happening_flag = true 
 	_animate_leg_arm()
+	if abs(arm.rotation) < PI/2:
+		_find_foot_placement()
+		_animate_leg_arm()
+	print(arm.rotation)
 	
 
 
