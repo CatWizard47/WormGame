@@ -1,6 +1,6 @@
 extends Sprite2D
 @export var step_time: float
-@export var leg_reach: int = 50 
+@export var leg_reach: float = 25 
 var foot_placement: Vector2
 var foot: RigidBody2D
 var arm: Node2D
@@ -20,12 +20,11 @@ func _find_foot_placement() -> void:
 	foot_placement = global_position + parent_velocity/2.0 
 	var rotated_vector: Vector2
 	rotated_vector.x=0
-	rotated_vector.y=30
+	rotated_vector.y=leg_reach / 2
 	if inverted_orientation_flag: 
 		foot_placement -= rotated_vector.rotated(parent_rotation)
 	else:
 		foot_placement += rotated_vector.rotated(parent_rotation)
-	foot.global_position = foot_placement
 	step_happening_flag = false
 	step_cooldown_flag = false
 	get_node("step_timer").start()
@@ -36,15 +35,11 @@ func _process(delta: float) -> void:
 	parent_rotation = get_parent().rotation
 	if(step_happening_flag and step_cooldown_flag):
 		_find_foot_placement()
-	foot.global_position = foot_placement # to zmienić na move_and_collide() tylko że w lokalnym
+	#foot.global_position = foot_placement # und fix zis
+	foot.move_and_collide(foot_placement - foot.global_position)
+	print(foot.to_local(foot_placement) * 10.0 , "foot_placement ", foot_placement)
 	if (foot.global_position - global_position).length() >= leg_reach:
-		step_happening_flag = true
-	#if inverted_orientation_flag:
-	#	if foot.position.y >= 5:
-	#		_find_foot_placement()
-	#else:
-	#	if foot.position.y <= -5:
-	#		_find_foot_placement() 
+		step_happening_flag = true 
 	_animate_leg_arm()
 	
 
@@ -58,8 +53,10 @@ func _ready() -> void:
 	else:
 		inverted_orientation_flag = false 
 	arm.position.x += leg_reach / 2.0
-	foot.position.x += leg_reach + 10
+	foot.position.x += leg_reach + 30
 	foot_placement = global_position 
+	step_time = get_parent().max_velocity / 150.0
+	#print(step_time)
 	get_node("step_timer").wait_time = step_time
 
 
