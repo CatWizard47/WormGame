@@ -41,17 +41,19 @@ func _movement(delta: float) -> void:
 	else:
 		engine_power = 0 
 		
-	if velocity.length() <= 1:
-		velocity = Vector2.ZERO
-	elif velocity.length() >= max_velocity:
-		velocity = velocity.normalized()*max_velocity * 0.99
 	
 	velocity -= velocity.normalized() * traction_Coefficient * mass * 9.81
 	velocity.x += engine_power * cos(rotation_direction)
 	velocity.y += engine_power * sin(rotation_direction)
+	
+	if velocity.length() <= 1:
+		velocity = Vector2.ZERO
+	elif velocity.length() >= max_velocity:
+		velocity = velocity.normalized()*max_velocity * 0.99
 
 	rotation = rotation_direction
 	move_and_collide(velocity * delta)
+	print(velocity.length())
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

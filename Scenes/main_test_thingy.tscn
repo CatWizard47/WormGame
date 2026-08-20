@@ -93,6 +93,7 @@ z_index = 1
 position = Vector2(240, 359)
 collision_mask = 12
 gravity_scale = 0.0
+max_engine_power = 20
 traction_Coefficient = 0.2
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=2098761291]
