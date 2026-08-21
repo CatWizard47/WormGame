@@ -44,7 +44,7 @@ func _rotate() -> void:
 		else:
 			if abs(rotation) > PI:
 				rotation = -signf(rotation) * PI
-	print(rotation)
+	#print(rotation)
 		
 		
 	#print("cond = ", desired_rotation - global_rotation, "  desired = " ,desired_rotation)

@@ -30,10 +30,12 @@ animations = [{
 size = Vector2(24, 20)
 
 [node name="Track_module_node" type="RigidBody2D" unique_id=316634533]
+collision_mask = 6
 gravity_scale = 0.0
 script = ExtResource("1_n7xal")
 
 [node name="track_animation" type="AnimatedSprite2D" parent="." unique_id=2106998931]
+z_index = -2
 sprite_frames = SubResource("SpriteFrames_o40nt")
 frame = 2
 frame_progress = 0.046333656

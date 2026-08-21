@@ -24,17 +24,28 @@ collision_mask = 6
 script = ExtResource("1_6t5aa")
 max_engine_power = 50
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=743409537]
+[node name="hull_collision_shape" type="CollisionShape2D" parent="." unique_id=743409537]
 position = Vector2(0.5, 0)
 shape = SubResource("RectangleShape2D_onrkg")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1243741245]
+[node name="hull_sprite" type="AnimatedSprite2D" parent="." unique_id=1243741245]
 sprite_frames = SubResource("SpriteFrames_onrkg")
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=56069536]
+[node name="Main_viewport" type="Camera2D" parent="." unique_id=56069536]
 
 [node name="player_main_turret" parent="." unique_id=444234207 instance=ExtResource("3_i3pqv")]
 position = Vector2(21, 0)
 
-[node name="Track_module_node" parent="." unique_id=316634533 instance=ExtResource("4_vgqql")]
-position = Vector2(25, 41)
+[node name="locomotion_nodes" type="Node2D" parent="." unique_id=1395031599]
+
+[node name="Track_module_node" parent="locomotion_nodes" unique_id=316634533 instance=ExtResource("4_vgqql")]
+position = Vector2(29, 29)
+
+[node name="Track_module_node2" parent="locomotion_nodes" unique_id=892006713 instance=ExtResource("4_vgqql")]
+position = Vector2(29, -29)
+
+[node name="Track_module_node3" parent="locomotion_nodes" unique_id=1436773130 instance=ExtResource("4_vgqql")]
+position = Vector2(-36, 29)
+
+[node name="Track_module_node4" parent="locomotion_nodes" unique_id=752165896 instance=ExtResource("4_vgqql")]
+position = Vector2(-37, -29)
