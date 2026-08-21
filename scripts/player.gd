@@ -23,12 +23,12 @@ func start(pos):
 
 func _movement(delta: float) -> void:
 	if Input.is_action_pressed("move_right"):
-		rotation_direction += 0.05
+		rotation_direction += 0.025
 		if rotation_direction >= 2*PI:
 			rotation_direction = 0
 			
 	if Input.is_action_pressed("move_left"):
-		rotation_direction -= 0.05
+		rotation_direction -= 0.025
 		if rotation_direction <= 0:
 			rotation_direction = 2*PI
 	

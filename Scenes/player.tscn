@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://m4n14id8pcxq" path="res://scripts/player.gd" id="1_6t5aa"]
 [ext_resource type="Texture2D" uid="uid://dxl8likyr37n8" path="res://Resources/Hulls/hull_test.png" id="2_onrkg"]
 [ext_resource type="PackedScene" uid="uid://bkhtrtgemtxcv" path="res://Scenes/player_main_turret.tscn" id="3_i3pqv"]
-[ext_resource type="PackedScene" uid="uid://bwvhd3fu0cuno" path="res://Scenes/leg_node.tscn" id="4_vgqql"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_onrkg"]
 size = Vector2(127, 58)
@@ -35,14 +34,3 @@ sprite_frames = SubResource("SpriteFrames_onrkg")
 
 [node name="player_main_turret" parent="." unique_id=444234207 instance=ExtResource("3_i3pqv")]
 position = Vector2(21, 0)
-
-[node name="leg_node" parent="." unique_id=448767190 instance=ExtResource("4_vgqql")]
-position = Vector2(104, -1)
-
-[node name="leg_node2" parent="." unique_id=1246549833 instance=ExtResource("4_vgqql")]
-position = Vector2(18, 47)
-rotation = 1.5707964
-
-[node name="leg_node3" parent="." unique_id=1587300611 instance=ExtResource("4_vgqql")]
-position = Vector2(18, -50)
-rotation = -1.5707964

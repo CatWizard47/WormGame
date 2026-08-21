@@ -1,6 +1,6 @@
 extends Sprite2D
 @export var step_time: float
-@export var leg_reach: float = 25 
+@export var leg_reach: float = 10
 var foot_placement: Vector2
 var foot: RigidBody2D
 var arm: Node2D

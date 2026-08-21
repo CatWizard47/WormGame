@@ -3,7 +3,7 @@ extends Node2D
 @export var rotation_speed : float = 0.01
 @export var start_rotation_radian: float = 0 # 0rad = aligned with hull #
 @export var accuracy_margin_radian: float = 0.01
-@export var rotation_limit_radian: float = PI/2 # must be within [PI, 0), above PI to ignore 
+@export var rotation_limit_radian: float = PI  # must be within [PI, 0), PI to ignore 
 var left_rotation_limit: float
 var right_rotation_limit: float
 var mouse_position: Vector2
@@ -32,20 +32,19 @@ func rotation_drive_check() -> bool:
 
 
 func _rotate() -> void:
-	mouse_position = get_global_mouse_position()
-	desired_rotation = atan2( (mouse_position - global_position).y , (mouse_position - global_position).x) 	
-	if  abs(global_rotation - desired_rotation) > accuracy_margin_radian: 
-		#shitass conditional, but works
-		if rotation_drive_check():
-			rotation += rotation_speed	
-		else:
-			rotation -=rotation_speed
-		if rotation_flag:
-			rotation = clampf(rotation, left_rotation_limit, right_rotation_limit)
-		else:
-			if abs(rotation) > PI:
-				rotation = -signf(rotation) * PI
-			
+	mouse_position = get_local_mouse_position()
+	desired_rotation = mouse_position.angle() 
+	if desired_rotation > 0:
+		rotation += rotation_speed
+	else:
+		rotation -= rotation_speed
+	if rotation_flag:
+		rotation = clampf(rotation, left_rotation_limit, right_rotation_limit)
+	else:
+		if abs(rotation) > PI:
+			rotation = -signf(rotation) * PI
+	print(rotation)
+		
 	#print("cond = ", desired_rotation - global_rotation, "  desired = " ,desired_rotation)
 	#print("global = ", global_rotation, "  local = " ,rotation)
 	#print(left_rotation_limit, "  ",rotation," ", right_rotation_limit)
