@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://bmapecm5pduoa"]
+
+[ext_resource type="Script" uid="uid://bwqdhks6swn0l" path="res://scripts/track_module_node.gd" id="1_n7xal"]
+[ext_resource type="Texture2D" uid="uid://d2634j0kstrwh" path="res://Resources/Legs/Track_tes_frame1.png" id="2_lqwiu"]
+[ext_resource type="Texture2D" uid="uid://b817wvyrh2ld3" path="res://Resources/Legs/Track_tes_frame2.png" id="3_fpyn1"]
+[ext_resource type="Texture2D" uid="uid://bfb2pnls4u7t6" path="res://Resources/Legs/Track_tes_frame3.png" id="4_botgd"]
+[ext_resource type="Texture2D" uid="uid://d10qi7c81jflo" path="res://Resources/Legs/Track_tes_frame4.png" id="5_1n7vx"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_o40nt"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_lqwiu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_fpyn1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_botgd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_1n7vx")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gft63"]
+size = Vector2(24, 20)
+
+[node name="Track_module_node" type="RigidBody2D" unique_id=316634533]
+gravity_scale = 0.0
+script = ExtResource("1_n7xal")
+
+[node name="track_animation" type="AnimatedSprite2D" parent="." unique_id=2106998931]
+sprite_frames = SubResource("SpriteFrames_o40nt")
+frame = 2
+frame_progress = 0.046333656
+
+[node name="track_collision_shape" type="CollisionShape2D" parent="." unique_id=2052966085]
+shape = SubResource("RectangleShape2D_gft63")

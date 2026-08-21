@@ -2,7 +2,7 @@ extends Node2D
 
 @export var rotation_speed : float = 0.01
 @export var start_rotation_radian: float = 0 # 0rad = aligned with hull #
-@export var accuracy_margin_radian: float = 0.01
+@export var accuracy_margin_radian: float = 0.001
 @export var rotation_limit_radian: float = PI  # must be within [PI, 0), PI to ignore 
 var left_rotation_limit: float
 var right_rotation_limit: float
@@ -34,16 +34,18 @@ func rotation_drive_check() -> bool:
 func _rotate() -> void:
 	mouse_position = get_local_mouse_position()
 	desired_rotation = mouse_position.angle() 
-	if desired_rotation > 0:
-		rotation += rotation_speed
-	else:
-		rotation -= rotation_speed
-	if rotation_flag:
-		rotation = clampf(rotation, left_rotation_limit, right_rotation_limit)
-	else:
-		if abs(rotation) > PI:
-			rotation = -signf(rotation) * PI
+	if abs(rotation - desired_rotation) > accuracy_margin_radian:
+		if desired_rotation > 0:
+			rotation += rotation_speed
+		else:
+			rotation -= rotation_speed
+		if rotation_flag:
+			rotation = clampf(rotation, left_rotation_limit, right_rotation_limit)
+		else:
+			if abs(rotation) > PI:
+				rotation = -signf(rotation) * PI
 	print(rotation)
+		
 		
 	#print("cond = ", desired_rotation - global_rotation, "  desired = " ,desired_rotation)
 	#print("global = ", global_rotation, "  local = " ,rotation)
@@ -54,4 +56,5 @@ func _physics_process(_delta: float) -> void:
 	_rotate()
 	if Input.is_action_pressed("M1_clicked"): 
 		print("Shootat:") 
+		#here_gun_fire_resource
 	
