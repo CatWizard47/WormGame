@@ -1,6 +1,6 @@
 extends RigidBody2D
 
-@export var max_engine_power = 10 
+@export var max_engine_power = 10 #max velocity is 10 times this
 @export var acceleration_mult : float = 0.5
 @export var traction_Coefficient : float = 0.02 #MUST BE SMOL
 @export var locomotion_node_rotation_speed: float = 0.025
@@ -42,6 +42,7 @@ func _movement(delta: float) -> void:
 		_rotate_locomotive_nodes(-locomotion_node_rotation_speed)
 	
 	##TODO - Movement comm to set loco_nodes rotation to 0 
+	#not sure if needed tho, the margin makes it somewhat unnecessary
 	
 	if(Input.is_action_pressed("move_backward") or Input.is_action_pressed("move_forward")):		
 		if Input.is_action_pressed("move_backward") and engine_power > -max_engine_power:
@@ -65,9 +66,7 @@ func _movement(delta: float) -> void:
 	print(velocity.length())
 	if velocity.length() <= 1:
 		velocity = Vector2.ZERO
-	#elif velocity.length() >= max_velocity:
-	#	velocity = velocity.normalized()*max_velocity * 0.99
-		
+			
 	move_and_collide(velocity * delta)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
