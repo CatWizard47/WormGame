@@ -9,11 +9,11 @@ func _ready() -> void:
 
 func change_rotation(rotation_speed: float) -> float:
 	if horizontal_orientation_inverted_flag:
-		rotation += rotation_speed
+		rotation -= rotation_speed
 		rotation = clampf( rotation , -PI / 2.01, +PI / 2.01)
 		return rotation
 	else:
-		rotation -= rotation_speed
+		rotation += rotation_speed
 		rotation = clampf( rotation , -PI / 2.01, +PI / 2.01)
 		return -rotation
 

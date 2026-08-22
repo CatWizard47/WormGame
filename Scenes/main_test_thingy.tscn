@@ -95,7 +95,6 @@ collision_mask = 12
 gravity_scale = 0.0
 max_engine_power = 10
 traction_Coefficient = 0.2
-max_velocity = 20
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=2098761291]
 visibility_layer = 2
