@@ -2,16 +2,14 @@ extends RigidBody2D
 
 @export var max_engine_power = 10 
 @export var acceleration_mult : float = 0.5
-@export var traction_Coefficient : float = 0.0002 #MUST BE SMOL
+@export var traction_Coefficient : float = 0.02 #MUST BE SMOL
 @export var max_velocity: int = 100
 @export var locomotion_node_rotation_speed: float = 0.025
 var locomotive_nodes: Node
 var screen_size # Size of the game window. # temp
 var velocity: Vector2
 var engine_power: float
-var rotation_direction: float = 0
 var locomotive_rotation: float
-#var output_array: Array
 var node_count: float
 
 
@@ -34,25 +32,15 @@ func _rotate_locomotive_nodes(rotation_speed:float) ->void:
 		locomotive_rotation += loco_node.change_rotation(rotation_speed)
 	locomotive_rotation = locomotive_rotation / node_count 
 		
-#func _apply_thrust_with_locomotive_nodes(power:float) -> void:
-#	for loco_node: Node in locomotive_nodes.get_children():
-#		output_array = loco_node.apply_thrust(power)
-#		velocity.x += output_array[0]
-#		velocity.y += output_array[1]
-#		rotation_direction += output_array[2]
 
 func _movement(delta: float) -> void:
 	if Input.is_action_pressed("move_right"):
 		_rotate_locomotive_nodes(locomotion_node_rotation_speed)
-		#rotation_direction += 0.025
-		#if rotation_direction >= 2*PI:
-		#	rotation_direction = 0
 			
 	if Input.is_action_pressed("move_left"):
 		_rotate_locomotive_nodes(-locomotion_node_rotation_speed)
-		#rotation_direction -= 0.025
-		#if rotation_direction <= 0:
-		#	rotation_direction = 2*PI
+	
+	##TODO - Movement comm to set loco_nodes rotation to 0 
 	
 	if(Input.is_action_pressed("move_backward") or Input.is_action_pressed("move_forward")):		
 		if Input.is_action_pressed("move_backward") and engine_power > -max_engine_power:
@@ -64,30 +52,30 @@ func _movement(delta: float) -> void:
 			engine_power +=1 * acceleration_mult
 	else:
 		engine_power = 0 
+	
 		
 	#_apply_thrust_with_locomotive_nodes(engine_power)
-	
-	#this needs to have thrust application
-	
 	if  locomotive_rotation > 0.01:
-		rotation_direction -= engine_power/100.0
+		#rotation_direction -= engine_power/100.0
+		rotation -= engine_power/ (500.0 * PI/2) 
 		#if rotation_direction < 0 :
 		#	rotation_direction = 2*PI
 		#	print("TEST")
 	elif locomotive_rotation < 0.01:
-		rotation_direction += engine_power/100.0
+		#rotation_direction += engine_power/100.0
+		rotation += engine_power/(500.0 * PI/2)
 		#if rotation_direction > 2*PI :
 		#	rotation_direction = 0
 		#	print("AIE")
-	if signf(rotation_direction) * signf(engine_power) <0:
-		pass
-	
-	
+	print(rotation)
+	 
 	#print(locomotive_rotation ," <-loco rotation-> ", rotation)	
-	rotation=rotation_direction
+	#rotation=rotation_direction
 	velocity -= velocity.normalized() * traction_Coefficient * mass * 9.81
+	#velocity = Vector2.from_angle(rotation).normalized() * engine_power * 10 
 	velocity.x += engine_power * cos(rotation)
 	velocity.y += engine_power * sin(rotation)
+	print(velocity)
 	
 	if velocity.length() <= 1:
 		velocity = Vector2.ZERO
