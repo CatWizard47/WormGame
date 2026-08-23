@@ -4,6 +4,7 @@ extends Node2D
 @export var start_rotation_radian: float = 0 # 0rad = aligned with hull #
 @export var accuracy_margin_radian: float = 0.001
 @export var rotation_limit_radian: float = PI  # must be within [PI, 0), PI to ignore 
+@export var Projectile: Bullet #bullet / laser / rocket?
 var left_rotation_limit: float
 var right_rotation_limit: float
 var mouse_position: Vector2
