@@ -1,44 +1,81 @@
 [gd_scene format=3 uid="uid://bmapecm5pduoa"]
 
 [ext_resource type="Script" uid="uid://bwqdhks6swn0l" path="res://scripts/track_module_node.gd" id="1_n7xal"]
-[ext_resource type="Texture2D" uid="uid://d2634j0kstrwh" path="res://Resources/Legs/Track_tes_frame1.png" id="2_lqwiu"]
-[ext_resource type="Texture2D" uid="uid://b817wvyrh2ld3" path="res://Resources/Legs/Track_tes_frame2.png" id="3_fpyn1"]
-[ext_resource type="Texture2D" uid="uid://bfb2pnls4u7t6" path="res://Resources/Legs/Track_tes_frame3.png" id="4_botgd"]
-[ext_resource type="Texture2D" uid="uid://d10qi7c81jflo" path="res://Resources/Legs/Track_tes_frame4.png" id="5_1n7vx"]
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_o40nt"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("2_lqwiu")
-}, {
-"duration": 1.0,
-"texture": ExtResource("3_fpyn1")
-}, {
-"duration": 1.0,
-"texture": ExtResource("4_botgd")
-}, {
-"duration": 1.0,
-"texture": ExtResource("5_1n7vx")
-}],
-"loop": 1,
-"name": &"default",
-"speed": 5.0
-}]
+[ext_resource type="Texture2D" uid="uid://dgyanyl1w2xbp" path="res://Resources/Legs/Track_test_side_section_Frame_1.png" id="2_n7xal"]
+[ext_resource type="Texture2D" uid="uid://duvmhn3pegx6c" path="res://Resources/Legs/Track_test_side_section_Frame_2.png" id="3_lqwiu"]
+[ext_resource type="Texture2D" uid="uid://40flrds215hc" path="res://Resources/Legs/Track_test_side_section_Frame_3.png" id="4_fpyn1"]
+[ext_resource type="Texture2D" uid="uid://b1l2344afpa3s" path="res://Resources/Legs/Track_test_side_section_Frame_4.png" id="5_botgd"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gft63"]
 size = Vector2(24, 20)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_leoyb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_n7xal")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_lqwiu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_fpyn1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_botgd")
+}],
+"loop": 1,
+"name": &"Move",
+"speed": 5.0
+}]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gft63"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_botgd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_fpyn1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_lqwiu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_n7xal")
+}],
+"loop": 1,
+"name": &"Move",
+"speed": 5.0
+}]
 
 [node name="Track_module_node" type="RigidBody2D" unique_id=316634533]
 collision_mask = 6
 gravity_scale = 0.0
 script = ExtResource("1_n7xal")
 
-[node name="track_animation" type="AnimatedSprite2D" parent="." unique_id=2106998931]
-z_index = -2
-sprite_frames = SubResource("SpriteFrames_o40nt")
-frame = 2
-frame_progress = 0.046333656
-
 [node name="track_collision_shape" type="CollisionShape2D" parent="." unique_id=2052966085]
 shape = SubResource("RectangleShape2D_gft63")
+
+[node name="Left_module" type="AnimatedSprite2D" parent="." unique_id=1921123156]
+z_index = -1
+position = Vector2(0, -6)
+rotation = -1.5707964
+sprite_frames = SubResource("SpriteFrames_leoyb")
+animation = &"Move"
+speed_scale = 5.0
+
+[node name="Right_module" type="AnimatedSprite2D" parent="." unique_id=610865889]
+z_index = -1
+position = Vector2(0, 6)
+rotation = 1.5707964
+sprite_frames = SubResource("SpriteFrames_gft63")
+animation = &"Move"
+frame_progress = 0.77693146
+speed_scale = 5.0
+
+[node name="Animation_timer" type="Timer" parent="." unique_id=1835527405]
+wait_time = 0.1
+one_shot = true
+
+[connection signal="timeout" from="Animation_timer" to="." method="_on_animation_timer_timeout"]

@@ -1,37 +1,47 @@
 extends RigidBody2D
 var new_direction: Vector2
 var horizontal_orientation_inverted_flag: bool = false
+var left_module: AnimatedSprite2D
+var right_module: AnimatedSprite2D
+var animation_timer: Timer
+var animation_stop_flag: bool = false
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	if position.x < 0:
 		horizontal_orientation_inverted_flag = true	
+	left_module = get_node("Left_module")
+	right_module = get_node("Right_module")
+	animation_timer = get_node("Animation_timer")
 
 func change_rotation(rotation_speed: float) -> float:
+	animation_timer.start()
 	if horizontal_orientation_inverted_flag:
 		rotation -= rotation_speed
 		rotation = clampf( rotation , -PI / 2.01, +PI / 2.01)
+		right_module.play("Move")
+		left_module.play_backwards("Move")
 		return rotation
 	else:
 		rotation += rotation_speed
 		rotation = clampf( rotation , -PI / 2.01, +PI / 2.01)
+		left_module.play("Move")
+		right_module.play_backwards("Move")
 		return -rotation
 
-#this output is going to get += to the parent, 
-#func apply_thrust(engine_power:float) -> Array: #[0.x|1.y] Vector2, velocity; [2] added rotation in radian
-	#var Output: Array = [0,0,0]
-	#velocity.x += engine_power * cos(rotation)
-	#velocity.y += engine_power * sin(rotation)
-	#Output[0] = (Vector2.from_angle(rotation) * engine_power).x
-	#Output[1] = (Vector2.from_angle(rotation) * engine_power).y
-	#if horizontal_orientation_inverted_flag:
-	#	Output[2] = -atan2(Output[1],Output[0]) / 100.0	
-	#else:
-	#	Output[2] = atan2(Output[1],Output[0]) / 100.0
-	#print(Output[2])
-	#return Output
-
-
+func pause_animation() -> void:
+	left_module.pause()
+	right_module.pause()
+	
+func animate(speed: float) -> void:
+	left_module.play("Move", signf(speed))
+	right_module.play("Move", signf(speed))
+	animation_stop_flag = true
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:	
 	pass
+	
+func _on_animation_timer_timeout() -> void:
+	print("TIMEOUT")
+	if !animation_stop_flag:
+		pause_animation()

@@ -3,7 +3,7 @@ extends RigidBody2D
 @export var max_engine_power = 10 #max velocity is 10 times this
 @export var acceleration_mult : float = 0.5
 @export var traction_Coefficient : float = 0.02 #MUST BE SMOL
-@export var locomotion_node_rotation_speed: float = 0.025
+@export var locomotion_node_rotation_speed: float = 0.025 # in radians
 @export var max_rotation_speed_radian:float
 var locomotive_nodes: Node
 var screen_size # Size of the game window. # temp
@@ -33,6 +33,13 @@ func _rotate_locomotive_nodes(rotation_speed:float) ->void:
 		locomotive_rotation += loco_node.change_rotation(rotation_speed)
 	locomotive_rotation = locomotive_rotation / node_count 
 		
+func _animate_locomotive_nodes(speed:float)->void:
+	for loco_node: Node in locomotive_nodes.get_children():
+		loco_node.animate(speed)
+		
+func _stop_locomotive_node_animation()->void:
+	for loco_node: Node in locomotive_nodes.get_children():
+		loco_node.pause_animation()		
 
 func _movement(delta: float) -> void:
 	if Input.is_action_pressed("move_right"):
@@ -47,12 +54,17 @@ func _movement(delta: float) -> void:
 	if(Input.is_action_pressed("move_backward") or Input.is_action_pressed("move_forward")):		
 		if Input.is_action_pressed("move_backward") and engine_power > -max_engine_power:
 			engine_power -=1 * acceleration_mult
+			_animate_locomotive_nodes(engine_power)
 			
 		if Input.is_action_pressed("move_forward") and engine_power < max_engine_power:
 			engine_power +=1 * acceleration_mult
+			_animate_locomotive_nodes(engine_power)
 	else:
-		engine_power = 0 
-	
+		engine_power = 0
+		_stop_locomotive_node_animation() 
+		
+	#print(engine_power)
+		
 	powertrain_radian_ratio=abs(locomotive_rotation / (PI / 2.01))	
 	if  locomotive_rotation > 0.01:	#devided by 80 to seem more 'realistic' ig
 		rotation -= ( engine_power / (max_engine_power * 80) ) * powertrain_radian_ratio
@@ -63,7 +75,6 @@ func _movement(delta: float) -> void:
 	velocity -= velocity.normalized() * traction_Coefficient * mass * 9.81
 	velocity = Vector2.from_angle(rotation).normalized() 
 	velocity = velocity * engine_power * 10 * (1 - powertrain_radian_ratio)
-	print(velocity.length())
 	if velocity.length() <= 1:
 		velocity = Vector2.ZERO
 			
