@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://bwvhd3fu0cuno"]
 
-[ext_resource type="Texture2D" uid="uid://cs8kn84pt41ia" path="res://Resources/Legs/leg_test_node.png" id="1_xwrrd"]
+[ext_resource type="Texture2D" uid="uid://cs8kn84pt41ia" path="res://Textures/Legs/leg_test_node.png" id="1_xwrrd"]
 [ext_resource type="Script" uid="uid://dlk6xemyydp0h" path="res://leg_movement.gd" id="2_vt4as"]
-[ext_resource type="Texture2D" uid="uid://dowar2fjcg3w5" path="res://Resources/Legs/leg_test_arm.png" id="3_ttqad"]
-[ext_resource type="Texture2D" uid="uid://j5ehjj5fyfu0" path="res://Resources/Legs/leg_test_foot.png" id="4_n3tqo"]
+[ext_resource type="Texture2D" uid="uid://dowar2fjcg3w5" path="res://Textures/Legs/leg_test_arm.png" id="3_ttqad"]
+[ext_resource type="Texture2D" uid="uid://j5ehjj5fyfu0" path="res://Textures/Legs/leg_test_foot.png" id="4_n3tqo"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_gft63"]
 radius = 6.0

@@ -4,14 +4,15 @@ extends RigidBody2D
 @export var acceleration_mult : float = 0.5
 @export var traction_Coefficient : float = 0.02 #MUST BE SMOL
 @export var locomotion_node_rotation_speed: float = 0.025 # in radians
-@export var max_rotation_speed_radian:float
-var locomotive_nodes: Node
 var screen_size # Size of the game window. # temp
 var velocity: Vector2
 var engine_power: float
 var locomotive_rotation: float
+var locomotive_nodes: Node
+var locomotive_nodes_rotated_this_tick: bool = false
 var powertrain_radian_ratio:float
 var node_count: float
+
 
 
 func _ready() -> void:
@@ -32,6 +33,7 @@ func _rotate_locomotive_nodes(rotation_speed:float) ->void:
 	for loco_node: Node in locomotive_nodes.get_children():
 		locomotive_rotation += loco_node.change_rotation(rotation_speed)
 	locomotive_rotation = locomotive_rotation / node_count 
+	locomotive_nodes_rotated_this_tick = true
 		
 func _animate_locomotive_nodes(speed:float)->void:
 	for loco_node: Node in locomotive_nodes.get_children():
@@ -42,6 +44,7 @@ func _stop_locomotive_node_animation()->void:
 		loco_node.pause_animation()		
 
 func _movement(delta: float) -> void:
+	locomotive_nodes_rotated_this_tick = false
 	if Input.is_action_pressed("move_right"):
 		_rotate_locomotive_nodes(locomotion_node_rotation_speed)
 			
@@ -54,16 +57,18 @@ func _movement(delta: float) -> void:
 	if(Input.is_action_pressed("move_backward") or Input.is_action_pressed("move_forward")):		
 		if Input.is_action_pressed("move_backward") and engine_power > -max_engine_power:
 			engine_power -=1 * acceleration_mult
-			_animate_locomotive_nodes(engine_power)
 			
 		if Input.is_action_pressed("move_forward") and engine_power < max_engine_power:
 			engine_power +=1 * acceleration_mult
+		
+		if	!locomotive_nodes_rotated_this_tick:
 			_animate_locomotive_nodes(engine_power)
+		
 	else:
 		engine_power = 0
-		_stop_locomotive_node_animation() 
+		if !locomotive_nodes_rotated_this_tick:
+			_stop_locomotive_node_animation() 
 		
-	#print(engine_power)
 		
 	powertrain_radian_ratio=abs(locomotive_rotation / (PI / 2.01))	
 	if  locomotive_rotation > 0.01:	#devided by 80 to seem more 'realistic' ig

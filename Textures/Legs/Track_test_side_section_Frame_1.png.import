@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bfb2pnls4u7t6"
-path="res://.godot/imported/Track_tes_frame3.png-97639ef7f2951ee0c5632787d45ef63f.ctex"
+uid="uid://dgyanyl1w2xbp"
+path="res://.godot/imported/Track_test_side_section_Frame_1.png-9c8182f92607d4a44ed20ede1fd882f8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Resources/Legs/Track_tes_frame3.png"
-dest_files=["res://.godot/imported/Track_tes_frame3.png-97639ef7f2951ee0c5632787d45ef63f.ctex"]
+source_file="res://Textures/Legs/Track_test_side_section_Frame_1.png"
+dest_files=["res://.godot/imported/Track_test_side_section_Frame_1.png-9c8182f92607d4a44ed20ede1fd882f8.ctex"]
 
 [params]
 

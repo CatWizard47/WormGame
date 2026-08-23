@@ -1,5 +1,4 @@
 extends RigidBody2D
-var new_direction: Vector2
 var horizontal_orientation_inverted_flag: bool = false
 var left_module: AnimatedSprite2D
 var right_module: AnimatedSprite2D
@@ -31,6 +30,7 @@ func change_rotation(rotation_speed: float) -> float:
 func pause_animation() -> void:
 	left_module.pause()
 	right_module.pause()
+	animation_stop_flag = false
 	
 func animate(speed: float) -> void:
 	left_module.play("Move", signf(speed))
@@ -38,10 +38,10 @@ func animate(speed: float) -> void:
 	animation_stop_flag = true
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:	
+func _process(delta: float) -> void:
 	pass
 	
 func _on_animation_timer_timeout() -> void:
-	print("TIMEOUT")
+	#print("TIMEOUT")
 	if !animation_stop_flag:
 		pause_animation()

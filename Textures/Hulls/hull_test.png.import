@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dowar2fjcg3w5"
-path="res://.godot/imported/leg_test_arm.png-2b3589cf5dc4d90d016a8a3685ed443c.ctex"
+uid="uid://dxl8likyr37n8"
+path="res://.godot/imported/hull_test.png-dca1918ea04afff39c51f550221d3939.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Resources/Legs/leg_test_arm.png"
-dest_files=["res://.godot/imported/leg_test_arm.png-2b3589cf5dc4d90d016a8a3685ed443c.ctex"]
+source_file="res://Textures/Hulls/hull_test.png"
+dest_files=["res://.godot/imported/hull_test.png-dca1918ea04afff39c51f550221d3939.ctex"]
 
 [params]
 

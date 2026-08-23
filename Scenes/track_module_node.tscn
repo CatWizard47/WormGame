@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://bmapecm5pduoa"]
 
 [ext_resource type="Script" uid="uid://bwqdhks6swn0l" path="res://scripts/track_module_node.gd" id="1_n7xal"]
-[ext_resource type="Texture2D" uid="uid://dgyanyl1w2xbp" path="res://Resources/Legs/Track_test_side_section_Frame_1.png" id="2_n7xal"]
-[ext_resource type="Texture2D" uid="uid://duvmhn3pegx6c" path="res://Resources/Legs/Track_test_side_section_Frame_2.png" id="3_lqwiu"]
-[ext_resource type="Texture2D" uid="uid://40flrds215hc" path="res://Resources/Legs/Track_test_side_section_Frame_3.png" id="4_fpyn1"]
-[ext_resource type="Texture2D" uid="uid://b1l2344afpa3s" path="res://Resources/Legs/Track_test_side_section_Frame_4.png" id="5_botgd"]
+[ext_resource type="Texture2D" uid="uid://dgyanyl1w2xbp" path="res://Textures/Legs/Track_test_side_section_Frame_1.png" id="2_n7xal"]
+[ext_resource type="Texture2D" uid="uid://duvmhn3pegx6c" path="res://Textures/Legs/Track_test_side_section_Frame_2.png" id="3_lqwiu"]
+[ext_resource type="Texture2D" uid="uid://40flrds215hc" path="res://Textures/Legs/Track_test_side_section_Frame_3.png" id="4_fpyn1"]
+[ext_resource type="Texture2D" uid="uid://b1l2344afpa3s" path="res://Textures/Legs/Track_test_side_section_Frame_4.png" id="5_botgd"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gft63"]
 size = Vector2(24, 20)

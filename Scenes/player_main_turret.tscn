@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://bkhtrtgemtxcv"]
 
 [ext_resource type="Script" uid="uid://nohwwevcrjud" path="res://scripts/player_main_turret.gd" id="1_ugf5t"]
-[ext_resource type="Texture2D" uid="uid://dx1ixm2nc617e" path="res://Resources/Turrets/Turret_test.png" id="2_qktiv"]
-[ext_resource type="Texture2D" uid="uid://fstf5teixiud" path="res://Resources/Weapons/GUN_test.png" id="3_axrt5"]
+[ext_resource type="Texture2D" uid="uid://dx1ixm2nc617e" path="res://Textures/Turrets/Turret_test.png" id="2_qktiv"]
+[ext_resource type="Texture2D" uid="uid://fstf5teixiud" path="res://Textures/Weapons/GUN_test.png" id="3_axrt5"]
 
 [node name="player_main_turret" type="Marker2D" unique_id=980375679]
 position = Vector2(215, 253)
