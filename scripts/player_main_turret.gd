@@ -52,12 +52,14 @@ func _rotate() -> void:
 			if abs(rotation) > PI:
 				rotation = -signf(rotation) * PI
 
+func get_new_bullet_position() -> Vector2:
+
 func get_bounding_box() -> Vector2:
 	return get_node("GunSprite").get_rect().size
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(_delta: float) -> void:
-	if is_weapon_active:
+	if is_weapon_active: #place this into the player node instead
 		_rotate()
 		if Input.is_action_pressed("M1_clicked") and can_fire_flag: 
 			print("Shootat:")
