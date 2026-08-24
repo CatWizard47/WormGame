@@ -4,20 +4,15 @@ extends Node2D
 @export var start_rotation_radian: float = 0 # 0rad = aligned with hull #
 @export var accuracy_margin_radian: float = 0.001
 @export var rotation_limit_radian: float = PI  # must be within [PI, 0), PI to ignore 
-#@export var projectile: ProjectileRes #bullet / laser / rocket?
 @export var maximum_projectiles: int = 1024
-#@export var shooting_cooldown: float = 0.5
 @export var turret_texture: Texture2D
 @export var gun_texture: Texture2D
-#var can_fire_flag: bool = true
-#var current_projectile_iterator: int = 1
 var left_rotation_limit: float
 var right_rotation_limit: float
 var mouse_position: Vector2
 var desired_rotation: float
 var rotation_flag: bool
 var is_weapon_active: bool = true #to be false in actual code
-#var projectile_scene
 
 
 func _ready() -> void: 
@@ -38,11 +33,10 @@ func _ready() -> void:
 		rotation_flag = false
 
 
-#func rotation_drive_check() -> bool:
-#	return ( desired_rotation - global_rotation  > 0 and  desired_rotation - global_rotation < PI ) or desired_rotation - global_rotation < -PI 
-
-func fire()->void:
+func fire() -> void:
+	print("BANG!") # animation 'ere
 	pass
+
 
 func _rotate() -> void:
 	mouse_position = get_local_mouse_position()
@@ -58,14 +52,15 @@ func _rotate() -> void:
 			if abs(rotation) > PI:
 				rotation = -signf(rotation) * PI
 
+
 func get_new_bullet_position() -> Vector2:
 	var Output: Vector2
 	Output = global_position
-	Output += Vector2(1,0).from_angle(global_rotation).normalized() * get_node("GunSprite").get_rect().size.y
+	Output += Vector2.from_angle(global_rotation).normalized() * get_node("GunSprite").get_rect().size.y
 	return Output
 	
-#func get_bounding_box() -> Vector2:
-#	return get_node("GunSprite").get_rect().size
+func get_turret_rotation() -> float:
+	return global_rotation
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(_delta: float) -> void:
@@ -83,7 +78,3 @@ func _physics_process(_delta: float) -> void:
 		#	if current_projectile_iterator == maximum_projectiles:
 		#		current_projectile_iterator = 0 
 		#	current_projectile_iterator += 1
-
-
-#func _on_cooldown_timer_timeout() -> void:
-#	can_fire_flag = true	

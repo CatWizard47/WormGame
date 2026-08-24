@@ -11,15 +11,23 @@ var locomotive_rotation: float
 var locomotive_nodes: Node
 var locomotive_nodes_rotated_this_tick: bool = false
 var powertrain_radian_ratio:float
-var node_count: float
-
+var locomotive_node_count: float
+enum weapon_groups{	#hipothetically not needed to be written like this, also may need to switch to a bool array for multiple weapon gr.s at once
+	ONE,			#TODO IN UI needs to change active weapon with reparent(node) method.
+	TWO,
+	THREE,
+	FOUR
+}
+var player_controlled_weapon_group: int	
 
 
 func _ready() -> void:
 	screen_size = get_viewport_rect().size
 	locomotive_nodes = get_node("locomotion_nodes")
-	node_count = locomotive_nodes.get_child_count()
+	locomotive_node_count = locomotive_nodes.get_child_count()
 	position = screen_size/2
+	player_controlled_weapon_group = weapon_groups.ONE
+	
 
 
 func start(pos):
@@ -32,7 +40,7 @@ func _rotate_locomotive_nodes(rotation_speed:float) ->void:
 	locomotive_rotation = 0
 	for loco_node: Node in locomotive_nodes.get_children():
 		locomotive_rotation += loco_node.change_rotation(rotation_speed)
-	locomotive_rotation = locomotive_rotation / node_count 
+	locomotive_rotation = locomotive_rotation / locomotive_node_count 
 	locomotive_nodes_rotated_this_tick = true
 		
 func _animate_locomotive_nodes(speed:float)->void:
@@ -84,10 +92,23 @@ func _movement(delta: float) -> void:
 		velocity = Vector2.ZERO
 			
 	move_and_collide(velocity * delta)
+	
+func fire_weapon_group()-> void:
+	var projectile_position: Vector2
+	var projectile_rotation: float
+	for node: Node in get_node("weapon_group_" + str(player_controlled_weapon_group)):
+		projectile_position = node.get_new_bullet_position()
+		projectile_rotation = node.get_turret_rotation()
+		#TODO
+		#INSTANTIATE BOOLET (OF SPECIFIC TYPE?)
+		#AFFIX POSITION AND ROTATION
+		#maybe as child of specific turret node? 
+		node.fire()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
 	_movement(delta)
 	if Input.is_action_pressed("M1_clicked"):
+		fire_weapon_group()
 		print(get_node("turret_nodes/player_main_turret").get_new_bullet_position())
 	#print("position = ",position, " velocity = ", velocity.length(), "speed = ", engine_power)	

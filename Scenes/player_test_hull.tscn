@@ -47,7 +47,13 @@ position = Vector2(-36, 29)
 [node name="Track_module_node4" parent="locomotion_nodes" unique_id=752165896 instance=ExtResource("4_vgqql")]
 position = Vector2(-37, -29)
 
-[node name="turret_nodes" type="Node2D" parent="." unique_id=777218414]
+[node name="weapon_group_1" type="Node2D" parent="." unique_id=777218414]
 
-[node name="player_main_turret" parent="turret_nodes" unique_id=444234207 instance=ExtResource("3_i3pqv")]
+[node name="player_main_turret" parent="weapon_group_1" unique_id=444234207 instance=ExtResource("3_i3pqv")]
 position = Vector2(21, 0)
+
+[node name="weapon_group_2" type="Node2D" parent="." unique_id=358971566]
+
+[node name="weapon_group_3" type="Node2D" parent="." unique_id=69159857]
+
+[node name="weapon_group_4" type="Node2D" parent="." unique_id=504607579]
