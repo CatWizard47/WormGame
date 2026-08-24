@@ -14,3 +14,7 @@ texture = ExtResource("2_qktiv")
 [node name="GunSprite" type="Sprite2D" parent="." unique_id=405094552]
 position = Vector2(14, 0)
 texture = ExtResource("3_axrt5")
+
+[node name="Cooldown_timer" type="Timer" parent="." unique_id=289662895]
+
+[connection signal="timeout" from="Cooldown_timer" to="." method="_on_cooldown_timer_timeout"]

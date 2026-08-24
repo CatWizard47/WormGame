@@ -4,16 +4,22 @@ extends Node2D
 @export var start_rotation_radian: float = 0 # 0rad = aligned with hull #
 @export var accuracy_margin_radian: float = 0.001
 @export var rotation_limit_radian: float = PI  # must be within [PI, 0), PI to ignore 
-@export var Projectile: Bullet #bullet / laser / rocket?
+@export var projectile: ProjectileRes #bullet / laser / rocket?
+@export var maximum_projectiles: int = 1024
+@export var shooting_cooldown: float = 0.5
+var can_fire_flag: bool = true
+var current_projectile_iterator: int = 1
 var left_rotation_limit: float
 var right_rotation_limit: float
 var mouse_position: Vector2
 var desired_rotation: float
 var rotation_flag: bool
 var is_weapon_active: bool = true #to be false in actual code
+var projectile_scene
 
 
 func _ready() -> void: 
+	get_node("Cooldown_timer").wait_time = shooting_cooldown
 	rotation_flag = true 
 	rotation = start_rotation_radian
 	left_rotation_limit = start_rotation_radian - rotation_limit_radian
@@ -46,14 +52,26 @@ func _rotate() -> void:
 			if abs(rotation) > PI:
 				rotation = -signf(rotation) * PI
 
-
+func get_bounding_box() -> Vector2:
+	return get_node("GunSprite").get_rect().size
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(_delta: float) -> void:
 	if is_weapon_active:
 		_rotate()
-		if Input.is_action_pressed("M1_clicked"): 
-			print("Shootat:") 
-		#here_gun_fire_resource
-		#sure?
-	#print(global_rotation)
+		if Input.is_action_pressed("M1_clicked") and can_fire_flag: 
+			print("Shootat:")
+			projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
+			if current_projectile_iterator < maximum_projectiles and !has_node("Projectile_" + str(current_projectile_iterator)):
+				projectile_scene.set_name("Projectile_" + str(current_projectile_iterator))
+				add_child(projectile_scene)
+				print("Projectile_" + str(current_projectile_iterator))
+				can_fire_flag = false
+				get_node("Cooldown_timer").start()
+			if current_projectile_iterator == maximum_projectiles:
+				current_projectile_iterator = 0 
+			current_projectile_iterator += 1
+
+
+func _on_cooldown_timer_timeout() -> void:
+	can_fire_flag = true	

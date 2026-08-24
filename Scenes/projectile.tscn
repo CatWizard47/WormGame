@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://y4ybcg1iwax2"]
+
+[ext_resource type="Script" uid="uid://ba1l4w0i3p1sk" path="res://scripts/projectile.gd" id="1_yr2qt"]
+[ext_resource type="Texture2D" uid="uid://b07o7litejuov" path="res://Textures/Projectiles/boolet_test.png" id="2_tl4hk"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_gft63"]
+radius = 2.0
+
+[node name="projectile_base" type="Area2D" unique_id=1983214548]
+script = ExtResource("1_yr2qt")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1738473187]
+texture = ExtResource("2_tl4hk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=843429036]
+position = Vector2(5, 0)
+shape = SubResource("CircleShape2D_gft63")
