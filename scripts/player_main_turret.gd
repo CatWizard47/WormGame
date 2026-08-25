@@ -4,21 +4,24 @@ extends Node2D
 @export var start_rotation_radian: float = 0 # 0rad = aligned with hull #
 @export var accuracy_margin_radian: float = 0.001
 @export var rotation_limit_radian: float = PI  # must be within [PI, 0), PI to ignore 
-@export var maximum_projectiles: int = 1024
+#@export var maximum_projectiles: int = 1024
 @export var turret_texture: Texture2D
 @export var gun_texture: Texture2D
+@export var allowed_ammunition_type: String #shit like 40mm or whatevs
 var left_rotation_limit: float
 var right_rotation_limit: float
 var mouse_position: Vector2
 var desired_rotation: float
 var rotation_flag: bool
-var is_weapon_active: bool = true #to be false in actual code
+var is_weapon_active: bool = true #starting value to be false in actual code
+var available_ammunition_types: Array #Types of ammunition as in ProjectileRes
+var loaded_ammunition: Array	#int array with amm
 
 
 func _ready() -> void: 
 	#get_node("Cooldown_timer").wait_time = shooting_cooldown
-	get_node("TurretSprite").set_texture(turret_texture)
-	get_node("GunSprite").set_texture(gun_texture)
+	#get_node("TurretSprite").set_texture(turret_texture)
+	#get_node("GunSprite").set_texture(gun_texture)
 	rotation_flag = true 
 	rotation = start_rotation_radian
 	left_rotation_limit = start_rotation_radian - rotation_limit_radian
@@ -32,10 +35,22 @@ func _ready() -> void:
 	if rotation_limit_radian == PI:
 		rotation_flag = false
 
+func Load(new_ammunition: ProjectileRes) -> bool:	
+	if new_ammunition.type == allowed_ammunition_type:
+		if available_ammunition_types.has(new_ammunition):
+			loaded_ammunition.append(available_ammunition_types.find(new_ammunition))
+		else:
+			available_ammunition_types.append(new_ammunition)
+			loaded_ammunition.append(available_ammunition_types.find(new_ammunition))
+	else:
+		return false
+		
+	return true
 
-func fire() -> void:
-	print("BANG!") # animation 'ere
-	pass
+
+func fire() -> ProjectileRes: 
+	print("BANG!") # animation 'ere #will return null if mag empty
+	return loaded_ammunition.pop_back()
 
 
 func _rotate() -> void:

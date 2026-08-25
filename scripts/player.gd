@@ -13,10 +13,10 @@ var locomotive_nodes_rotated_this_tick: bool = false
 var powertrain_radian_ratio:float
 var locomotive_node_count: float
 enum weapon_groups{	#hipothetically not needed to be written like this, also may need to switch to a bool array for multiple weapon gr.s at once
-	ONE,			#TODO IN UI needs to change active weapon with reparent(node) method.
-	TWO,
-	THREE,
-	FOUR
+	ONE = 1,			#TODO IN UI needs to change active weapon with reparent(node) method.
+	TWO = 2,
+	THREE = 3,
+	FOUR = 4
 }
 var player_controlled_weapon_group: int	
 
@@ -96,7 +96,8 @@ func _movement(delta: float) -> void:
 func fire_weapon_group()-> void:
 	var projectile_position: Vector2
 	var projectile_rotation: float
-	for node: Node in get_node("weapon_group_" + str(player_controlled_weapon_group)):
+	#var weapon_group_node: Node = get_node("weapon_group_" + str(player_controlled_weapon_group))
+	for node: Node in get_node("weapon_group_" + str(player_controlled_weapon_group)).get_children():
 		projectile_position = node.get_new_bullet_position()
 		projectile_rotation = node.get_turret_rotation()
 		#TODO
@@ -110,5 +111,5 @@ func _physics_process(delta: float) -> void:
 	_movement(delta)
 	if Input.is_action_pressed("M1_clicked"):
 		fire_weapon_group()
-		print(get_node("turret_nodes/player_main_turret").get_new_bullet_position())
+		#print(get_node("turret_nodes/player_main_turret").get_new_bullet_position())
 	#print("position = ",position, " velocity = ", velocity.length(), "speed = ", engine_power)	
