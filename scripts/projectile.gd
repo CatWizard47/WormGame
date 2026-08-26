@@ -1,4 +1,4 @@
-extends Area2D
+extends RigidBody2D
 static var projectile_stats: ProjectileRes
 static var start_position: Vector2
 static var start_rotation: float
@@ -17,15 +17,22 @@ func _ready() -> void:
 		_hitscan_fire()
 	else:
 		velocity = Vector2.from_angle(rotation).normalized() * projectile_stats.projectile_speed
+		#var new_collision_shape = RectangleShape2D.new() 
+		var new_collision_shape = CircleShape2D.new()
+		#new_collision_shape.set_size(Vector2(3.0, 10.0))
+		new_collision_shape.set_radius(20.0)
+		self.collision_mask = 0 
+		get_node("ProjectileCollision").set_shape(new_collision_shape)
 	pass # Replace with function body.
 	#https://docs.godotengine.org/en/stable/tutorials/performance/using_servers.html
 	#later tho, now base implement
 
 
 func _process(delta: float) -> void:
-	position += velocity
+	move_and_collide(velocity)
 
 func _deal_damage(body: Node2D) -> void:
+	queue_free()
 	pass
 
 func _explode() -> void:
@@ -34,11 +41,17 @@ func _explode() -> void:
 	
 func _on_timer_timeout() -> void:
 	_explode()
-	self.queue_free()
+	queue_free()
 
 func _hitscan_fire() -> void:
 	pass
 
-func _on_body_entered(body: Node2D) -> void:
+
+func _on_impact(body: Node) -> void:
 	_deal_damage(body)
+	print("TEST")
 	pass # Replace with function body.
+
+
+func startup_timer_timeout() -> void:
+	self.collision_mask = 12
