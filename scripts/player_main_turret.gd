@@ -49,7 +49,7 @@ func Load(new_ammunition: ProjectileRes) -> bool:
 
 
 func fire() -> ProjectileRes: 
-	print("BANG!") # animation 'ere #will return null if mag empty
+	#print("BANG!") # animation 'ere #will return null if mag empty
 	if !loaded_ammunition.is_empty():
 		return available_ammunition_types[loaded_ammunition.pop_back()]
 	else:

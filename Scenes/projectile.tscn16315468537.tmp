@@ -3,34 +3,32 @@
 [ext_resource type="Script" uid="uid://ba1l4w0i3p1sk" path="res://scripts/projectile.gd" id="1_yr2qt"]
 [ext_resource type="Texture2D" uid="uid://b07o7litejuov" path="res://Textures/Projectiles/boolet_test.png" id="2_tl4hk"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_yr2qt"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_gft63"]
+radius = 2.0
 
-[node name="projectile_base" type="RigidBody2D" unique_id=477990536]
+[node name="projectile_base" type="RigidBody2D" unique_id=236302332]
+collision_layer = 0
 collision_mask = 12
 mass = 0.001
 gravity_scale = 0.0
-center_of_mass_mode = 1
-can_sleep = false
+lock_rotation = true
 contact_monitor = true
 max_contacts_reported = 16
 script = ExtResource("1_yr2qt")
-metadata/_custom_type_script = "uid://ba1l4w0i3p1sk"
-
-[node name="ProjectileCollision" type="CollisionShape2D" parent="." unique_id=843429036]
-shape = SubResource("CircleShape2D_yr2qt")
-one_way_collision_margin = 29.2
-debug_color = Color(0.7774363, 0.4401377, 5.7756904e-07, 0.41960785)
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1738473187]
 texture = ExtResource("2_tl4hk")
 
+[node name="ProjectileCollision" type="CollisionShape2D" parent="." unique_id=843429036]
+shape = SubResource("CircleShape2D_gft63")
+
 [node name="ExpiryTimer" type="Timer" parent="." unique_id=978705381]
-wait_time = 5.0
+wait_time = 1.5
 one_shot = true
 autostart = true
 
 [node name="StartupCollisionDisableTimer" type="Timer" parent="." unique_id=912891090]
-wait_time = 0.5
+wait_time = 0.05
 one_shot = true
 autostart = true
 

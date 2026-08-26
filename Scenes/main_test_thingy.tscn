@@ -92,7 +92,6 @@ shape = SubResource("SegmentShape2D_ty0pc")
 visibility_layer = 3
 z_index = 1
 position = Vector2(240, 359)
-collision_mask = 12
 max_engine_power = 10
 traction_Coefficient = 0.2
 test_projectile = ExtResource("3_4ogdj")
