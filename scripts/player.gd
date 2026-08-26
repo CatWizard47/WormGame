@@ -4,6 +4,7 @@ extends RigidBody2D
 @export var acceleration_mult : float = 0.5
 @export var traction_Coefficient : float = 0.02 #MUST BE SMOL
 @export var locomotion_node_rotation_speed: float = 0.025 # in radians
+@export var test_projectile: ProjectileRes
 var screen_size # Size of the game window. # temp
 var velocity: Vector2
 var engine_power: float
@@ -27,7 +28,8 @@ func _ready() -> void:
 	locomotive_nodes = get_node("locomotion_nodes")
 	locomotive_node_count = locomotive_nodes.get_child_count()
 	position = screen_size/2
-	player_controlled_weapon_group = weapon_groups.ONE
+	player_controlled_weapon_group = weapon_groups.ONE #TEMP
+	get_node("weapon_group_1/player_main_turret").allowed_ammunition_type = "TEST" #TEMP
 	
 
 
@@ -95,22 +97,15 @@ func _movement(delta: float) -> void:
 	move_and_collide(velocity * delta)
 	
 func fire_weapon_group()-> void:
-	var projectile_position: Vector2
-	var projectile_rotation: float
 	var projectile 
 	#var weapon_group_node: Node = get_node("weapon_group_" + str(player_controlled_weapon_group))
 	for node: Node in get_node("weapon_group_" + str(player_controlled_weapon_group)).get_children():
 		projectile = node.fire()
-		projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
-		projectile_scene.setup(node.get_new_bullet_position(), node.get_turret_rotation(), projectile)
-		add_sibling(projectile_scene)
-		#projectile_position = node.get_new_bullet_position()
-		#projectile_rotation = node.get_turret_rotation()
-		#TODO
-		#INSTANTIATE BOOLET (OF SPECIFIC TYPE?)
-		#AFFIX POSITION AND ROTATION
-		#maybe as child of specific turret node? 
-		#node.fire()
+		node.Load(test_projectile)
+		if projectile != null:
+			projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
+			projectile_scene.setup(node.get_new_bullet_position(), node.get_turret_rotation(), projectile)
+			add_sibling(projectile_scene)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:

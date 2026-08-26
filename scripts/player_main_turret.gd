@@ -7,7 +7,7 @@ extends Node2D
 #@export var maximum_projectiles: int = 1024
 @export var turret_texture: Texture2D
 @export var gun_texture: Texture2D
-@export var allowed_ammunition_type: String #shit like 40mm or whatevs
+@export var allowed_ammunition_type: String #shit like 40mm or whatevs = 
 var left_rotation_limit: float
 var right_rotation_limit: float
 var mouse_position: Vector2
@@ -35,8 +35,10 @@ func _ready() -> void:
 	if rotation_limit_radian == PI:
 		rotation_flag = false
 
-func Load(new_ammunition: ProjectileRes) -> bool:	
-	if new_ammunition.type == allowed_ammunition_type:
+func Load(new_ammunition: ProjectileRes) -> bool:
+	#print(new_ammunition.type," ",allowed_ammunition_type)
+	#print(new_ammunition.type == allowed_ammunition_type)	
+	if new_ammunition.type == allowed_ammunition_type:	
 		if !available_ammunition_types.has(new_ammunition):
 			available_ammunition_types.append(new_ammunition)
 		loaded_ammunition.append(available_ammunition_types.find(new_ammunition))
@@ -48,7 +50,7 @@ func Load(new_ammunition: ProjectileRes) -> bool:
 
 func fire() -> ProjectileRes: 
 	print("BANG!") # animation 'ere #will return null if mag empty
-	if loaded_ammunition.count(ProjectileRes)>0:
+	if !loaded_ammunition.is_empty():
 		return available_ammunition_types[loaded_ammunition.pop_back()]
 	else:
 		return null

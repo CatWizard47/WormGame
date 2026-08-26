@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ProjectileRes" format=3 uid="uid://60na7pnwk6im"]
+
+[ext_resource type="Script" uid="uid://du7mdtfhpywlw" path="res://scripts/projectile_base_resource.gd" id="1_w5nq3"]
+[ext_resource type="Texture2D" uid="uid://b07o7litejuov" path="res://Textures/Projectiles/boolet_test.png" id="2_8lwd8"]
+
+[resource]
+script = ExtResource("1_w5nq3")
+health_damage = 1
+structure_damage = 1
+armour_damage = 1
+projectile_speed = 20.0
+type = "TEST"
+texture = ExtResource("2_8lwd8")
+metadata/_custom_type_script = "uid://du7mdtfhpywlw"
