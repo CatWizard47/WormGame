@@ -19,7 +19,7 @@ var loaded_ammunition: Array	#int array with amm
 
 
 func _ready() -> void: 
-	#get_node("Cooldown_timer").wait_time = shooting_cooldown
+	#get_node("Cooldown_timer").wait_time = shooting_cooldown	# might be necessary to keep, 
 	#get_node("TurretSprite").set_texture(turret_texture)
 	#get_node("GunSprite").set_texture(gun_texture)
 	rotation_flag = true 
@@ -37,11 +37,9 @@ func _ready() -> void:
 
 func Load(new_ammunition: ProjectileRes) -> bool:	
 	if new_ammunition.type == allowed_ammunition_type:
-		if available_ammunition_types.has(new_ammunition):
-			loaded_ammunition.append(available_ammunition_types.find(new_ammunition))
-		else:
+		if !available_ammunition_types.has(new_ammunition):
 			available_ammunition_types.append(new_ammunition)
-			loaded_ammunition.append(available_ammunition_types.find(new_ammunition))
+		loaded_ammunition.append(available_ammunition_types.find(new_ammunition))
 	else:
 		return false
 		
@@ -50,7 +48,10 @@ func Load(new_ammunition: ProjectileRes) -> bool:
 
 func fire() -> ProjectileRes: 
 	print("BANG!") # animation 'ere #will return null if mag empty
-	return loaded_ammunition.pop_back()
+	if loaded_ammunition.count(ProjectileRes)>0:
+		return available_ammunition_types[loaded_ammunition.pop_back()]
+	else:
+		return null
 
 
 func _rotate() -> void:

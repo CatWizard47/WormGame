@@ -19,6 +19,7 @@ enum weapon_groups{	#hipothetically not needed to be written like this, also may
 	FOUR = 4
 }
 var player_controlled_weapon_group: int	
+var projectile_scene
 
 
 func _ready() -> void:
@@ -96,15 +97,20 @@ func _movement(delta: float) -> void:
 func fire_weapon_group()-> void:
 	var projectile_position: Vector2
 	var projectile_rotation: float
+	var projectile 
 	#var weapon_group_node: Node = get_node("weapon_group_" + str(player_controlled_weapon_group))
 	for node: Node in get_node("weapon_group_" + str(player_controlled_weapon_group)).get_children():
-		projectile_position = node.get_new_bullet_position()
-		projectile_rotation = node.get_turret_rotation()
+		projectile = node.fire()
+		projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
+		projectile_scene.setup(node.get_new_bullet_position(), node.get_turret_rotation(), projectile)
+		add_sibling(projectile_scene)
+		#projectile_position = node.get_new_bullet_position()
+		#projectile_rotation = node.get_turret_rotation()
 		#TODO
 		#INSTANTIATE BOOLET (OF SPECIFIC TYPE?)
 		#AFFIX POSITION AND ROTATION
 		#maybe as child of specific turret node? 
-		node.fire()
+		#node.fire()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
