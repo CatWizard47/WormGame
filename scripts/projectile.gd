@@ -1,10 +1,10 @@
+
 class_name Projectile extends RigidBody2D
 static var projectile_stats: ProjectileRes
 static var start_position: Vector2
 static var start_rotation: float
-static var is_projectile: bool = true	# Node2D
-static var sprite: Texture2D
-var sprite_rid
+static var is_projectile: bool = true
+var sprite: Sprite2D
 var velocity
 var collision_flag: bool = false
 
@@ -13,19 +13,8 @@ static func setup(new_position: Vector2, new_rotation: float, Projectile:Project
 	start_position = new_position
 	start_rotation = new_rotation
 	projectile_stats = Projectile
-	sprite = projectile_stats.texture
-
-func _setup_sprite() -> void:
-	sprite_rid = RenderingServer.canvas_item_create()
-	RenderingServer.canvas_item_set_parent(sprite_rid, get_canvas_item())
-	RenderingServer.canvas_item_add_texture_rect(sprite_rid, Rect2(-sprite.get_size() / 2, sprite.get_size()), sprite)
-	#var xform = Transform2D().rotated(start_rotation).translated(start_position)
-	#RenderingServer.canvas_item_set_transform(sprite_rid, xform)
-	# Reset physics interpolation for this item.
-	RenderingServer.canvas_item_reset_physics_interpolation(sprite_rid)
 
 func _ready() -> void:
-	_setup_sprite()
 	position = start_position
 	rotation = start_rotation
 	if projectile_stats.projectile_speed == 0:
