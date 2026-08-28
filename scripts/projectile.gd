@@ -28,7 +28,7 @@ func _ready() -> void:
 		self.collision_mask = 12
 		get_node("ProjectileCollision").set_shape(new_collision_shape)
 	pass # Replace with function body.
-	#https://docs.godotengine.org/en/stable/tutorials/performance/ausing_servers.html
+	#https://docs.godotengine.org/en/stable/tutorials/performance/using_servers.html
 	#later tho, now base implement
 
 
