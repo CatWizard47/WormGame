@@ -49,10 +49,11 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Track_module_node" type="RigidBody2D" unique_id=316634533]
+[node name="Track_module_node" type="RigidBody2D" unique_id=2110799318]
 collision_mask = 12
 gravity_scale = 0.0
 script = ExtResource("1_n7xal")
+metadata/_custom_type_script = "uid://bwqdhks6swn0l"
 
 [node name="track_collision_shape" type="CollisionShape2D" parent="." unique_id=2052966085]
 shape = SubResource("RectangleShape2D_gft63")

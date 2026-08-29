@@ -5,6 +5,7 @@ extends RigidBody2D
 @export var traction_Coefficient : float = 0.02 #MUST BE SMOL
 @export var locomotion_node_rotation_speed: float = 0.025 # in radians
 @export var test_projectile: ProjectileRes
+var node_rids: Array = Array()
 var screen_size # Size of the game window. # temp
 var velocity: Vector2
 var engine_power: float
@@ -28,6 +29,7 @@ func _ready() -> void:
 	locomotive_nodes = get_node("locomotion_nodes")
 	locomotive_node_count = locomotive_nodes.get_child_count()
 	position = screen_size/4 #TEMP
+	update_all_rids()
 	player_controlled_weapon_group = weapon_groups.ONE #TEMP
 	get_node("weapon_group_1/player_main_turret").allowed_ammunition_type = "TEST" #TEMP
 
@@ -38,8 +40,12 @@ func _ready() -> void:
 #	get_node("CollisionShape2D").disabled = false
 
 
-func get_collision_rid() -> RID:
-	return get_node("hull_collision_shape").get_accessibility_element()
+
+func update_all_rids() -> void:
+	for loco_node: Node in locomotive_nodes.get_children():
+		node_rids.append(loco_node.get_rid())
+	node_rids.append(self.get_rid())
+	
 
 
 func _rotate_locomotive_nodes(rotation_speed:float) ->void:
@@ -108,7 +114,7 @@ func fire_weapon_group()-> void:
 		node.Load(test_projectile)
 		if projectile != null:
 			projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
-			projectile_scene.setup(node.get_new_bullet_position(), node.get_turret_rotation(), projectile)
+			projectile_scene.setup(node.get_new_bullet_position(), node.get_turret_rotation(), projectile,node_rids)
 			add_sibling(projectile_scene)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

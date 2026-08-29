@@ -1,4 +1,4 @@
-extends RigidBody2D
+class_name TrackModule extends RigidBody2D
 var horizontal_orientation_inverted_flag: bool = false
 var left_module: AnimatedSprite2D
 var right_module: AnimatedSprite2D
