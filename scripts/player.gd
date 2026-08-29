@@ -27,16 +27,19 @@ func _ready() -> void:
 	screen_size = get_viewport_rect().size
 	locomotive_nodes = get_node("locomotion_nodes")
 	locomotive_node_count = locomotive_nodes.get_child_count()
-	position = screen_size/2
+	position = screen_size/4 #TEMP
 	player_controlled_weapon_group = weapon_groups.ONE #TEMP
 	get_node("weapon_group_1/player_main_turret").allowed_ammunition_type = "TEST" #TEMP
-	
 
 
-func start(pos):
-	position = pos
-	show()
-	get_node("CollisionShape2D").disabled = false
+#func start(pos): #temp
+#	position = pos
+#	show()
+#	get_node("CollisionShape2D").disabled = false
+
+
+func get_collision_rid() -> RID:
+	return get_node("hull_collision_shape").get_accessibility_element()
 
 
 func _rotate_locomotive_nodes(rotation_speed:float) ->void:
@@ -53,6 +56,7 @@ func _animate_locomotive_nodes(speed:float)->void:
 func _stop_locomotive_node_animation()->void:
 	for loco_node: Node in locomotive_nodes.get_children():
 		loco_node.pause_animation()		
+
 
 func _movement(delta: float) -> void:
 	locomotive_nodes_rotated_this_tick = false
