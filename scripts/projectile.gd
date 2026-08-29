@@ -27,15 +27,14 @@ func _setup_sprite() -> void:
 	RenderingServer.canvas_item_set_parent(sprite_rid, get_canvas_item())
 	RenderingServer.canvas_item_add_texture_rect(sprite_rid, Rect2(-sprite.get_size() / 2, sprite.get_size()), sprite)
 	#somehow have to set global_coords to localhere dun ask
-	RenderingServer.canvas_item_set_transform(sprite_rid,Transform2D(0,Vector2.ZERO))
-	RenderingServer.canvas_item_reset_physics_interpolation(sprite_rid)
+	RenderingServer.canvas_item_set_transform(sprite_rid,Transform2D(start_rotation,start_position))
 
 func _move_body(state,index):
 	RenderingServer.canvas_item_set_transform(sprite_rid,state.transform)
 	
 func _setup_body() -> void:
 	body_rid = PhysicsServer2D.body_create()
-	PhysicsServer2D.body_set_mode(body_rid,PhysicsServer2D.BODY_MODE_RIGID)
+	PhysicsServer2D.body_set_mode(body_rid,PhysicsServer2D.BODY_MODE_RIGID_LINEAR)
 	shape_rid = PhysicsServer2D.circle_shape_create()
 	PhysicsServer2D.shape_set_data(shape_rid, collision_shape.radius)
 	PhysicsServer2D.body_add_shape(body_rid,shape_rid)
@@ -52,7 +51,9 @@ func _ready() -> void:
 	#rotation = start_rotation
 	_setup_body()
 	_setup_sprite()
+	#PhysicsServer2D.body_attach_canvas_instance_id(body_rid,)
 	PhysicsServer2D.body_set_force_integration_callback(body_rid, on_move, "_body_moved")
+	RenderingServer.canvas_item_reset_physics_interpolation(sprite_rid)
 	if projectile_stats.projectile_speed == 0:
 		_hitscan_fire()
 	else:
@@ -72,7 +73,8 @@ func _physics_process(delta: float) -> void:
 	#move_and_collide(velocity * delta,false,0.1)
 	#position +=  velocity*delta
 	var space_state = get_world_2d().direct_space_state
-	var ray_query = PhysicsRayQueryParameters2D.create(global_position, global_position + velocity.normalized() * 10 )
+	var body_position = (PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin())
+	var ray_query = PhysicsRayQueryParameters2D.create(body_position, body_position + velocity.normalized() * 2 )
 	ray_query.exclude = [sprite_rid,body_rid,shape_rid]
 	var ray_result = space_state.intersect_ray(ray_query)
 	var body_query = PhysicsShapeQueryParameters2D.new()
@@ -114,9 +116,11 @@ func _remove_this()->void:
 	print("sprite",sprite_rid,"body=",body_rid,"shape=",shape_rid)
 	if sprite_rid.is_valid() and instance_from_id(sprite_rid.get_id()) != null:
 		if instance_from_id(sprite_rid.get_id()).is_queued_for_deletion():
+			RenderingServer.canvas_item_clear(sprite_rid)
 			RenderingServer.free_rid(sprite_rid)
 	if body_rid.is_valid() and instance_from_id(body_rid.get_id()) != null:
 		if instance_from_id(body_rid.get_id()).is_queued_for_deletion(): 
+			PhysicsServer2D.body_set_collision_mask(body_rid,0)
 			PhysicsServer2D.free_rid(body_rid)
 	if shape_rid.is_valid() and instance_from_id(shape_rid.get_id()) != null:
 		if instance_from_id(shape_rid.get_id()).is_queued_for_deletion():
