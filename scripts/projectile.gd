@@ -58,7 +58,7 @@ func _ready() -> void:
 	if projectile_stats.projectile_speed == 0:
 		_hitscan_fire()
 	else:
-		velocity = Vector2.from_angle(start_rotation).normalized() * projectile_stats.projectile_speed
+		velocity = Vector2.from_angle(start_rotation).normalized() * projectile_stats.projectile_speed * 100
 		#self.collision_mask = 12
 	#https://docs.godotengine.org/en/stable/tutorials/performance/using_servers.html
 	#later tho, now base implement
@@ -71,37 +71,42 @@ func is_valid_target(id: int) -> bool:
 func _physics_process(delta: float) -> void: 
 	var space_state = get_world_2d().direct_space_state
 	var body_position = (PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin())
-	var ray_query = PhysicsRayQueryParameters2D.create(body_position, body_position + velocity.normalized() * 2 )
+	var ray_query = PhysicsRayQueryParameters2D.create(body_position, body_position + velocity.normalized()*10 )
+	#print(body_position)
+	#print(velocity.normalized())
 	ray_query.exclude.append_array(excluded_RIDS) #excluded_RIDS
 	#ray_query.exclude = [sprite_rid,body_rid,shape_rid]
 	ray_query.exclude.append(sprite_rid)
 	ray_query.exclude.append(body_rid)
 	ray_query.exclude.append(shape_rid)
 	var ray_result = space_state.intersect_ray(ray_query)
-	var body_query = PhysicsShapeQueryParameters2D.new()
-	body_query.shape = collision_shape
-	body_query.exclude.append_array(excluded_RIDS)
-	body_query.exclude.append(sprite_rid)
-	body_query.exclude.append(body_rid)
-	body_query.exclude.append(shape_rid)
-	var body_result = space_state.intersect_shape(body_query,1)
+	#var body_query = PhysicsShapeQueryParameters2D.new()
+	#body_query.motion = velocity.normalized() * 10
+	#body_query.shape = collision_shape
+	#body_query.exclude.append_array(excluded_RIDS)
+	#body_query.exclude.append(sprite_rid)
+	#body_query.exclude.append(body_rid)
+	#body_query.exclude.append(shape_rid)
+	#var body_result = space_state.intersect_shape(body_query,1)
 	if !ray_result.is_empty() and instance_from_id(ray_result.collider_id) != null and collision_flag:
 		if is_valid_target(ray_result.collider_id):
 			_deal_damage(instance_from_id(ray_result.collider_id))
 		elif(instance_from_id(ray_result.collider_id).is_class("StaticBody2D")):# and ray_result.shape != 0):
+			print("delet")
 			_remove_this()
-	if !body_result.is_empty() and instance_from_id(body_result[0].collider_id) != null and collision_flag:
-		if is_valid_target(body_result[0].collider_id):
-			_deal_damage(instance_from_id(body_result[0].collider_id))
-		elif(instance_from_id(body_result[0].collider_id).is_class("StaticBody2D")): #and body_result[0].shape != 0):
-			print(instance_from_id(body_result[0].collider_id).get_class())
-			_remove_this()
+	#if !body_result.is_empty() and instance_from_id(body_result[0].collider_id) != null and collision_flag:
+	#	if is_valid_target(body_result[0].collider_id):
+	#		_deal_damage(instance_from_id(body_result[0].collider_id))
+	#	elif(instance_from_id(body_result[0].collider_id).is_class("StaticBody2D")): #and body_result[0].shape != 0):
+	#		print(instance_from_id(body_result[0].collider_id).get_class())
+	#		_remove_this()
 	#print(body_result)
 	#print(delta)
 	
 
 
 func _deal_damage(body: Node2D) -> void:
+	print(body)
 	_remove_this()
 	pass
 
@@ -131,11 +136,11 @@ func _remove_this()->void:
 			PhysicsServer2D.free_rid(shape_rid)
 	queue_free()
 
-func _on_impact(body: Node) -> void:
-	#_deal_damage(body)
-	#print("TEST")
-	_remove_this()
-	pass # Replace with function body.
+#func _on_impact(body: Node) -> void:
+#	#_deal_damage(body)
+#	#print("TEST")
+#	_remove_this()
+#	pass # Replace with function body.
 
 
 func _on_start_up_timer_timeout() -> void:
