@@ -1,6 +1,6 @@
 extends Node2D
 
-@export var rotation_speed : float = 0.01
+@export var rotation_speed : float = 0.01		# might have to change these to static after changing this to 
 @export var start_rotation_radian: float = 0 # 0rad = aligned with hull #
 @export var accuracy_margin_radian: float = 0.001
 @export var rotation_limit_radian: float = PI  # must be within [PI, 0), PI to ignore 
@@ -8,11 +8,14 @@ extends Node2D
 @export var turret_texture: Texture2D
 @export var gun_texture: Texture2D
 @export var allowed_ammunition_type: String #shit like 40mm or whatevs = 
+@export var cooldown_time:float = 0.5
+@export var maximum_magazine_size: int = 100
 var left_rotation_limit: float
 var right_rotation_limit: float
 var mouse_position: Vector2
 var desired_rotation: float
 var rotation_flag: bool
+var can_fire_flag: bool = true
 var is_weapon_active: bool = true #starting value to be false in actual code
 var available_ammunition_types: Array #Types of ammunition as in ProjectileRes
 var loaded_ammunition: Array	#int array with amm
@@ -22,6 +25,7 @@ func _ready() -> void:
 	#get_node("Cooldown_timer").wait_time = shooting_cooldown	# might be necessary to keep, 
 	#get_node("TurretSprite").set_texture(turret_texture)
 	#get_node("GunSprite").set_texture(gun_texture)
+	get_node("Cooldown_timer").wait_time = cooldown_time
 	rotation_flag = true 
 	rotation = start_rotation_radian
 	left_rotation_limit = start_rotation_radian - rotation_limit_radian
@@ -38,7 +42,7 @@ func _ready() -> void:
 func Load(new_ammunition: ProjectileRes) -> bool:
 	#print(new_ammunition.type," ",allowed_ammunition_type)
 	#print(new_ammunition.type == allowed_ammunition_type)	
-	if new_ammunition.type == allowed_ammunition_type:	
+	if new_ammunition.type == allowed_ammunition_type and loaded_ammunition.size() <= maximum_magazine_size:	
 		if !available_ammunition_types.has(new_ammunition):
 			available_ammunition_types.append(new_ammunition)
 		loaded_ammunition.append(available_ammunition_types.find(new_ammunition))
@@ -50,7 +54,9 @@ func Load(new_ammunition: ProjectileRes) -> bool:
 
 func fire() -> ProjectileRes: 
 	#print("BANG!") # animation 'ere #will return null if mag empty
-	if !loaded_ammunition.is_empty():
+	if !loaded_ammunition.is_empty() and can_fire_flag:
+		can_fire_flag = false
+		get_node("Cooldown_timer").start()
 		return available_ammunition_types[loaded_ammunition.pop_back()]
 	else:
 		return null
@@ -84,15 +90,8 @@ func get_turret_rotation() -> float:
 func _physics_process(_delta: float) -> void:
 	if is_weapon_active: #place this into the player node instead
 		_rotate()
-		#if Input.is_action_pressed("M1_clicked") and can_fire_flag: 
-		#	print("Shootat:")
-		#	projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
-		#	if current_projectile_iterator < maximum_projectiles and !has_node("Projectile_" + str(current_projectile_iterator)):
-		#		projectile_scene.set_name("Projectile_" + str(current_projectile_iterator))
-		#		add_child(projectile_scene)
-		#		print("Projectile_" + str(current_projectile_iterator))
-		#		can_fire_flag = false
-		#		get_node("Cooldown_timer").start()
-		#	if current_projectile_iterator == maximum_projectiles:
-		#		current_projectile_iterator = 0 
-		#	current_projectile_iterator += 1
+
+
+func _on_cooldown_timer_timeout() -> void:
+	#print("can_fire")
+	can_fire_flag = true

@@ -14,10 +14,10 @@ var velocity
 var collision_flag: bool = false
 
 
-static func setup(new_position: Vector2, new_rotation: float, Projectile:ProjectileRes,RIDS_to_exclude:Array) -> void:
+static func setup(new_position: Vector2, new_rotation: float, NewProjectile:ProjectileRes,RIDS_to_exclude:Array) -> void:
 	start_position = new_position
 	start_rotation = new_rotation
-	projectile_stats = Projectile
+	projectile_stats = NewProjectile
 	sprite = projectile_stats.texture
 	collision_shape = CircleShape2D.new()
 	collision_shape.radius = 0.5
@@ -49,6 +49,8 @@ func _setup_body() -> void:
 	PhysicsServer2D.body_set_collision_mask(body_rid,12)
 	PhysicsServer2D.body_apply_central_force(body_rid,Vector2.from_angle(start_rotation).normalized() * projectile_stats.projectile_speed*100)
 
+
+	#TODO possibly change velocity to be representative of actuall reality
 func _ready() -> void:
 	var on_move = Callable(self,"_move_body")
 	_setup_body()
@@ -68,18 +70,18 @@ func is_valid_target(id: int) -> bool:
 	return (!instance_from_id(id).is_class("Projectile") and !instance_from_id(id).is_queued_for_deletion() and instance_from_id(id).is_class("RigidBody2D"))
 
 
-func _physics_process(delta: float) -> void: 
+func _physics_process(_delta: float) -> void: 
 	var space_state = get_world_2d().direct_space_state
 	var body_position = (PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin())
 	var ray_query = PhysicsRayQueryParameters2D.create(body_position, body_position + velocity.normalized()*10 )
 	ray_query.exclude = excluded_RIDS
-	print(ray_query.exclude)
+	#print(ray_query.exclude)
 	var ray_result = space_state.intersect_ray(ray_query)
 	if !ray_result.is_empty() and instance_from_id(ray_result.collider_id) != null and collision_flag:
 		if is_valid_target(ray_result.collider_id):
 			_deal_damage(instance_from_id(ray_result.collider_id))
 		elif(instance_from_id(ray_result.collider_id).is_class("StaticBody2D")):# and ray_result.shape != 0):
-			print("delet")
+			#print("delet")
 			_remove_this()
 
 	

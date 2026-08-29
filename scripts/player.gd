@@ -39,21 +39,21 @@ func _ready() -> void:
 #	show()
 #	get_node("CollisionShape2D").disabled = false
 
-
-
 func update_all_rids() -> void:
 	for loco_node: Node in locomotive_nodes.get_children():
 		node_rids.append(loco_node.get_rid())
 	node_rids.append(self.get_rid())
 	
 
-
 func _rotate_locomotive_nodes(rotation_speed:float) ->void:
 	locomotive_rotation = 0
 	for loco_node: Node in locomotive_nodes.get_children():
 		locomotive_rotation += loco_node.change_rotation(rotation_speed)
-	locomotive_rotation = locomotive_rotation / locomotive_node_count 
-	locomotive_nodes_rotated_this_tick = true
+	locomotive_rotation = locomotive_rotation / locomotive_node_count
+	if abs(locomotive_rotation) > PI/2.02:	#crude implement but werks
+		locomotive_nodes_rotated_this_tick = false
+	else:	 
+		locomotive_nodes_rotated_this_tick = true
 		
 func _animate_locomotive_nodes(speed:float)->void:
 	for loco_node: Node in locomotive_nodes.get_children():
