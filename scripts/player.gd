@@ -121,16 +121,16 @@ func fire_weapon_group()-> void:
 	var projectile 
 	#var weapon_group_node: Node = get_node("weapon_group_" + str(player_controlled_weapon_group))
 	for node: Node in get_node("weapon_group_" + str(player_controlled_weapon_group)).get_children():
-		node.Load(test_projectile)
-		projectile = node.fire()
-		if projectile != null:
-			pass
+		node.Load(test_projectile) #TEMP
+		node.fire()
+		#projectile = node.fire()
+		#if projectile != null:
 			#projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
 			#projectile_scene.setup(node.get_new_bullet_position(), node.get_turret_rotation(), projectile,node_rids)
 			#add_sibling(projectile_scene)
 
 func _instantiate_projectile(projectile_position:Vector2, projectile_rotation:float, created_projectile:ProjectileRes) -> void:
-	print("Fired")
+	#print("Fired")
 	projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
 	projectile_scene.setup(projectile_position, projectile_rotation, created_projectile,node_rids)
 	add_sibling(projectile_scene)

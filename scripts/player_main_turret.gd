@@ -42,8 +42,6 @@ func _ready() -> void:
 		rotation_flag = false
 
 func Load(new_ammunition: ProjectileRes) -> bool:
-	#print(new_ammunition.type," ",allowed_ammunition_type)
-	#print(new_ammunition.type == allowed_ammunition_type)	
 	if new_ammunition.type == allowed_ammunition_type and loaded_ammunition.size() <= maximum_magazine_size:	
 		if !available_ammunition_types.has(new_ammunition):
 			available_ammunition_types.append(new_ammunition)
@@ -54,16 +52,16 @@ func Load(new_ammunition: ProjectileRes) -> bool:
 	return true
 
 
+func _emit_fire_signal() -> void:
+	Projectile_fired.emit(get_new_bullet_position(),get_turret_rotation(),available_ammunition_types[loaded_ammunition.pop_back()])
+
 func fire() -> void: 
-	#print("BANG!") # animation 'ere #will return null if mag empty
+	if can_fire_flag:
+		get_node("BurstFireCooldownTimer").start()
 	if !loaded_ammunition.is_empty() and can_fire_flag:
 		can_fire_flag = false
 		get_node("CooldownTimer").start()
-		Projectile_fired.emit(get_new_bullet_position(),get_turret_rotation(),available_ammunition_types[loaded_ammunition.pop_back()])
-		#return available_ammunition_types[loaded_ammunition.pop_back()]
-	#else:
-		#return null
-
+		_emit_fire_signal()
 
 func _rotate() -> void:
 	mouse_position = get_local_mouse_position()
@@ -98,3 +96,7 @@ func _physics_process(_delta: float) -> void:
 func _on_cooldown_timer_timeout() -> void:
 	#print("can_fire")
 	can_fire_flag = true
+
+
+func _on_burst_fire_cooldown_timer_timeout() -> void:
+	pass # Replace with function body.

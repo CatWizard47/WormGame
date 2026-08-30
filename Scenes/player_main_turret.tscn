@@ -23,3 +23,4 @@ wait_time = 0.2
 one_shot = true
 
 [connection signal="timeout" from="CooldownTimer" to="." method="_on_cooldown_timer_timeout"]
+[connection signal="timeout" from="BurstFireCooldownTimer" to="." method="_on_burst_fire_cooldown_timer_timeout"]
