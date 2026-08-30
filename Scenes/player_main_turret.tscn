@@ -19,7 +19,7 @@ texture = ExtResource("3_axrt5")
 one_shot = true
 
 [node name="BurstFireCooldownTimer" type="Timer" parent="." unique_id=1878074437]
-wait_time = 0.2
+wait_time = 0.05
 one_shot = true
 
 [connection signal="timeout" from="CooldownTimer" to="." method="_on_cooldown_timer_timeout"]

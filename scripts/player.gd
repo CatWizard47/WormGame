@@ -65,10 +65,12 @@ func _rotate_locomotive_nodes(rotation_speed:float) ->void:
 		locomotive_nodes_rotated_this_tick = false
 	else:	 
 		locomotive_nodes_rotated_this_tick = true
+	
 		
 func _animate_locomotive_nodes(speed:float)->void:
 	for loco_node: Node in locomotive_nodes.get_children():
 		loco_node.animate(speed)
+		
 		
 func _stop_locomotive_node_animation()->void:
 	for loco_node: Node in locomotive_nodes.get_children():
@@ -78,43 +80,32 @@ func _stop_locomotive_node_animation()->void:
 func _movement(delta: float) -> void:
 	locomotive_nodes_rotated_this_tick = false
 	if Input.is_action_pressed("move_right"):
-		_rotate_locomotive_nodes(locomotion_node_rotation_speed)
-			
+		_rotate_locomotive_nodes(locomotion_node_rotation_speed)	
 	if Input.is_action_pressed("move_left"):
 		_rotate_locomotive_nodes(-locomotion_node_rotation_speed)
-	
 	##TODO - Movement comm to set loco_nodes rotation to 0 
 	#not sure if needed tho, the margin makes it somewhat unnecessary
-	
 	if(Input.is_action_pressed("move_backward") or Input.is_action_pressed("move_forward")):		
 		if Input.is_action_pressed("move_backward") and engine_power > -max_engine_power:
-			engine_power -=1 * acceleration_mult
-			
+			engine_power -=1 * acceleration_mult	
 		if Input.is_action_pressed("move_forward") and engine_power < max_engine_power:
 			engine_power +=1 * acceleration_mult
-		
 		if	!locomotive_nodes_rotated_this_tick:
 			_animate_locomotive_nodes(engine_power)
-		
 	else:
 		engine_power = 0
 		if !locomotive_nodes_rotated_this_tick:
 			_stop_locomotive_node_animation() 
-		
-		
 	powertrain_radian_ratio=abs(locomotive_rotation / (PI / 2.01))	
 	if  locomotive_rotation > 0.01:	#devided by 80 to seem more 'realistic' ig
-		rotation -= ( engine_power / (max_engine_power * 80) ) * powertrain_radian_ratio
-		
+		rotation -= ( engine_power / (max_engine_power * 80) ) * powertrain_radian_ratio	
 	elif locomotive_rotation < 0.01:
-		rotation += ( engine_power / (max_engine_power * 80) ) * powertrain_radian_ratio
-		
+		rotation += ( engine_power / (max_engine_power * 80) ) * powertrain_radian_ratio	
 	velocity -= velocity.normalized() * traction_Coefficient * mass * 9.81
 	velocity = Vector2.from_angle(rotation).normalized() 
 	velocity = velocity * engine_power * 10 * (1 - powertrain_radian_ratio)
 	if velocity.length() <= 1:
-		velocity = Vector2.ZERO
-			
+		velocity = Vector2.ZERO		
 	move_and_collide(velocity * delta)
 	
 func fire_weapon_group()-> void:
@@ -122,18 +113,18 @@ func fire_weapon_group()-> void:
 	#var weapon_group_node: Node = get_node("weapon_group_" + str(player_controlled_weapon_group))
 	for node: Node in get_node("weapon_group_" + str(player_controlled_weapon_group)).get_children():
 		node.Load(test_projectile) #TEMP
+		node.Load(test_projectile)
+		node.Load(test_projectile)
+		node.Load(test_projectile)
 		node.fire()
-		#projectile = node.fire()
-		#if projectile != null:
-			#projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
-			#projectile_scene.setup(node.get_new_bullet_position(), node.get_turret_rotation(), projectile,node_rids)
-			#add_sibling(projectile_scene)
+
 
 func _instantiate_projectile(projectile_position:Vector2, projectile_rotation:float, created_projectile:ProjectileRes) -> void:
 	#print("Fired")
 	projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
 	projectile_scene.setup(projectile_position, projectile_rotation, created_projectile,node_rids)
 	add_sibling(projectile_scene)
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:

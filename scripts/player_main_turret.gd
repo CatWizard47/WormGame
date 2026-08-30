@@ -9,14 +9,15 @@ extends Node2D
 @export var allowed_ammunition_type: String 	#shit like 40mm or whatevs = 
 @export var cooldown_time:float = 0.5
 @export var maximum_magazine_size: int = 100
-@export var burst_fire_horizontal_translate: float
-@export var burst_fire_count: int = 1 
+@export var burst_fire_horizontal_translate: float = 10
+@export var burst_fire_count: int = 4 
 var left_rotation_limit: float
 var right_rotation_limit: float
 var mouse_position: Vector2
 var desired_rotation: float
 var rotation_flag: bool
 var can_fire_flag: bool = true
+var current_burst_count: int
 var is_weapon_active: bool = true 				#starting value to be false in actual code
 var available_ammunition_types: Array 			#Types of ammunition as in ProjectileRes
 var loaded_ammunition: Array					#int array with amm
@@ -52,16 +53,12 @@ func Load(new_ammunition: ProjectileRes) -> bool:
 	return true
 
 
-func _emit_fire_signal() -> void:
-	Projectile_fired.emit(get_new_bullet_position(),get_turret_rotation(),available_ammunition_types[loaded_ammunition.pop_back()])
-
 func fire() -> void: 
 	if can_fire_flag:
-		get_node("BurstFireCooldownTimer").start()
-	if !loaded_ammunition.is_empty() and can_fire_flag:
-		can_fire_flag = false
+		current_burst_count = burst_fire_count
+		get_node("BurstFireCooldownTimer").timeout.emit()
 		get_node("CooldownTimer").start()
-		_emit_fire_signal()
+		can_fire_flag = false
 
 func _rotate() -> void:
 	mouse_position = get_local_mouse_position()
@@ -81,6 +78,11 @@ func _rotate() -> void:
 func get_new_bullet_position() -> Vector2:
 	var Output: Vector2
 	Output = global_position
+	if burst_fire_count%2 == 0:
+		Output += Vector2.from_angle(global_rotation+PI/2).normalized() * burst_fire_horizontal_translate * (current_burst_count - burst_fire_count/2)
+		Output += Vector2.from_angle(global_rotation+PI/2).normalized() * burst_fire_horizontal_translate * 0.5
+	else:
+		Output += Vector2.from_angle(global_rotation+PI/2).normalized() * burst_fire_horizontal_translate * (current_burst_count - (burst_fire_count-1)/2)
 	Output += Vector2.from_angle(global_rotation).normalized() * get_node("GunSprite").get_rect().size.y
 	return Output
 	
@@ -94,9 +96,14 @@ func _physics_process(_delta: float) -> void:
 
 
 func _on_cooldown_timer_timeout() -> void:
-	#print("can_fire")
 	can_fire_flag = true
 
 
 func _on_burst_fire_cooldown_timer_timeout() -> void:
-	pass # Replace with function body.
+	if !loaded_ammunition.is_empty() and current_burst_count > 0:
+		current_burst_count -= 1
+		Projectile_fired.emit(get_new_bullet_position(),get_turret_rotation(),available_ammunition_types[loaded_ammunition.pop_back()])
+		get_node("BurstFireCooldownTimer").start()
+	elif !loaded_ammunition.is_empty():
+		can_fire_flag = false
+		get_node("CooldownTimer").start()
