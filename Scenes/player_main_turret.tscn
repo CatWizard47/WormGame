@@ -15,7 +15,11 @@ texture = ExtResource("2_qktiv")
 position = Vector2(14, 0)
 texture = ExtResource("3_axrt5")
 
-[node name="Cooldown_timer" type="Timer" parent="." unique_id=289662895]
+[node name="CooldownTimer" type="Timer" parent="." unique_id=289662895]
 one_shot = true
 
-[connection signal="timeout" from="Cooldown_timer" to="." method="_on_cooldown_timer_timeout"]
+[node name="BurstFireCooldownTimer" type="Timer" parent="." unique_id=1878074437]
+wait_time = 0.2
+one_shot = true
+
+[connection signal="timeout" from="CooldownTimer" to="." method="_on_cooldown_timer_timeout"]

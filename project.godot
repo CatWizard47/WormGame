@@ -50,6 +50,11 @@ M1_clicked={
 ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="PlayerAndUnits"
+2d_physics/layer_4="Boundaries"
+
 [physics]
 
 3d/physics_engine="Jolt Physics"

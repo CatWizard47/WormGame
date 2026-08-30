@@ -30,14 +30,25 @@ func _ready() -> void:
 	locomotive_node_count = locomotive_nodes.get_child_count()
 	position = screen_size/4 #TEMP
 	update_all_rids()
+	_connect_fire_signals()
 	player_controlled_weapon_group = weapon_groups.ONE #TEMP
 	get_node("weapon_group_1/player_main_turret").allowed_ammunition_type = "TEST" #TEMP
 
 
-#func start(pos): #temp
-#	position = pos
-#	show()
-#	get_node("CollisionShape2D").disabled = false
+func _connect_fire_signals()->void: #should not be more than 4 weapon groups
+	if !get_node("weapon_group_1").get_children().is_empty():	
+		for node: Node in get_node("weapon_group_1").get_children():
+			node.Projectile_fired.connect(_instantiate_projectile)
+	if !get_node("weapon_group_2").get_children().is_empty():
+		for node: Node in get_node("weapon_group_1").get_children():
+			node.Projectile_fired.connect(_instantiate_projectile)
+	if !get_node("weapon_group_3").get_children().is_empty():
+		for node: Node in get_node("weapon_group_1").get_children():
+			node.Projectile_fired.connect(_instantiate_projectile)
+	if !get_node("weapon_group_4").get_children().is_empty():
+		for node: Node in get_node("weapon_group_1").get_children():
+			node.Projectile_fired.connect(_instantiate_projectile)
+
 
 func update_all_rids() -> void:
 	for loco_node: Node in locomotive_nodes.get_children():
@@ -110,12 +121,19 @@ func fire_weapon_group()-> void:
 	var projectile 
 	#var weapon_group_node: Node = get_node("weapon_group_" + str(player_controlled_weapon_group))
 	for node: Node in get_node("weapon_group_" + str(player_controlled_weapon_group)).get_children():
-		projectile = node.fire()
 		node.Load(test_projectile)
+		projectile = node.fire()
 		if projectile != null:
-			projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
-			projectile_scene.setup(node.get_new_bullet_position(), node.get_turret_rotation(), projectile,node_rids)
-			add_sibling(projectile_scene)
+			pass
+			#projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
+			#projectile_scene.setup(node.get_new_bullet_position(), node.get_turret_rotation(), projectile,node_rids)
+			#add_sibling(projectile_scene)
+
+func _instantiate_projectile(projectile_position:Vector2, projectile_rotation:float, created_projectile:ProjectileRes) -> void:
+	print("Fired")
+	projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
+	projectile_scene.setup(projectile_position, projectile_rotation, created_projectile,node_rids)
+	add_sibling(projectile_scene)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:

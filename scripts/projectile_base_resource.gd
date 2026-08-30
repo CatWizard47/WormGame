@@ -8,10 +8,10 @@ class_name ProjectileRes extends Resource
 @export var element: damage_type
 @export var texture: Texture2D
 @export var blast_radius: float
-
+@export var has_ballistic_trajectory: bool = false
 
 enum damage_type {
-	BALLISTIC,
+	KINETIC,
 	HEAT,
 	COLD,
 	ELECTRIC

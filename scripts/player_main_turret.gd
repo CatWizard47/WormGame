@@ -1,31 +1,33 @@
 extends Node2D
 
 @export var rotation_speed : float = 0.01		# might have to change these to static after changing this to 
-@export var start_rotation_radian: float = 0 # 0rad = aligned with hull #
+@export var start_rotation_radian: float = 0 	#0rad = aligned with hull #
 @export var accuracy_margin_radian: float = 0.001
-@export var rotation_limit_radian: float = PI  # must be within [PI, 0), PI to ignore 
-#@export var maximum_projectiles: int = 1024
+@export var rotation_limit_radian: float = PI  #must be within [PI, 0), PI to ignore 
 @export var turret_texture: Texture2D
 @export var gun_texture: Texture2D
-@export var allowed_ammunition_type: String #shit like 40mm or whatevs = 
+@export var allowed_ammunition_type: String 	#shit like 40mm or whatevs = 
 @export var cooldown_time:float = 0.5
 @export var maximum_magazine_size: int = 100
+@export var burst_fire_horizontal_translate: float
+@export var burst_fire_count: int = 1 
 var left_rotation_limit: float
 var right_rotation_limit: float
 var mouse_position: Vector2
 var desired_rotation: float
 var rotation_flag: bool
 var can_fire_flag: bool = true
-var is_weapon_active: bool = true #starting value to be false in actual code
-var available_ammunition_types: Array #Types of ammunition as in ProjectileRes
-var loaded_ammunition: Array	#int array with amm
+var is_weapon_active: bool = true 				#starting value to be false in actual code
+var available_ammunition_types: Array 			#Types of ammunition as in ProjectileRes
+var loaded_ammunition: Array					#int array with amm
+signal Projectile_fired(projectile_position, projectile_rotation, projectile_resource)
 
 
 func _ready() -> void: 
 	#get_node("Cooldown_timer").wait_time = shooting_cooldown	# might be necessary to keep, 
 	#get_node("TurretSprite").set_texture(turret_texture)
 	#get_node("GunSprite").set_texture(gun_texture)
-	get_node("Cooldown_timer").wait_time = cooldown_time
+	get_node("CooldownTimer").wait_time = cooldown_time
 	rotation_flag = true 
 	rotation = start_rotation_radian
 	left_rotation_limit = start_rotation_radian - rotation_limit_radian
@@ -52,14 +54,15 @@ func Load(new_ammunition: ProjectileRes) -> bool:
 	return true
 
 
-func fire() -> ProjectileRes: 
+func fire() -> void: 
 	#print("BANG!") # animation 'ere #will return null if mag empty
 	if !loaded_ammunition.is_empty() and can_fire_flag:
 		can_fire_flag = false
-		get_node("Cooldown_timer").start()
-		return available_ammunition_types[loaded_ammunition.pop_back()]
-	else:
-		return null
+		get_node("CooldownTimer").start()
+		Projectile_fired.emit(get_new_bullet_position(),get_turret_rotation(),available_ammunition_types[loaded_ammunition.pop_back()])
+		#return available_ammunition_types[loaded_ammunition.pop_back()]
+	#else:
+		#return null
 
 
 func _rotate() -> void:
