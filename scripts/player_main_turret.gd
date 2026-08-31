@@ -9,19 +9,21 @@ extends Node2D
 @export var allowed_ammunition_type: String 	#shit like 40mm or whatevs = 
 @export var cooldown_time:float = 0.5
 @export var maximum_magazine_size: int = 100
-@export var burst_fire_horizontal_translate: float = 10
-@export var burst_fire_count: int = 4 
+@export var burst_fire_horizontal_translate: float = 4
+@export var burst_fire_count: int = 5 
 var left_rotation_limit: float
 var right_rotation_limit: float
 var mouse_position: Vector2
 var desired_rotation: float
 var rotation_flag: bool
 var can_fire_flag: bool = true
+var Burst_direction: int = -1
 var current_burst_count: int
 var is_weapon_active: bool = true 				#starting value to be false in actual code
 var available_ammunition_types: Array 			#Types of ammunition as in ProjectileRes
 var loaded_ammunition: Array					#int array with amm
 signal Projectile_fired(projectile_position, projectile_rotation, projectile_resource)
+
 
 
 func _ready() -> void: 
@@ -56,6 +58,7 @@ func Load(new_ammunition: ProjectileRes) -> bool:
 func fire() -> void: 
 	if can_fire_flag:
 		current_burst_count = burst_fire_count
+		Burst_direction = Burst_direction * -1
 		get_node("BurstFireCooldownTimer").timeout.emit()
 		get_node("CooldownTimer").start()
 		can_fire_flag = false
@@ -79,10 +82,10 @@ func get_new_bullet_position() -> Vector2:
 	var Output: Vector2
 	Output = global_position
 	if burst_fire_count%2 == 0:
-		Output += Vector2.from_angle(global_rotation+PI/2).normalized() * burst_fire_horizontal_translate * (current_burst_count - burst_fire_count/2)
-		Output += Vector2.from_angle(global_rotation+PI/2).normalized() * burst_fire_horizontal_translate * 0.5
+		Output += Vector2.from_angle(global_rotation+PI/2).normalized() * burst_fire_horizontal_translate * (current_burst_count - burst_fire_count/2) * Burst_direction
+		Output += Vector2.from_angle(global_rotation+PI/2).normalized() * burst_fire_horizontal_translate * 0.5 * Burst_direction
 	else:
-		Output += Vector2.from_angle(global_rotation+PI/2).normalized() * burst_fire_horizontal_translate * (current_burst_count - (burst_fire_count-1)/2)
+		Output += Vector2.from_angle(global_rotation+PI/2).normalized() * burst_fire_horizontal_translate * (current_burst_count - (burst_fire_count-1)/2) * Burst_direction
 	Output += Vector2.from_angle(global_rotation).normalized() * get_node("GunSprite").get_rect().size.y
 	return Output
 	
