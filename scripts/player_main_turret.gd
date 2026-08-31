@@ -2,15 +2,17 @@ extends Node2D
 
 @export var rotation_speed : float = 0.01		# might have to change these to static after changing this to 
 @export var start_rotation_radian: float = 0 	#0rad = aligned with hull #
-@export var accuracy_margin_radian: float = 0.001
 @export var rotation_limit_radian: float = PI  #must be within [PI, 0), PI to ignore 
 @export var turret_texture: Texture2D
 @export var gun_texture: Texture2D
 @export var allowed_ammunition_type: String 	#shit like 40mm or whatevs = 
-@export var cooldown_time:float = 0.5
+@export var cooldown_time:float = 3
 @export var maximum_magazine_size: int = 100
-@export var burst_fire_horizontal_translate: float = 4
-@export var burst_fire_count: int = 5 
+@export var burst_fire_horizontal_translate: float = 0
+@export var burst_fire_count: int = 1
+@export var firing_delay: float = 0.05 # must be at leas 0.05
+@export var innacuracy_degrees: float = 1.5
+var accuracy_margin_radian: float = 0.001
 var left_rotation_limit: float
 var right_rotation_limit: float
 var mouse_position: Vector2
@@ -31,6 +33,7 @@ func _ready() -> void:
 	#get_node("TurretSprite").set_texture(turret_texture)
 	#get_node("GunSprite").set_texture(gun_texture)
 	get_node("CooldownTimer").wait_time = cooldown_time
+	get_node("BurstFireCooldownTimer").wait_time = firing_delay
 	rotation_flag = true 
 	rotation = start_rotation_radian
 	left_rotation_limit = start_rotation_radian - rotation_limit_radian
@@ -90,7 +93,7 @@ func get_new_bullet_position() -> Vector2:
 	return Output
 	
 func get_turret_rotation() -> float:
-	return global_rotation
+	return (global_rotation + deg_to_rad(randfn(0.0,innacuracy_degrees) ))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(_delta: float) -> void:
