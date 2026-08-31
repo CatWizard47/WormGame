@@ -1,9 +1,14 @@
 [gd_scene format=3 uid="uid://b82ds00m4tjr2"]
 
 [ext_resource type="Script" uid="uid://m4n14id8pcxq" path="res://scripts/player.gd" id="1_6t5aa"]
+[ext_resource type="Script" uid="uid://du7mdtfhpywlw" path="res://scripts/projectile_base_resource.gd" id="2_32ch0"]
 [ext_resource type="Texture2D" uid="uid://dxl8likyr37n8" path="res://Textures/Hulls/hull_test.png" id="2_onrkg"]
 [ext_resource type="PackedScene" uid="uid://bkhtrtgemtxcv" path="res://Scenes/player_main_turret.tscn" id="3_i3pqv"]
 [ext_resource type="PackedScene" uid="uid://bmapecm5pduoa" path="res://Scenes/track_module_node.tscn" id="4_vgqql"]
+
+[sub_resource type="Resource" id="Resource_d55l8"]
+script = ExtResource("2_32ch0")
+metadata/_custom_type_script = "uid://du7mdtfhpywlw"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_onrkg"]
 size = Vector2(127, 58)
@@ -24,6 +29,7 @@ collision_mask = 12
 gravity_scale = 0.0
 script = ExtResource("1_6t5aa")
 max_engine_power = 50
+test_projectile = SubResource("Resource_d55l8")
 
 [node name="hull_collision_shape" type="CollisionShape2D" parent="." unique_id=743409537]
 position = Vector2(0.5, 0)
@@ -52,6 +58,8 @@ position = Vector2(-37, -29)
 
 [node name="player_main_turret" parent="weapon_group_1" unique_id=444234207 instance=ExtResource("3_i3pqv")]
 position = Vector2(21, 0)
+allowed_ammunition_type = "TEST"
+burst_fire_count = 3
 
 [node name="weapon_group_2" type="Node2D" parent="." unique_id=358971566]
 

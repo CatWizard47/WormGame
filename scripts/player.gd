@@ -1,5 +1,6 @@
 extends RigidBody2D
 
+@export var status: Status = Status.new(100,100,100,100)
 @export var max_engine_power = 10 #max velocity is 10 times this
 @export var acceleration_mult : float = 0.5
 @export var traction_Coefficient : float = 0.02 #MUST BE SMOL

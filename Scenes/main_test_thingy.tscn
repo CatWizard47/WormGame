@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://0onp0vfkh7ua" path="res://Textures/1569567959007.jpg" id="1_2ipxj"]
 [ext_resource type="PackedScene" uid="uid://b82ds00m4tjr2" path="res://Scenes/player_test_hull.tscn" id="2_4ogdj"]
 [ext_resource type="Texture2D" uid="uid://c7sb78wrd73ny" path="res://Textures/TileSets/Tile_test.png" id="3_2ipxj"]
-[ext_resource type="Resource" uid="uid://60na7pnwk6im" path="res://Resources/Test_bullet.tres" id="3_4ogdj"]
+[ext_resource type="Resource" uid="uid://60na7pnwk6im" path="res://Resources/Projectiles/Test_bullet.tres" id="3_4ogdj"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gft63"]
 size = Vector2(675.4075, 653.5239)

@@ -74,8 +74,8 @@ func _physics_process(_delta: float) -> void:
 	var space_state = get_world_2d().direct_space_state
 	var body_position = (PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin())
 	var ray_query = PhysicsRayQueryParameters2D.create(body_position, body_position + velocity.normalized()*10 )
-	ray_query.exclude = excluded_RIDS # possibly redundant line
-	#print(ray_query.exclude)
+	ray_query.exclude = excluded_RIDS # possibly redundant line # actually not, since not setting collision mask, might be change later
+	#print(ray_query.exclude)			#gotta think bout this 
 	var ray_result = space_state.intersect_ray(ray_query)
 	if !ray_result.is_empty() and instance_from_id(ray_result.collider_id) != null and collision_flag:
 		if is_valid_target(ray_result.collider_id):

@@ -6,7 +6,7 @@ extends Node2D
 @export var turret_texture: Texture2D
 @export var gun_texture: Texture2D
 @export var allowed_ammunition_type: String 	#shit like 40mm or whatevs = 
-@export var cooldown_time:float = 3
+@export var cooldown_time:float = 1
 @export var maximum_magazine_size: int = 100
 @export var burst_fire_horizontal_translate: float = 0
 @export var burst_fire_count: int = 1
@@ -89,7 +89,7 @@ func get_new_bullet_position() -> Vector2:
 		Output += Vector2.from_angle(global_rotation+PI/2).normalized() * burst_fire_horizontal_translate * 0.5 * Burst_direction
 	else:
 		Output += Vector2.from_angle(global_rotation+PI/2).normalized() * burst_fire_horizontal_translate * (current_burst_count - (burst_fire_count-1)/2) * Burst_direction
-	Output += Vector2.from_angle(global_rotation).normalized() * get_node("GunSprite").get_rect().size.y
+	Output += Vector2.from_angle(global_rotation).normalized() * get_node("GunSprite").get_rect().size.y * 2
 	return Output
 	
 func get_turret_rotation() -> float:
