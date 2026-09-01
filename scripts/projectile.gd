@@ -67,7 +67,7 @@ func _ready() -> void:
 
 
 func is_valid_target(id: int) -> bool:
-	return (!instance_from_id(id).is_class("Projectile") and !instance_from_id(id).is_queued_for_deletion() and instance_from_id(id).is_class("RigidBody2D"))
+	return (!instance_from_id(id).is_class("Projectile") and !instance_from_id(id).is_queued_for_deletion() and !instance_from_id(id).is_class("StaticBody2D"))
 
 
 func _physics_process(_delta: float) -> void: 
@@ -77,6 +77,7 @@ func _physics_process(_delta: float) -> void:
 	ray_query.exclude = excluded_RIDS # possibly redundant line # actually not, since not setting collision mask, might be change later
 	#print(ray_query.exclude)			#gotta think bout this 
 	var ray_result = space_state.intersect_ray(ray_query)
+	#print(ray_result)
 	if !ray_result.is_empty() and instance_from_id(ray_result.collider_id) != null and collision_flag:
 		if is_valid_target(ray_result.collider_id):
 			_deal_damage(instance_from_id(ray_result.collider_id))
@@ -86,9 +87,12 @@ func _physics_process(_delta: float) -> void:
 
 
 func _deal_damage(body: Node2D) -> void:
-	print(body)
+	#print(body)
 	if body.get("status") != null:
+		#print("HIT")
 		body.status.deal_damage(projectile_stats.health_damage,projectile_stats.structure_damage,projectile_stats.armour_damage)
+	#else:
+	#	print("CANNOT DEAL DAMAGE")
 	_remove_self()
 	pass
 

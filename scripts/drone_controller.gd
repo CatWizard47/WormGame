@@ -35,12 +35,18 @@ func _physics_body_setup() -> void:
 	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(rotation,position))
 	PhysicsServer2D.body_set_param(body_rid,PhysicsServer2D.BODY_PARAM_GRAVITY_SCALE,0)
 	PhysicsServer2D.body_set_collision_layer(body_rid,12)
-	PhysicsServer2D.body_set_collision_mask(body_rid,13)	#to make them slide below larger units
+	PhysicsServer2D.body_set_collision_mask(body_rid,0)	#to make them slide below larger units
+	PhysicsServer2D.body_attach_object_instance_id(body_rid,self.get_instance_id())
+	print(PhysicsServer2D.body_get_canvas_instance_id(body_rid))
 
-func _ready() -> void:
-	position = starting_position	#TEMP
+func _ready() -> void:	#TEMP
+	var on_move = Callable(self,"_move_body")
 	_physics_body_setup()
 	_sprite_setup()
+	position = starting_position
+	PhysicsServer2D.body_set_force_integration_callback(body_rid, on_move, "_body_moved")
+	RenderingServer.canvas_item_reset_physics_interpolation(sprite_rid)
+	print((PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin()))
 
 func Set_desired_coordinates(new_desired_position: Vector2) -> void:
 	desired_position = new_desired_position

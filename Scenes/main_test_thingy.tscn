@@ -112,4 +112,4 @@ collision_enabled = false
 [node name="Drone" parent="." unique_id=351390122 instance=ExtResource("5_xlhaj")]
 sprite = ExtResource("6_dwlkq")
 collision_shape = SubResource("RectangleShape2D_vmay7")
-starting_position = Vector2(100, -10)
+starting_position = Vector2(150, 300)
