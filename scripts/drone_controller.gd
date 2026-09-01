@@ -18,9 +18,8 @@ func _sprite_setup()->void:
 	sprite_rid = RenderingServer.canvas_item_create()
 	RenderingServer.canvas_item_set_parent(sprite_rid, get_canvas_item())
 	RenderingServer.canvas_item_add_texture_rect(sprite_rid, Rect2(-sprite.get_size() / 2, sprite.get_size()), sprite)
-	RenderingServer.canvas_item_set_transform(sprite_rid,Transform2D(rotation,position))
+	RenderingServer.canvas_item_set_transform(sprite_rid,Transform2D(rotation,starting_position))
 	RenderingServer.canvas_item_set_z_index(sprite_rid,10)
-	pass
 
 func _move_body(state,index):
 	RenderingServer.canvas_item_set_transform(sprite_rid,state.transform)
@@ -32,7 +31,7 @@ func _physics_body_setup() -> void:
 	PhysicsServer2D.shape_set_data(shape_rid, collision_shape.size)
 	PhysicsServer2D.body_add_shape(body_rid,shape_rid)
 	PhysicsServer2D.body_set_space(body_rid,get_world_2d().space)
-	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(rotation,position))
+	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(rotation,starting_position))
 	PhysicsServer2D.body_set_param(body_rid,PhysicsServer2D.BODY_PARAM_GRAVITY_SCALE,0)
 	PhysicsServer2D.body_set_collision_layer(body_rid,12)
 	PhysicsServer2D.body_set_collision_mask(body_rid,0)	#to make them slide below larger units
@@ -40,10 +39,10 @@ func _physics_body_setup() -> void:
 	print(PhysicsServer2D.body_get_canvas_instance_id(body_rid))
 
 func _ready() -> void:	#TEMP
+	#position = starting_position
 	var on_move = Callable(self,"_move_body")
 	_physics_body_setup()
 	_sprite_setup()
-	position = starting_position
 	PhysicsServer2D.body_set_force_integration_callback(body_rid, on_move, "_body_moved")
 	RenderingServer.canvas_item_reset_physics_interpolation(sprite_rid)
 	print((PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin()))

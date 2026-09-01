@@ -55,7 +55,7 @@ texture_region_size = Vector2i(32, 32)
 sources/0 = SubResource("TileSetAtlasSource_ty0pc")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vmay7"]
-size = Vector2(128, 1280)
+size = Vector2(64, 64)
 
 [node name="Main_test_thingy" type="Node" unique_id=1334854990]
 

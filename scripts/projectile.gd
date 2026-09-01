@@ -47,8 +47,9 @@ func _setup_body() -> void:
 	PhysicsServer2D.body_set_param(body_rid,PhysicsServer2D.BODY_PARAM_GRAVITY_SCALE,0)
 	PhysicsServer2D.body_set_collision_layer(body_rid,0)
 	PhysicsServer2D.body_set_collision_mask(body_rid,12)
+	PhysicsServer2D.body_attach_object_instance_id(body_rid,self.get_instance_id())
 	PhysicsServer2D.body_apply_central_force(body_rid,Vector2.from_angle(start_rotation).normalized() * projectile_stats.projectile_speed*100)
-
+	#might need to rework line above
 
 	#TODO possibly change velocity to be representative of actuall reality
 func _ready() -> void:
