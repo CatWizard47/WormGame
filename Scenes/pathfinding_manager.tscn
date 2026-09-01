@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://huklmvhpm5d7"]
+
+[ext_resource type="Script" uid="uid://c435l88qxkgwh" path="res://scripts/pathfinding_manager.gd" id="1_gemm7"]
+
+[node name="PathfindingManager" type="Node2D" unique_id=1055131330]
+script = ExtResource("1_gemm7")
