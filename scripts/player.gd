@@ -1,6 +1,6 @@
 extends RigidBody2D
 
-@export var status: Status = Status.new(100,100,100,100)
+@export var status: Status = Status.new(100,100,100)
 @export var max_engine_power = 10 #max velocity is 10 times this
 @export var acceleration_mult : float = 0.5
 @export var traction_Coefficient : float = 0.02 #MUST BE SMOL
@@ -110,7 +110,7 @@ func _movement(delta: float) -> void:
 	move_and_collide(velocity * delta)
 	
 func fire_weapon_group()-> void:
-	var projectile 
+	#var projectile 
 	#var weapon_group_node: Node = get_node("weapon_group_" + str(player_controlled_weapon_group))
 	for node: Node in get_node("weapon_group_" + str(player_controlled_weapon_group)).get_children():
 		node.Load(test_projectile) #TEMP

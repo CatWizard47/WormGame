@@ -85,10 +85,10 @@ func get_new_bullet_position() -> Vector2:
 	var Output: Vector2
 	Output = global_position
 	if burst_fire_count%2 == 0:
-		Output += Vector2.from_angle(global_rotation+PI/2).normalized() * burst_fire_horizontal_translate * (current_burst_count - burst_fire_count/2) * Burst_direction
-		Output += Vector2.from_angle(global_rotation+PI/2).normalized() * burst_fire_horizontal_translate * 0.5 * Burst_direction
+		Output += Vector2.from_angle(global_rotation+PI/2.0).normalized() * burst_fire_horizontal_translate * (current_burst_count - burst_fire_count/2) * Burst_direction
+		Output += Vector2.from_angle(global_rotation+PI/2.0).normalized() * burst_fire_horizontal_translate * 0.5 * Burst_direction
 	else:
-		Output += Vector2.from_angle(global_rotation+PI/2).normalized() * burst_fire_horizontal_translate * (current_burst_count - (burst_fire_count-1)/2) * Burst_direction
+		Output += Vector2.from_angle(global_rotation+PI/2.0).normalized() * burst_fire_horizontal_translate * (current_burst_count - (burst_fire_count-1)/2) * Burst_direction
 	Output += Vector2.from_angle(global_rotation).normalized() * get_node("GunSprite").get_rect().size.y * 2
 	return Output
 	

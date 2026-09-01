@@ -1,7 +1,8 @@
 class_name  Drone extends Node2D 
-@export var status: Status = Status.new(10,10,10,0)
+@export var status: Status = Status.new(10,10,10)
 @export var sprite: Texture2D
-@export var collision_shape: CircleShape2D
+@export var collision_shape: RectangleShape2D
+@export var starting_position: Vector2 #TEMP
 #need some sort of resource store or whatevr
 #+possibly weapon
 var desired_position #the actual thing won't be pathfinding, this is simply to move the drone from A to B, a short segment that will be actually gotten via a drone group controller,
@@ -9,9 +10,9 @@ var sprite_rid: RID
 var body_rid: RID
 var shape_rid: RID
 
-func _init(start_position:Vector2, start_rotation:float):
-	position=start_position
-	rotation=start_rotation
+#func _init(start_position:Vector2, start_rotation:float):
+#	position=start_position
+#	rotation=start_rotation
 
 func _sprite_setup()->void:
 	sprite_rid = RenderingServer.canvas_item_create()
@@ -27,16 +28,17 @@ func _move_body(state,index):
 func _physics_body_setup() -> void:
 	body_rid = PhysicsServer2D.body_create()
 	PhysicsServer2D.body_set_mode(body_rid,PhysicsServer2D.BODY_MODE_RIGID)
-	shape_rid = PhysicsServer2D.circle_shape_create()
-	PhysicsServer2D.shape_set_data(shape_rid, collision_shape.radius)
+	shape_rid = PhysicsServer2D.rectangle_shape_create()
+	PhysicsServer2D.shape_set_data(shape_rid, collision_shape.size)
 	PhysicsServer2D.body_add_shape(body_rid,shape_rid)
 	PhysicsServer2D.body_set_space(body_rid,get_world_2d().space)
 	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(rotation,position))
 	PhysicsServer2D.body_set_param(body_rid,PhysicsServer2D.BODY_PARAM_GRAVITY_SCALE,0)
-	PhysicsServer2D.body_set_collision_layer(body_rid,2)
+	PhysicsServer2D.body_set_collision_layer(body_rid,12)
 	PhysicsServer2D.body_set_collision_mask(body_rid,13)	#to make them slide below larger units
 
 func _ready() -> void:
+	position = starting_position	#TEMP
 	_physics_body_setup()
 	_sprite_setup()
 
