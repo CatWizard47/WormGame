@@ -4,6 +4,7 @@ class_name  Drone extends Node2D
 @export var collision_shape: CircleShape2D
 #need some sort of resource store or whatevr
 #+possibly weapon
+var desired_position #the actual thing won't be pathfinding, this is simply to move the drone from A to B, a short segment that will be actually gotten via a drone group controller,
 var sprite_rid: RID
 var body_rid: RID
 var shape_rid: RID
@@ -25,7 +26,7 @@ func _move_body(state,index):
 	
 func _physics_body_setup() -> void:
 	body_rid = PhysicsServer2D.body_create()
-	PhysicsServer2D.body_set_mode(body_rid,PhysicsServer2D.BODY_MODE_RIGID_LINEAR)
+	PhysicsServer2D.body_set_mode(body_rid,PhysicsServer2D.BODY_MODE_RIGID)
 	shape_rid = PhysicsServer2D.circle_shape_create()
 	PhysicsServer2D.shape_set_data(shape_rid, collision_shape.radius)
 	PhysicsServer2D.body_add_shape(body_rid,shape_rid)
@@ -39,7 +40,28 @@ func _ready() -> void:
 	_physics_body_setup()
 	_sprite_setup()
 
+func Set_desired_coordinates(new_desired_position: Vector2) -> void:
+	desired_position = new_desired_position
+	#also will need to set up rotation here
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	#actual translation from A to B here
 	pass
+	
+
+func _remove_this()->void:
+	#print("sprite",sprite_rid,"body=",body_rid,"shape=",shape_rid)
+	if sprite_rid.is_valid() and instance_from_id(sprite_rid.get_id()) != null:
+		if instance_from_id(sprite_rid.get_id()).is_queued_for_deletion():
+			RenderingServer.canvas_item_clear(sprite_rid)
+			RenderingServer.free_rid(sprite_rid)
+	if body_rid.is_valid() and instance_from_id(body_rid.get_id()) != null:
+		if instance_from_id(body_rid.get_id()).is_queued_for_deletion(): 
+			PhysicsServer2D.body_set_collision_mask(body_rid,0)
+			PhysicsServer2D.free_rid(body_rid)
+	if shape_rid.is_valid() and instance_from_id(shape_rid.get_id()) != null:
+		if instance_from_id(shape_rid.get_id()).is_queued_for_deletion():
+			PhysicsServer2D.free_rid(shape_rid)
+	queue_free()

@@ -82,19 +82,19 @@ func _physics_process(_delta: float) -> void:
 			_deal_damage(instance_from_id(ray_result.collider_id))
 		elif(instance_from_id(ray_result.collider_id).is_class("StaticBody2D")):# and ray_result.shape != 0):
 			#print("delet")
-			_remove_this()
-
-	
+			_remove_self()
 
 
 func _deal_damage(body: Node2D) -> void:
 	print(body)
-	_remove_this()
+	if body.get("status") != null:
+		body.status.deal_damage(projectile_stats.health_damage,projectile_stats.structure_damage,projectile_stats.armour_damage)
+	_remove_self()
 	pass
 
 func _explode() -> void:
 	#will increase collision shape size (gradually? or Instantly?)
-	_remove_this()
+	_remove_self()
 	pass
 	
 func _on_timer_timeout() -> void:
@@ -103,7 +103,7 @@ func _on_timer_timeout() -> void:
 func _hitscan_fire() -> void:
 	pass
 
-func _remove_this()->void:
+func _remove_self()->void:
 	#print("sprite",sprite_rid,"body=",body_rid,"shape=",shape_rid)
 	if sprite_rid.is_valid() and instance_from_id(sprite_rid.get_id()) != null:
 		if instance_from_id(sprite_rid.get_id()).is_queued_for_deletion():

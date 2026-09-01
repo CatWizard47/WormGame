@@ -93,7 +93,7 @@ func get_new_bullet_position() -> Vector2:
 	return Output
 	
 func get_turret_rotation() -> float:
-	return (global_rotation + deg_to_rad(randfn(0.0,innacuracy_degrees) ))
+	return (global_rotation + deg_to_rad(randfn(0.0,innacuracy_degrees/2.0) ))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(_delta: float) -> void:
