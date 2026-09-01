@@ -20,6 +20,8 @@ func _init(maximum_health:int, maximum_armour: int, maximum_structure: int):
 
 func deal_damage(health_damage: int, structure_damage: int, armour_damage: int):
 	var dealt_damage: int
+	#print(health,"=health ",structure, " = structure ", armour, " = armour" )
+	#print(health_damage,"=health_dmg ",structure_damage, " = structure_dmg ", armour_damage, " = armour_dmg" )
 	if armour > 0:
 		dealt_damage = armour_damage
 		armour -= dealt_damage

@@ -18,7 +18,7 @@ func _sprite_setup()->void:
 	sprite_rid = RenderingServer.canvas_item_create()
 	RenderingServer.canvas_item_set_parent(sprite_rid, get_canvas_item())
 	RenderingServer.canvas_item_add_texture_rect(sprite_rid, Rect2(-sprite.get_size() / 2, sprite.get_size()), sprite)
-	RenderingServer.canvas_item_set_transform(sprite_rid,Transform2D(rotation,starting_position))
+	RenderingServer.canvas_item_set_transform(sprite_rid,Transform2D(rotation,starting_position))	#position/rotation will be in a local position relative to parent, have to keep in mind
 	RenderingServer.canvas_item_set_z_index(sprite_rid,10)
 
 func _move_body(state,index):
@@ -45,7 +45,8 @@ func _ready() -> void:	#TEMP
 	_sprite_setup()
 	PhysicsServer2D.body_set_force_integration_callback(body_rid, on_move, "_body_moved")
 	RenderingServer.canvas_item_reset_physics_interpolation(sprite_rid)
-	print((PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin()))
+	self.status.on_death.connect(_on_death)
+	#print((PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin()))
 
 func Set_desired_coordinates(new_desired_position: Vector2) -> void:
 	desired_position = new_desired_position
@@ -56,19 +57,24 @@ func Set_desired_coordinates(new_desired_position: Vector2) -> void:
 func _process(delta: float) -> void:
 	#actual translation from A to B here
 	pass
-	
+
+func _on_death()->void:
+	_remove_this()
+	queue_free()	
 
 func _remove_this()->void:
 	#print("sprite",sprite_rid,"body=",body_rid,"shape=",shape_rid)
-	if sprite_rid.is_valid() and instance_from_id(sprite_rid.get_id()) != null:
-		if instance_from_id(sprite_rid.get_id()).is_queued_for_deletion():
+	if sprite_rid.is_valid():
+			#print(sprite_rid)
 			RenderingServer.canvas_item_clear(sprite_rid)
 			RenderingServer.free_rid(sprite_rid)
-	if body_rid.is_valid() and instance_from_id(body_rid.get_id()) != null:
-		if instance_from_id(body_rid.get_id()).is_queued_for_deletion(): 
+	if body_rid.is_valid():
+			#print(body_rid)
+			PhysicsServer2D.body_set_collision_layer(body_rid,0)
 			PhysicsServer2D.body_set_collision_mask(body_rid,0)
+			PhysicsServer2D.body_clear_shapes(body_rid)
 			PhysicsServer2D.free_rid(body_rid)
-	if shape_rid.is_valid() and instance_from_id(shape_rid.get_id()) != null:
-		if instance_from_id(shape_rid.get_id()).is_queued_for_deletion():
+	if shape_rid.is_valid():
+			#print(shape_rid)
 			PhysicsServer2D.free_rid(shape_rid)
 	queue_free()
