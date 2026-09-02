@@ -12,6 +12,8 @@ var desired_position: Vector2
 var sprite_rid: RID
 var body_rid: RID
 var shape_rid: RID
+var velocity: Vector2
+var weight
 
 #func _init(start_position:Vector2, start_rotation:float):
 #	position=start_position
@@ -51,6 +53,7 @@ func _ready() -> void:	#TEMP
 	self.status.on_death.connect(_on_death)
 	current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
 	desired_position = current_position
+	velocity = Vector2.ZERO
 	#print((PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin()))
 
 
@@ -61,10 +64,13 @@ func Set_desired_coordinates(new_desired_position: Vector2) -> void:
 
 func _physics_process(delta: float) -> void:
 	current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
-	if (desired_position - current_position).length() > 20:
-		var applied_vector: Vector2 =  desired_position - current_position
-		print(applied_vector)
-		PhysicsServer2D.body_apply_impulse(body_rid,applied_vector*delta)
+	weight = 1 - exp(4.0 * delta)
+	velocity = (desired_position - current_position).normalized()*10
+	#if (desired_position - current_position).length() > 20:
+		#$Sprite2D.position = $Sprite2D.position.lerp(mouse_pos, weight)
+	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(starting_rotation,(current_position+velocity*delta)))
+		#print(applied_vector)
+		#PhysicsServer2D.body_apply_impulse(body_rid,applied_vector*delta)
 	if Input.is_action_pressed("SPACE"):				#temp
 		desired_position = get_global_mouse_position()	#temp
 		#print(desired_position)
