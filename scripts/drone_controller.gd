@@ -65,16 +65,13 @@ func _on_death()->void:
 func _remove_this()->void:
 	#print("sprite",sprite_rid,"body=",body_rid,"shape=",shape_rid)
 	if sprite_rid.is_valid():
-			#print(sprite_rid)
 			RenderingServer.canvas_item_clear(sprite_rid)
 			RenderingServer.free_rid(sprite_rid)
 	if body_rid.is_valid():
-			#print(body_rid)
 			PhysicsServer2D.body_set_collision_layer(body_rid,0)
 			PhysicsServer2D.body_set_collision_mask(body_rid,0)
 			PhysicsServer2D.body_clear_shapes(body_rid)
 			PhysicsServer2D.free_rid(body_rid)
 	if shape_rid.is_valid():
-			#print(shape_rid)
 			PhysicsServer2D.free_rid(shape_rid)
 	queue_free()

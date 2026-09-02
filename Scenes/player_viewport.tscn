@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://c5semwkwqqpcx"]
+
+[sub_resource type="GDScript" id="GDScript_147ay"]
+script/source = "extends Control
+var PlayerUnit: RigidBody2D
+var position_value: Label
+var rotation_value: Label
+var loco_node_rotation_value: Label
+var mouse_pos_value: Label
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	if get_parent().get_parent()!=null:
+		PlayerUnit = get_parent().get_parent()
+		position = PlayerUnit.position
+		position_value = get_node(\"HBoxContainer/VerticalStatValueContainer/PositionValue\")
+		rotation_value = get_node(\"HBoxContainer/VerticalStatValueContainer/RotationValue\")
+		loco_node_rotation_value = get_node(\"HBoxContainer/VerticalStatValueContainer/LocoNodeRotationValue\")
+		mouse_pos_value = get_node(\"HBoxContainer/VerticalStatValueContainer/MousePosValue\")
+	else:
+		print(\"ERR\")
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	position = PlayerUnit.position
+	position_value.text = str(PlayerUnit.position)
+	rotation_value.text = str(PlayerUnit.rotation)
+	loco_node_rotation_value.text = str(PlayerUnit.locomotive_rotation)
+	mouse_pos_value.text = str(get_global_mouse_position())
+"
+
+[node name="player_viewport" type="Node" unique_id=1549578306]
+
+[node name="ViewPortController" type="Control" parent="." unique_id=1107642881]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = SubResource("GDScript_147ay")
+
+[node name="Camera2D" type="Camera2D" parent="ViewPortController" unique_id=714849236]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ViewPortController" unique_id=2034869054]
+layout_mode = 0
+offset_left = -799.0
+offset_top = 206.0
+offset_right = -633.0
+offset_bottom = 310.0
+
+[node name="VerticalStatLabelContainer" type="VBoxContainer" parent="ViewPortController/HBoxContainer" unique_id=388709512]
+layout_mode = 2
+
+[node name="PositionLabel" type="Label" parent="ViewPortController/HBoxContainer/VerticalStatLabelContainer" unique_id=1604064263]
+layout_mode = 2
+text = "Position:"
+
+[node name="RotationLabel" type="Label" parent="ViewPortController/HBoxContainer/VerticalStatLabelContainer" unique_id=1919468568]
+layout_mode = 2
+text = "Rotation"
+
+[node name="LocoNodeRotationLabel" type="Label" parent="ViewPortController/HBoxContainer/VerticalStatLabelContainer" unique_id=1719951700]
+layout_mode = 2
+text = "LocoNodeRot:"
+
+[node name="MousePositionLabel" type="Label" parent="ViewPortController/HBoxContainer/VerticalStatLabelContainer" unique_id=846780673]
+layout_mode = 2
+text = "MousePos:"
+
+[node name="VerticalStatValueContainer" type="VBoxContainer" parent="ViewPortController/HBoxContainer" unique_id=496566221]
+layout_mode = 2
+
+[node name="PositionValue" type="Label" parent="ViewPortController/HBoxContainer/VerticalStatValueContainer" unique_id=1466019290]
+layout_mode = 2
+text = "Value1"
+
+[node name="RotationValue" type="Label" parent="ViewPortController/HBoxContainer/VerticalStatValueContainer" unique_id=631935656]
+layout_mode = 2
+text = "Value2"
+
+[node name="LocoNodeRotationValue" type="Label" parent="ViewPortController/HBoxContainer/VerticalStatValueContainer" unique_id=1855804367]
+layout_mode = 2
+text = "Value3"
+
+[node name="MousePosValue" type="Label" parent="ViewPortController/HBoxContainer/VerticalStatValueContainer" unique_id=1476304956]
+layout_mode = 2
+text = "Value4"

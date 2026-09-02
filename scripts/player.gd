@@ -121,11 +121,8 @@ func fire_weapon_group()-> void:
 
 
 func _instantiate_projectile(projectile_position:Vector2, projectile_rotation:float, created_projectile:ProjectileRes) -> void:
-	#print("Fired")
 	#projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
 	projectile_scene = Projectile.new(projectile_position, projectile_rotation, created_projectile,node_rids,12)
-	#projectile_scene.instantiate()
-	#projectile_scene.setup(projectile_position, projectile_rotation, created_projectile,node_rids)
 	add_sibling(projectile_scene)
 
 

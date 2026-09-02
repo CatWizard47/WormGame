@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://dxl8likyr37n8" path="res://Textures/Hulls/hull_test.png" id="2_onrkg"]
 [ext_resource type="PackedScene" uid="uid://bkhtrtgemtxcv" path="res://Scenes/player_main_turret.tscn" id="3_i3pqv"]
 [ext_resource type="PackedScene" uid="uid://bmapecm5pduoa" path="res://Scenes/track_module_node.tscn" id="4_vgqql"]
+[ext_resource type="PackedScene" uid="uid://c5semwkwqqpcx" path="res://Scenes/player_viewport.tscn" id="6_3ypp0"]
 
 [sub_resource type="Resource" id="Resource_d55l8"]
 script = ExtResource("2_32ch0")
@@ -38,8 +39,6 @@ shape = SubResource("RectangleShape2D_onrkg")
 [node name="hull_sprite" type="AnimatedSprite2D" parent="." unique_id=1243741245]
 sprite_frames = SubResource("SpriteFrames_onrkg")
 
-[node name="Main_viewport" type="Camera2D" parent="." unique_id=56069536]
-
 [node name="locomotion_nodes" type="Node2D" parent="." unique_id=1395031599]
 
 [node name="Track_module_node" parent="locomotion_nodes" unique_id=316634533 instance=ExtResource("4_vgqql")]
@@ -67,3 +66,5 @@ innacuracy_degrees = 3.0
 [node name="weapon_group_3" type="Node2D" parent="." unique_id=69159857]
 
 [node name="weapon_group_4" type="Node2D" parent="." unique_id=504607579]
+
+[node name="player_viewport" parent="." unique_id=1119026350 instance=ExtResource("6_3ypp0")]
