@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://8aleby2ul72q"]
 
-[ext_resource type="Script" uid="uid://dshmgtl4uye0f" path="res://scripts/drone_controller.gd" id="1_ws5iu"]
+[ext_resource type="Script" uid="uid://dshmgtl4uye0f" path="res://scripts/unit_controller.gd" id="1_ws5iu"]
 
 [node name="Drone" type="Node2D" unique_id=351390122]
 script = ExtResource("1_ws5iu")

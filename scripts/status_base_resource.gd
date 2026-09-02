@@ -6,7 +6,7 @@ var health: int
 var armour: int
 var structure: int
 signal on_damage_recived	#these are tripped on projectiles and other dmg dealing sources
-signal on_death				#obj that have these to connect here
+signal on_death				#obj that have these to connect here #EVERY OBJ WITH THIS RESOURCE HAS TO HAVE THIS
 
 
 func _init(maximum_health:int, maximum_armour: int, maximum_structure: int):

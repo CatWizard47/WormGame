@@ -5,7 +5,8 @@ class_name  Drone extends Node2D
 @export var starting_position: Vector2 #TEMP
 #need some sort of resource store or whatevr
 #+possibly weapon
-var desired_position #the actual thing won't be pathfinding, this is simply to move the drone from A to B, a short segment that will be actually gotten via a drone group controller,
+var current_position: Transform2D
+var desired_position: Transform2D #the actual thing won't be pathfinding, this is simply to move the drone from A to B, a short segment that will be actually gotten via a drone group controller,
 var sprite_rid: RID
 var body_rid: RID
 var shape_rid: RID
@@ -49,11 +50,10 @@ func _ready() -> void:	#TEMP
 	#print((PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin()))
 
 func Set_desired_coordinates(new_desired_position: Vector2) -> void:
-	desired_position = new_desired_position
+	desired_position.origin = new_desired_position
 	#also will need to set up rotation here
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	#actual translation from A to B here
 	pass
