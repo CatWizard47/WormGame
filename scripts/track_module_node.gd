@@ -1,16 +1,16 @@
-class_name TrackModule extends RigidBody2D
+class_name TrackModule extends StaticBody2D
 var horizontal_orientation_inverted_flag: bool = false
-var left_module: AnimatedSprite2D
-var right_module: AnimatedSprite2D
-var animation_timer: Timer
+@export var left_module: AnimatedSprite2D
+@export var right_module: AnimatedSprite2D
+@export var animation_timer: Timer
 var animation_stop_flag: bool = false
 
 func _ready() -> void:
 	if position.x < 0:
 		horizontal_orientation_inverted_flag = true	
-	left_module = get_node("Left_module")
-	right_module = get_node("Right_module")
-	animation_timer = get_node("Animation_timer")
+	#left_module = get_node("Left_module")
+	#right_module = get_node("Right_module")
+	#animation_timer = get_node("Animation_timer")
 
 func change_rotation(rotation_speed: float) -> float:
 	animation_timer.start()
