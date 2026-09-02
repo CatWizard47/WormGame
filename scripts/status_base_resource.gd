@@ -31,7 +31,7 @@ func deal_damage(health_damage: int, structure_damage: int, armour_damage: int):
 		structure -= dealt_damage
 		structure = clamp(structure, 0, max_structure)
 	if health > 0:
-		dealt_damage = (health_damage - armour) * ( 1 - (structure/max_structure))
+		dealt_damage = (health_damage - armour - structure)
 		health -= dealt_damage
 		health = clamp(health, 0, max_health)
 	on_damage_recived.emit()

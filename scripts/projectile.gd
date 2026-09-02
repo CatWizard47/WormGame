@@ -7,10 +7,10 @@ var is_projectile: bool = true
 var sprite: Texture2D
 var collision_shape: CircleShape2D
 var excluded_RIDS: Array
-var sprite_rid
-var body_rid
-var shape_rid
-var velocity
+var sprite_rid: RID
+var body_rid: RID
+var shape_rid: RID
+var velocity: Vector2
 var current_collision_mask:int
 
 
@@ -67,8 +67,6 @@ func _ready() -> void:
 
 
 func is_valid_target(id: int) -> bool:
-	#print(instance_from_id(id))
-	print(id)
 	return (!instance_from_id(id).is_class("Projectile") and !instance_from_id(id).is_queued_for_deletion() and !instance_from_id(id).is_class("StaticBody2D"))
 
 
@@ -77,23 +75,17 @@ func _physics_process(_delta: float) -> void:
 	var body_position = (PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin())
 	var ray_query = PhysicsRayQueryParameters2D.create(body_position, body_position + velocity.normalized()*10 )
 	ray_query.exclude = excluded_RIDS # possibly redundant line # actually not, since not setting collision mask, might be change later
-	#print(ray_query.exclude)			#gotta think bout this 
 	var ray_result = space_state.intersect_ray(ray_query)
 	if !ray_result.is_empty() and instance_from_id(ray_result.get("collider_id")) != null:
 		if is_valid_target(ray_result.get("collider_id")):
 			_deal_damage(instance_from_id(ray_result.get("collider_id")))
 		elif(instance_from_id(ray_result.get("collider_id")).is_class("StaticBody2D")):
-			print("delet")
 			_remove_self()
 
 
 func _deal_damage(body: Node2D) -> void:
-	#print(body)
 	if body.get("status") != null:
-		#print("HIT")
 		body.status.deal_damage(projectile_stats.health_damage,projectile_stats.structure_damage,projectile_stats.armour_damage)
-	#else:
-	#	print("CANNOT DEAL DAMAGE")
 	_remove_self()
 	pass
 
@@ -111,17 +103,14 @@ func _hitscan_fire() -> void:
 func _remove_self()->void:
 	#print("sprite",sprite_rid,"body=",body_rid,"shape=",shape_rid)
 	if sprite_rid.is_valid():
-			#print(sprite_rid)
 			RenderingServer.canvas_item_clear(sprite_rid)
 			RenderingServer.free_rid(sprite_rid)
 	if body_rid.is_valid():
-			#print(body_rid)
 			PhysicsServer2D.body_set_collision_layer(body_rid,0)
 			PhysicsServer2D.body_set_collision_mask(body_rid,0)
 			PhysicsServer2D.body_clear_shapes(body_rid)
 			PhysicsServer2D.free_rid(body_rid)
 	if shape_rid.is_valid():
-			#print(shape_rid)
 			PhysicsServer2D.free_rid(shape_rid)
 	queue_free()
 
