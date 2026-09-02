@@ -5,7 +5,8 @@ extends Node2D	#needs to be a 2D node, due to world2D usage
 func _ready() -> void:
 	pass # Replace with function body.
 
-func Find_path(PositionA:Vector2, PositionB:Vector2)->Array:
+												#if z-levels are to be implemented, i have to dynamically change col_layer of obj
+func Find_path(PositionA:Vector2, PositionB:Vector2,CollisionMask:int)->Array:
 	var Output:Array = Array()	#Returns an array of positions, 
 	#https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html
 	#https://en.wikipedia.org/wiki/A*_search_algorithm # maybe?

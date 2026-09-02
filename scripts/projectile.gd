@@ -1,20 +1,20 @@
 
 class_name Projectile extends Node2D
-static var projectile_stats: ProjectileRes
-static var start_position: Vector2
-static var start_rotation: float
-static var is_projectile: bool = true
-static var sprite: Texture2D
-static var collision_shape: CircleShape2D
-static var excluded_RIDS: Array
+var projectile_stats: ProjectileRes 
+var start_position: Vector2
+var start_rotation: float
+var is_projectile: bool = true
+var sprite: Texture2D
+var collision_shape: CircleShape2D
+var excluded_RIDS: Array
 var sprite_rid
 var body_rid
 var shape_rid
 var velocity
-var collision_flag: bool = false
+var current_collision_mask:int
 
 
-static func setup(new_position: Vector2, new_rotation: float, NewProjectile:ProjectileRes,RIDS_to_exclude:Array) -> void:
+func _init(new_position: Vector2, new_rotation: float, NewProjectile:ProjectileRes,RIDS_to_exclude:Array,collision_mask:int)->void:
 	start_position = new_position
 	start_rotation = new_rotation
 	projectile_stats = NewProjectile
@@ -22,8 +22,7 @@ static func setup(new_position: Vector2, new_rotation: float, NewProjectile:Proj
 	collision_shape = CircleShape2D.new()
 	collision_shape.radius = 0.5
 	excluded_RIDS = RIDS_to_exclude
-	#print(excluded_RIDS)
-
+	current_collision_mask = collision_mask
 
 func _setup_sprite() -> void:
 	sprite_rid = RenderingServer.canvas_item_create()
@@ -46,7 +45,7 @@ func _setup_body() -> void:
 	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(start_rotation,start_position))
 	PhysicsServer2D.body_set_param(body_rid,PhysicsServer2D.BODY_PARAM_GRAVITY_SCALE,0)
 	PhysicsServer2D.body_set_collision_layer(body_rid,0)
-	PhysicsServer2D.body_set_collision_mask(body_rid,12)
+	PhysicsServer2D.body_set_collision_mask(body_rid,current_collision_mask)
 	PhysicsServer2D.body_attach_object_instance_id(body_rid,self.get_instance_id())
 	PhysicsServer2D.body_apply_central_force(body_rid,Vector2.from_angle(start_rotation).normalized() * projectile_stats.projectile_speed*100)
 	#might need to rework line above
@@ -64,10 +63,12 @@ func _ready() -> void:
 		velocity = Vector2.from_angle(start_rotation).normalized() * projectile_stats.projectile_speed * 100
 		#self.collision_mask = 12
 	#https://docs.godotengine.org/en/stable/tutorials/performance/using_servers.html
-	#later tho, now base implement
+	#later tho, now base implement # actually done!
 
 
 func is_valid_target(id: int) -> bool:
+	#print(instance_from_id(id))
+	print(id)
 	return (!instance_from_id(id).is_class("Projectile") and !instance_from_id(id).is_queued_for_deletion() and !instance_from_id(id).is_class("StaticBody2D"))
 
 
@@ -78,12 +79,11 @@ func _physics_process(_delta: float) -> void:
 	ray_query.exclude = excluded_RIDS # possibly redundant line # actually not, since not setting collision mask, might be change later
 	#print(ray_query.exclude)			#gotta think bout this 
 	var ray_result = space_state.intersect_ray(ray_query)
-	#print(ray_result)
-	if !ray_result.is_empty() and instance_from_id(ray_result.collider_id) != null and collision_flag:
-		if is_valid_target(ray_result.collider_id):
-			_deal_damage(instance_from_id(ray_result.collider_id))
-		elif(instance_from_id(ray_result.collider_id).is_class("StaticBody2D")):# and ray_result.shape != 0):
-			#print("delet")
+	if !ray_result.is_empty() and instance_from_id(ray_result.get("collider_id")) != null:
+		if is_valid_target(ray_result.get("collider_id")):
+			_deal_damage(instance_from_id(ray_result.get("collider_id")))
+		elif(instance_from_id(ray_result.get("collider_id")).is_class("StaticBody2D")):
+			print("delet")
 			_remove_self()
 
 
@@ -125,9 +125,6 @@ func _remove_self()->void:
 			PhysicsServer2D.free_rid(shape_rid)
 	queue_free()
 
-
-func _on_start_up_timer_timeout() -> void:
-	collision_flag = true
 
 
 func _on_explode_timer_timeout() -> void:

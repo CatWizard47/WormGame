@@ -99,6 +99,7 @@ func get_turret_rotation() -> float:
 func _physics_process(_delta: float) -> void:
 	if is_weapon_active: #place this into the player node instead
 		_rotate()
+		
 
 
 func _on_cooldown_timer_timeout() -> void:

@@ -33,7 +33,7 @@ func _ready() -> void:
 	update_all_rids()
 	_connect_fire_signals()
 	player_controlled_weapon_group = weapon_groups.ONE #TEMP
-	get_node("weapon_group_1/player_main_turret").allowed_ammunition_type = "TEST" #TEMP
+	#get_node("weapon_group_1/player_main_turret").allowed_ammunition_type = "TEST" #TEMP
 
 
 func _connect_fire_signals()->void: #should not be more than 4 weapon groups
@@ -122,8 +122,10 @@ func fire_weapon_group()-> void:
 
 func _instantiate_projectile(projectile_position:Vector2, projectile_rotation:float, created_projectile:ProjectileRes) -> void:
 	#print("Fired")
-	projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
-	projectile_scene.setup(projectile_position, projectile_rotation, created_projectile,node_rids)
+	#projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
+	projectile_scene = Projectile.new(projectile_position, projectile_rotation, created_projectile,node_rids,12)
+	#projectile_scene.instantiate()
+	#projectile_scene.setup(projectile_position, projectile_rotation, created_projectile,node_rids)
 	add_sibling(projectile_scene)
 
 
