@@ -4,10 +4,13 @@ class_name  Drone extends Node2D
 @export var collision_shape: RectangleShape2D
 @export var starting_position: Vector2 #TEMP
 @export var starting_rotation: float
+@export var rotation_speed: float =0.01
 #need some sort of resource store or whatevr
 #+possibly weapon
 var current_position: Vector2
-var desired_position: Vector2 
+var desired_position: Vector2
+var current_rotation: float 
+var desired_rotation: float
  #the actual thing won't be pathfinding, this is simply to move the drone from A to B, a short segment that will be actually gotten via a drone group controller,
 var sprite_rid: RID
 var body_rid: RID
@@ -45,14 +48,15 @@ func _physics_body_setup() -> void:
 
 func _ready() -> void:	#TEMP
 	#position = starting_position
+	current_rotation = starting_rotation
 	var on_move = Callable(self,"_move_body")
 	_physics_body_setup()
 	_sprite_setup()
 	PhysicsServer2D.body_set_force_integration_callback(body_rid, on_move, "_body_moved")
 	RenderingServer.canvas_item_reset_physics_interpolation(sprite_rid)
 	self.status.on_death.connect(_on_death)
-	current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
-	desired_position = current_position
+	#current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
+	#desired_position = current_position
 	velocity = Vector2.ZERO
 	#print((PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin()))
 
@@ -64,11 +68,23 @@ func Set_desired_coordinates(new_desired_position: Vector2) -> void:
 
 func _physics_process(delta: float) -> void:
 	current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
+	current_rotation = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_rotation()
+	desired_rotation = (current_position - desired_position).angle()
+	#print(current_movement_vector)
 	weight = 1 - exp(4.0 * delta)
-	velocity = (desired_position - current_position).normalized()*10
+	print((current_position - desired_position).angle())
+	if abs(current_rotation - desired_rotation) > 0.001:
+		if desired_rotation > 0:
+			current_rotation -= rotation_speed
+		else:
+			current_rotation += rotation_speed
+	#if (current_position-desired_position).length()<30:	#somewhat temp
+	#	velocity = Vector2.ZERO
+	#else:
+	#	velocity = (desired_position - current_position).normalized()*30
 	#if (desired_position - current_position).length() > 20:
 		#$Sprite2D.position = $Sprite2D.position.lerp(mouse_pos, weight)
-	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(starting_rotation,(current_position+velocity*delta)))
+	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(current_rotation,(current_position)))
 		#print(applied_vector)
 		#PhysicsServer2D.body_apply_impulse(body_rid,applied_vector*delta)
 	if Input.is_action_pressed("SPACE"):				#temp
