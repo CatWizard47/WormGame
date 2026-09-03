@@ -11,6 +11,7 @@ var current_position: Vector2
 var desired_position: Vector2
 var current_rotation: float 
 var desired_rotation: float
+var current_rotation_sign: int
  #the actual thing won't be pathfinding, this is simply to move the drone from A to B, a short segment that will be actually gotten via a drone group controller,
 var sprite_rid: RID
 var body_rid: RID
@@ -76,14 +77,25 @@ func _physics_process(delta: float) -> void:
 	current_rotation = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_rotation()
 	desired_rotation = (desired_position - current_position).angle()
 	#desired_rotation = atan2((desired_position - current_position).y,(desired_position - current_position).x)
-	print(desired_rotation)
+	#print(desired_rotation)
 	#print(current_movement_vector)
 	print(" current = ",current_rotation," desired = ",desired_rotation," cond = ",(current_rotation - desired_rotation))
+	#if abs(current_rotation - desired_rotation) > 0.05:
+	#	#if current_rotation < desired_rotation and current_rotation - desired_rotation >= PI:
+	#	if current_rotation - desired_rotation >= PI :
+	#		current_rotation += rotation_speed
+	#		print("+")
+	#	else:
+	#		current_rotation -= rotation_speed
+	#		print("-")
 	if abs(current_rotation - desired_rotation) > 0.05:
-		if current_rotation < desired_rotation or current_rotation - desired_rotation >= PI :
-			current_rotation += rotation_speed
+		#if current_rotation < desired_rotation and current_rotation - desired_rotation >= PI:
+		if abs(current_rotation) > abs(desired_rotation):
+			current_rotation += rotation_speed 
+			print("+")
 		else:
-			current_rotation -= rotation_speed
+			current_rotation -= rotation_speed  
+			print("-")
 		#if abs(current_rotation) > PI:
 		#	current_rotation = -signf(current_rotation) * PI
 	
