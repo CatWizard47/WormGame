@@ -7,16 +7,13 @@ class_name  Drone extends Node2D
 @export var rotation_speed: float =0.05
 #need some sort of resource store or whatevr
 #+possibly weapon
-var current_position: Vector2
 var desired_position: Vector2
-var current_rotation: float 
-var desired_rotation: float
-var current_rotation_sign: int
+var current_position: Vector2
  #the actual thing won't be pathfinding, this is simply to move the drone from A to B, a short segment that will be actually gotten via a drone group controller,
 var sprite_rid: RID
 var body_rid: RID
 var shape_rid: RID
-var velocity: Vector2
+var travel_direction: Vector2
 #var weight
 
 #func _init(start_position:Vector2, start_rotation:float):
@@ -48,18 +45,16 @@ func _physics_body_setup() -> void:
 	PhysicsServer2D.body_attach_object_instance_id(body_rid,self.get_instance_id())
 
 func _ready() -> void:	#TEMP
-	#position = starting_position
-	current_rotation = starting_rotation
 	desired_position = starting_position
+	print(desired_position)
+	print(starting_rotation)
 	var on_move = Callable(self,"_move_body")
 	_physics_body_setup()
 	_sprite_setup()
 	PhysicsServer2D.body_set_force_integration_callback(body_rid, on_move, "_body_moved")
 	RenderingServer.canvas_item_reset_physics_interpolation(sprite_rid)
 	self.status.on_death.connect(_on_death)
-	#current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
-	#desired_position = current_position
-	velocity = Vector2.ZERO
+	travel_direction = Vector2.from_angle(starting_rotation).normalized()
 	#print((PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin()))
 
 
@@ -70,56 +65,19 @@ func Set_desired_coordinates(new_desired_position: Vector2) -> void:
 
 func _physics_process(delta: float) -> void:
 	#weight = 1 - exp(0.005 * delta)
-		
+	current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
+	if abs(current_position - desired_position).length() >= 30:
+		travel_direction = (travel_direction * 3 + (desired_position - current_position).normalized()).normalized()
+		current_position +=travel_direction 
+		PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction.angle(),current_position))	
 	#PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(desired_rotation,desired_position.lerp(current_position,weight)))
 	
-	current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
-	current_rotation = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_rotation()
-	desired_rotation = (desired_position - current_position).angle()
-	#desired_rotation = atan2((desired_position - current_position).y,(desired_position - current_position).x)
-	#print(desired_rotation)
-	#print(current_movement_vector)
-	print(" current = ",current_rotation," desired = ",desired_rotation," cond = ",abs(current_rotation - desired_rotation))
-	if abs(current_rotation - desired_rotation) > 0.05:
-		#if current_rotation < desired_rotation and current_rotation - desired_rotation >= PI:
-		if abs(desired_rotation - current_rotation) > PI:
-			current_rotation += rotation_speed
-			print("+")
-		else:
-			current_rotation -= rotation_speed
-			print("-")
-		if abs(current_rotation) > PI:
-			current_rotation = -signf(current_rotation) * PI
-	#if abs(current_rotation - desired_rotation) > 0.05:
-		#if current_rotation < desired_rotation and current_rotation - desired_rotation >= PI:
-	#	if abs(current_rotation) > abs(desired_rotation):
-	#		current_rotation += rotation_speed 
-	#		print("+")
-	#	else:
-	#		current_rotation -= rotation_speed  
-	#		print("-")
-		#if abs(current_rotation) > PI:
-		#	current_rotation = -signf(current_rotation) * PI
+	#current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
+	#current_rotation = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_rotation()
+	#desired_rotation = (desired_position - current_position).angle()
+	#
 	
-	
-	
-	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(current_rotation,(current_position)))
-	
-	#PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(current_rotation,(current_position)))
-	#print((current_position - desired_position).angle())
-	#if abs(current_rotation - desired_rotation) > 0.001:
-	#	if desired_rotation > 0:
-	#		current_rotation -= rotation_speed
-	#	else:
-	#		current_rotation += rotation_speed
-	#if (current_position-desired_position).length()<30:	#somewhat temp
-	#	velocity = Vector2.ZERO
-	#else:
-	#	velocity = (desired_position - current_position).normalized()*30
-	#if (desired_position - current_position).length() > 20:
-		#$Sprite2D.position = $Sprite2D.position.lerp(mouse_pos, weight)
-		#print(applied_vector)
-		#PhysicsServer2D.body_apply_impulse(body_rid,applied_vector*delta)
+
 	if Input.is_action_pressed("SPACE"):				#temp
 		desired_position = get_global_mouse_position()	#temp
 		#print(desired_position)
