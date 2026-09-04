@@ -79,23 +79,25 @@ func _physics_process(delta: float) -> void:
 	#desired_rotation = atan2((desired_position - current_position).y,(desired_position - current_position).x)
 	#print(desired_rotation)
 	#print(current_movement_vector)
-	print(" current = ",current_rotation," desired = ",desired_rotation," cond = ",(current_rotation - desired_rotation))
-	#if abs(current_rotation - desired_rotation) > 0.05:
-	#	#if current_rotation < desired_rotation and current_rotation - desired_rotation >= PI:
-	#	if current_rotation - desired_rotation >= PI :
-	#		current_rotation += rotation_speed
-	#		print("+")
-	#	else:
-	#		current_rotation -= rotation_speed
-	#		print("-")
+	print(" current = ",current_rotation," desired = ",desired_rotation," cond = ",abs(current_rotation - desired_rotation))
 	if abs(current_rotation - desired_rotation) > 0.05:
 		#if current_rotation < desired_rotation and current_rotation - desired_rotation >= PI:
-		if abs(current_rotation) > abs(desired_rotation):
-			current_rotation += rotation_speed 
+		if abs(desired_rotation - current_rotation) > PI:
+			current_rotation += rotation_speed
 			print("+")
 		else:
-			current_rotation -= rotation_speed  
+			current_rotation -= rotation_speed
 			print("-")
+		if abs(current_rotation) > PI:
+			current_rotation = -signf(current_rotation) * PI
+	#if abs(current_rotation - desired_rotation) > 0.05:
+		#if current_rotation < desired_rotation and current_rotation - desired_rotation >= PI:
+	#	if abs(current_rotation) > abs(desired_rotation):
+	#		current_rotation += rotation_speed 
+	#		print("+")
+	#	else:
+	#		current_rotation -= rotation_speed  
+	#		print("-")
 		#if abs(current_rotation) > PI:
 		#	current_rotation = -signf(current_rotation) * PI
 	
