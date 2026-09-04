@@ -4,9 +4,20 @@
 [ext_resource type="Texture2D" uid="uid://dx1ixm2nc617e" path="res://Textures/Turrets/Turret_test.png" id="2_qktiv"]
 [ext_resource type="Texture2D" uid="uid://fstf5teixiud" path="res://Textures/Weapons/GUN_test.png" id="3_axrt5"]
 
-[node name="player_main_turret" type="Marker2D" unique_id=980375679]
+[node name="player_main_turret" type="Marker2D" unique_id=1147735742]
 position = Vector2(215, 253)
 script = ExtResource("1_ugf5t")
+rotation_speed = null
+start_rotation_radian = null
+rotation_limit_radian = null
+allowed_ammunition_type = null
+cooldown_time = null
+maximum_magazine_size = null
+burst_fire_horizontal_translate = null
+burst_fire_count = null
+firing_delay = null
+innacuracy_degrees = null
+metadata/_custom_type_script = "uid://nohwwevcrjud"
 
 [node name="TurretSprite" type="Sprite2D" parent="." unique_id=429079524]
 texture = ExtResource("2_qktiv")

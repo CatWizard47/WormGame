@@ -1,4 +1,4 @@
-extends Node2D
+class_name PlayerMainTurret extends Marker2D
 
 @export var rotation_speed : float = 0.01		# might have to change these to static after changing this to 
 @export var start_rotation_radian: float = 0 	#0rad = aligned with hull #
@@ -24,7 +24,7 @@ var current_burst_count: int
 var is_weapon_active: bool = true 				#starting value to be false in actual code
 var available_ammunition_types: Array 			#Types of ammunition as in ProjectileRes
 var loaded_ammunition: Array					#int array with amm
-signal Projectile_fired(projectile_position, projectile_rotation, projectile_resource)
+signal projectile_fired(projectile_position, projectile_rotation, projectile_resource)
 
 
 
@@ -108,7 +108,7 @@ func _on_cooldown_timer_timeout() -> void:
 func _on_burst_fire_cooldown_timer_timeout() -> void:
 	if !loaded_ammunition.is_empty() and current_burst_count > 0:
 		current_burst_count -= 1
-		Projectile_fired.emit(get_new_bullet_position(),get_turret_rotation(),available_ammunition_types[loaded_ammunition.pop_back()])
+		projectile_fired.emit(get_new_bullet_position(),get_turret_rotation(),available_ammunition_types[loaded_ammunition.pop_back()])
 		get_node("BurstFireCooldownTimer").start()
 	elif !loaded_ammunition.is_empty():
 		can_fire_flag = false

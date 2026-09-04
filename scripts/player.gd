@@ -1,7 +1,7 @@
 extends RigidBody2D
 
 @export var status: Status = Status.new(100,100,100)
-@export var max_engine_power = 10 #max velocity is 10 times this
+@export var max_engine_power: float = 10 #max velocity is 10 times this
 @export var acceleration_mult : float = 0.5
 @export var traction_Coefficient : float = 0.02 #MUST BE SMOL
 @export var locomotion_node_rotation_speed: float = 0.025 # in radians
@@ -11,7 +11,7 @@ var screen_size # Size of the game window. # temp
 var velocity: Vector2
 var engine_power: float
 var locomotive_rotation: float
-var locomotive_nodes: Node
+var locomotive_nodes: Array
 var locomotive_nodes_rotated_this_tick: bool = false
 var powertrain_radian_ratio:float
 var locomotive_node_count: float
@@ -21,45 +21,83 @@ enum weapon_groups{	#hipothetically not needed to be written like this, also may
 	THREE = 3,
 	FOUR = 4
 }
+var weapon_group_1: Array = Array()	#number instead of words incase of procedural use
+var weapon_group_2: Array = Array()
+var weapon_group_3: Array = Array()
+var weapon_group_4: Array = Array()
 var player_controlled_weapon_group: int	
 var projectile_scene
 
 
 func _ready() -> void:
 	screen_size = get_viewport_rect().size
-	locomotive_nodes = get_node("locomotion_nodes")
-	locomotive_node_count = locomotive_nodes.get_child_count()
+	#locomotive_nodes = get_node("locomotion_nodes")
+	_update_locomotive_nodes()
+	locomotive_node_count = locomotive_nodes.size()
 	position = screen_size/4 #TEMP
 	_update_all_rids()
-	_connect_fire_signals()
+	_update_weapon_groups()
 	player_controlled_weapon_group = weapon_groups.ONE #TEMP
 	#get_node("weapon_group_1/player_main_turret").allowed_ammunition_type = "TEST" #TEMP
 
+func _update_locomotive_nodes()->void:
+	locomotive_nodes.clear()
+	if !get_node("locomotion_nodes").get_children().is_empty():	
+		for node: Node in get_node("locomotion_nodes").get_children():
+			locomotive_nodes.append(node)
 
-func _connect_fire_signals()->void: #should not be more than 4 weapon groups	#this is terrible and in need of rework
+func _update_weapon_groups()->void:	#potentially also shit, but less than get_node every time a fire action is called
+	weapon_group_1.clear()
 	if !get_node("weapon_group_1").get_children().is_empty():	
 		for node: Node in get_node("weapon_group_1").get_children():
-			node.Projectile_fired.connect(_instantiate_projectile)
-	if !get_node("weapon_group_2").get_children().is_empty():
-		for node: Node in get_node("weapon_group_1").get_children():
-			node.Projectile_fired.connect(_instantiate_projectile)
-	if !get_node("weapon_group_3").get_children().is_empty():
-		for node: Node in get_node("weapon_group_1").get_children():
-			node.Projectile_fired.connect(_instantiate_projectile)
-	if !get_node("weapon_group_4").get_children().is_empty():
-		for node: Node in get_node("weapon_group_1").get_children():
-			node.Projectile_fired.connect(_instantiate_projectile)
+			weapon_group_1.append(node)
+			if weapon_group_1[-1].projectile_fired.has_connections(): 
+				weapon_group_1[-1].projectile_fired.disconnect()
+			weapon_group_1[-1].projectile_fired.connect(_instantiate_projectile)
+	weapon_group_2.clear()
+	if !get_node("weapon_group_2").get_children().is_empty():	
+		for node: Node in get_node("weapon_group_2").get_children():
+			weapon_group_2.append(node)
+			if weapon_group_2[-1].projectile_fired.has_connections():
+				weapon_group_2[-1].projectile_fired.disconnect()
+			weapon_group_2[-1].projectile_fired.connect(_instantiate_projectile)
+	if !get_node("weapon_group_3").get_children().is_empty():	
+		for node: Node in get_node("weapon_group_3").get_children():
+			weapon_group_3.append(node)
+			if weapon_group_3[-1].projectile_fired.has_connections():
+				weapon_group_3[-1].projectile_fired.disconnect()
+			weapon_group_3[-1].projectile_fired.connect(_instantiate_projectile)
+	if !get_node("weapon_group_4").get_children().is_empty():	
+		for node: Node in get_node("weapon_group_4").get_children():
+			weapon_group_4.append(node)
+			if weapon_group_4[-1].projectile_fired.has_connections():
+				weapon_group_4[-1].projectile_fired.disconnect()
+			weapon_group_4[-1].projectile_fired.connect(_instantiate_projectile)
+
+#func _connect_fire_signals()->void: #should not be more than 4 weapon groups	#this is terrible and in need of rework
+#	if !get_node("weapon_group_1").get_children().is_empty():	
+#		for node: Node in get_node("weapon_group_1").get_children():
+#			node.Projectile_fired.connect(_instantiate_projectile)
+#	if !get_node("weapon_group_2").get_children().is_empty():
+#		for node: Node in get_node("weapon_group_1").get_children():
+#			node.Projectile_fired.connect(_instantiate_projectile)
+#	if !get_node("weapon_group_3").get_children().is_empty():
+#		for node: Node in get_node("weapon_group_1").get_children():
+#			node.Projectile_fired.connect(_instantiate_projectile)
+#	if !get_node("weapon_group_4").get_children().is_empty():
+#		for node: Node in get_node("weapon_group_1").get_children():
+#			node.Projectile_fired.connect(_instantiate_projectile)
 
 
 func _update_all_rids() -> void:
-	for loco_node: Node in locomotive_nodes.get_children():
+	for loco_node: Node in locomotive_nodes:
 		node_rids.append(loco_node.get_rid())
 	node_rids.append(self.get_rid())
 	
 
 func _rotate_locomotive_nodes(rotation_speed:float) ->void:
 	locomotive_rotation = 0
-	for loco_node: Node in locomotive_nodes.get_children():
+	for loco_node: Node in locomotive_nodes:
 		locomotive_rotation += loco_node.change_rotation(rotation_speed)
 	locomotive_rotation = locomotive_rotation / locomotive_node_count
 	if abs(locomotive_rotation) > PI/2.02:	#crude implement but werks
@@ -69,12 +107,12 @@ func _rotate_locomotive_nodes(rotation_speed:float) ->void:
 	
 		
 func _animate_locomotive_nodes(speed:float)->void:
-	for loco_node: Node in locomotive_nodes.get_children():
+	for loco_node: Node in locomotive_nodes:
 		loco_node.animate(speed)
 		
 		
 func _stop_locomotive_node_animation()->void:
-	for loco_node: Node in locomotive_nodes.get_children():
+	for loco_node: Node in locomotive_nodes:
 		loco_node.pause_animation()		
 
 

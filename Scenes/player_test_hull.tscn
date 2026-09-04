@@ -30,7 +30,6 @@ collision_mask = 12
 mass = 1000.0
 gravity_scale = 0.0
 script = ExtResource("1_6t5aa")
-max_engine_power = 50
 test_projectile = SubResource("Resource_d55l8")
 
 [node name="hull_collision_shape" type="CollisionShape2D" parent="." unique_id=743409537]
@@ -58,8 +57,15 @@ position = Vector2(-37, -29)
 
 [node name="player_main_turret" parent="weapon_group_1" unique_id=444234207 instance=ExtResource("3_i3pqv")]
 position = Vector2(21, 0)
+rotation_speed = 0.01
+start_rotation_radian = 0.0
+rotation_limit_radian = 3.141592653589793
 allowed_ammunition_type = "TEST"
+cooldown_time = 1.0
+maximum_magazine_size = 100
+burst_fire_horizontal_translate = 0.0
 burst_fire_count = 5
+firing_delay = 0.05
 innacuracy_degrees = 3.0
 
 [node name="weapon_group_2" type="Node2D" parent="." unique_id=358971566]
