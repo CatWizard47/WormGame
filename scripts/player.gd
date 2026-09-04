@@ -31,7 +31,6 @@ var projectile_scene
 
 func _ready() -> void:
 	screen_size = get_viewport_rect().size
-	#locomotive_nodes = get_node("locomotion_nodes")
 	_update_locomotive_nodes()
 	locomotive_node_count = locomotive_nodes.size()
 	position = screen_size/4 #TEMP
@@ -73,20 +72,6 @@ func _update_weapon_groups()->void:	#potentially also shit, but less than get_no
 			if weapon_group_4[-1].projectile_fired.has_connections():
 				weapon_group_4[-1].projectile_fired.disconnect()
 			weapon_group_4[-1].projectile_fired.connect(_instantiate_projectile)
-
-#func _connect_fire_signals()->void: #should not be more than 4 weapon groups	#this is terrible and in need of rework
-#	if !get_node("weapon_group_1").get_children().is_empty():	
-#		for node: Node in get_node("weapon_group_1").get_children():
-#			node.Projectile_fired.connect(_instantiate_projectile)
-#	if !get_node("weapon_group_2").get_children().is_empty():
-#		for node: Node in get_node("weapon_group_1").get_children():
-#			node.Projectile_fired.connect(_instantiate_projectile)
-#	if !get_node("weapon_group_3").get_children().is_empty():
-#		for node: Node in get_node("weapon_group_1").get_children():
-#			node.Projectile_fired.connect(_instantiate_projectile)
-#	if !get_node("weapon_group_4").get_children().is_empty():
-#		for node: Node in get_node("weapon_group_1").get_children():
-#			node.Projectile_fired.connect(_instantiate_projectile)
 
 
 func _update_all_rids() -> void:
