@@ -89,16 +89,16 @@ func _deal_damage(body: Node2D) -> void:
 	_remove_self()
 	pass
 
-func _explode() -> void:
+
+func _explode() -> void:	#TODO
 	#will increase collision shape size (gradually? or Instantly?)
 	_remove_self()
 	pass
-	
-func _on_timer_timeout() -> void:
-	_explode()
 
-func _hitscan_fire() -> void:
+
+func _hitscan_fire() -> void:	#TODO
 	pass
+
 
 func _remove_self()->void:
 	#print("sprite",sprite_rid,"body=",body_rid,"shape=",shape_rid)

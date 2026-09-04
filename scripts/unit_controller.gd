@@ -67,7 +67,7 @@ func Set_desired_coordinates(new_desired_position: Vector2) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	#weight = 1 - exp(0.005 * delta)
+	#weight = 1 - exp(0.005 * delta)		#TODO fix collision issues
 	current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
 	if abs(current_position - desired_position).length() >= 30:	#temp is position satisfied
 		travel_direction = (travel_direction * rotation_ratio + (desired_position - current_position).normalized()).normalized() # * engine_power?
