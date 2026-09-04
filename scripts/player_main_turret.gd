@@ -17,7 +17,7 @@ var left_rotation_limit: float
 var right_rotation_limit: float
 var mouse_position: Vector2
 var desired_rotation: float
-var rotation_flag: bool
+var is_rotation_limited: bool = true
 var can_fire_flag: bool = true
 var Burst_direction: int = -1
 var current_burst_count: int
@@ -34,7 +34,6 @@ func _ready() -> void:
 	#get_node("GunSprite").set_texture(gun_texture)
 	get_node("CooldownTimer").wait_time = cooldown_time
 	get_node("BurstFireCooldownTimer").wait_time = firing_delay
-	rotation_flag = true 
 	rotation = start_rotation_radian
 	left_rotation_limit = start_rotation_radian - rotation_limit_radian
 	right_rotation_limit = start_rotation_radian + rotation_limit_radian
@@ -45,7 +44,7 @@ func _ready() -> void:
 	elif start_rotation_radian <= -PI:
 		left_rotation_limit = right_rotation_limit - 2 * rotation_limit_radian
 	if rotation_limit_radian == PI:
-		rotation_flag = false
+		is_rotation_limited = false
 
 func Load(new_ammunition: ProjectileRes) -> bool:
 	if new_ammunition.type == allowed_ammunition_type and loaded_ammunition.size() <= maximum_magazine_size:	
@@ -74,7 +73,7 @@ func _rotate() -> void:
 			rotation += rotation_speed
 		else:
 			rotation -= rotation_speed
-		if rotation_flag:
+		if is_rotation_limited:
 			rotation = clampf(rotation, left_rotation_limit, right_rotation_limit)
 		else:
 			if abs(rotation) > PI:
