@@ -68,23 +68,22 @@ func Set_desired_coordinates(new_desired_position: Vector2) -> void:
 
 func _physics_process(delta: float) -> void:
 	#weight = 1 - exp(0.005 * delta)		#TODO fix collision issues
-	current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
-	if abs(current_position - desired_position).length() >= 30:	#temp is position satisfied
-		travel_direction = (travel_direction * rotation_ratio + (desired_position - current_position).normalized()).normalized() # * engine_power?
-		current_position +=travel_direction * engine_power		
-		engine_power += acceleration_mult
-		PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction.angle(),current_position))
-	else:
-		engine_power -= acceleration_mult	
-	engine_power = clampf(engine_power,0,max_engine_power)	
-	if Input.is_action_pressed("SPACE"):				#temp
-		desired_position = get_global_mouse_position()	#temp
-		#print(desired_position)
-	pass
+	if(!self.is_queued_for_deletion()):
+		current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
+		if abs(current_position - desired_position).length() >= 30:	#temp is position satisfied
+			travel_direction = (travel_direction * rotation_ratio + (desired_position - current_position).normalized()).normalized() # * engine_power?
+			current_position +=travel_direction * engine_power		
+			engine_power += acceleration_mult
+			PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction.angle(),current_position))
+		else:
+			engine_power -= acceleration_mult	
+		engine_power = clampf(engine_power,0,max_engine_power)	
+		if Input.is_action_pressed("SPACE"):				#temp
+			desired_position = get_global_mouse_position()	#temp
+			#print(desired_position)
 
 func _on_death()->void:
-	_remove_this()
-	queue_free()	
+	_remove_this()	
 
 func _remove_this()->void:
 	#print("sprite",sprite_rid,"body=",body_rid,"shape=",shape_rid)
