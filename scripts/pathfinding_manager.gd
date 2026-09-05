@@ -12,10 +12,14 @@ func Find_path(PositionA:Vector2, PositionB:Vector2,CollisionMask:int = 12)->Arr
 	var nodes_parsed: Array = Array()
 	var nodes_unparsed: Array = Array()
 	var is_not_finished_flag: bool = true
-	var start_node: PathfindingNode = PathfindingNode.new(PositionA,true,0)
+	nodes_unparsed.append(PathfindingNode.new(PositionA,true,0))	#provide starting node
 	var space_state = get_world_2d().direct_space_state
 	while is_not_finished_flag:
 		pass
+		
+		
+		
+		
 	#var ray_query = PhysicsRayQueryParameters2D.create(body_position, body_position + velocity.normalized()*10 )
 	#https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html
 	#https://en.wikipedia.org/wiki/A*_search_algorithm # maybe?
