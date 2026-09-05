@@ -51,7 +51,7 @@ func _ready() -> void:	#TEMP
 	desired_position = starting_position
 	print(desired_position)
 	print(starting_rotation)
-	var on_move = Callable(self,"_move_body")
+	var on_move: Callable = Callable(self,"_move_body")
 	_physics_body_setup()
 	_sprite_setup()
 	PhysicsServer2D.body_set_force_integration_callback(body_rid, on_move, "_body_moved")
@@ -87,14 +87,15 @@ func _on_death()->void:
 
 func _remove_this()->void:
 	#print("sprite",sprite_rid,"body=",body_rid,"shape=",shape_rid)
-	if sprite_rid.is_valid():
+	if(!self.is_queued_for_deletion()):
+		if sprite_rid.is_valid():
 			RenderingServer.canvas_item_clear(sprite_rid)
 			RenderingServer.free_rid(sprite_rid)
-	if body_rid.is_valid():
+		if body_rid.is_valid():
 			PhysicsServer2D.body_set_collision_layer(body_rid,0)
 			PhysicsServer2D.body_set_collision_mask(body_rid,0)
 			PhysicsServer2D.body_clear_shapes(body_rid)
 			PhysicsServer2D.free_rid(body_rid)
-	if shape_rid.is_valid():
+		if shape_rid.is_valid():
 			PhysicsServer2D.free_rid(shape_rid)
 	queue_free()
