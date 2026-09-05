@@ -88,6 +88,7 @@ func _physics_process(_delta: float) -> void:
 	ray_query.exclude = excluded_RIDS # possibly redundant line # actually not, since not setting collision mask, might be change later
 	var ray_result = space_state.intersect_ray(ray_query)
 	if !ray_result.is_empty() and instance_from_id(ray_result.get("collider_id")) != null:
+		#print(ray_result)
 		if is_valid_target(ray_result.get("collider_id")):
 			_deal_damage(instance_from_id(ray_result.get("collider_id")))
 		elif(instance_from_id(ray_result.get("collider_id")).is_class("StaticBody2D")):
@@ -103,7 +104,22 @@ func _deal_damage(body: Node2D) -> void:
 
 func _explode() -> void:	#TODO
 	#will increase collision shape size (gradually? or Instantly?)
-	print("boom")
+	#var body_query = PhysicsShapeQueryParameters2D.create()
+	var space_state = get_world_2d().direct_space_state
+	var explosion_shape_rid = PhysicsServer2D.circle_shape_create()
+	PhysicsServer2D.shape_set_data(explosion_shape_rid, projectile_stats.blast_radius)
+	var params = PhysicsShapeQueryParameters2D.new()
+	var body_position = (PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin())
+	params.motion = body_position
+	params.shape_rid = explosion_shape_rid# Execute physics queries here...# Release the shape when done with physics queries.
+	var explosion_result = space_state.intersect_shape(params,32)
+	for result:Dictionary in explosion_result:
+		if !result.is_empty() and instance_from_id(result.get("collider_id")) != null:
+			#print(result)
+			if is_valid_target(result.get("collider_id")):
+				_deal_damage(instance_from_id(result.get("collider_id")))
+	PhysicsServer2D.free_rid(explosion_shape_rid)
+	#print("boom")
 	_remove_self()
 	pass
 
