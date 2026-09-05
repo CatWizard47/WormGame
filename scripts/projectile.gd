@@ -2,6 +2,7 @@
 class_name Projectile extends Node2D
 var projectile_stats: ProjectileRes 
 var start_position: Vector2
+var end_position: Vector2
 var start_rotation: float
 var is_projectile: bool = true
 var sprite: Texture2D
@@ -12,9 +13,10 @@ var body_rid: RID
 var shape_rid: RID
 var velocity: Vector2
 var current_collision_mask:int
+var explode_timer: Timer = Timer.new()
 
 
-func _init(new_position: Vector2, new_rotation: float, NewProjectile:ProjectileRes,RIDS_to_exclude:Array,collision_mask:int)->void:
+func _init(new_position: Vector2, new_rotation: float, NewProjectile:ProjectileRes,RIDS_to_exclude:Array,collision_mask:int,aimpoint:Vector2)->void:
 	start_position = new_position
 	start_rotation = new_rotation
 	projectile_stats = NewProjectile
@@ -23,6 +25,7 @@ func _init(new_position: Vector2, new_rotation: float, NewProjectile:ProjectileR
 	collision_shape.radius = 0.5
 	excluded_RIDS = RIDS_to_exclude
 	current_collision_mask = collision_mask
+	end_position = aimpoint
 
 func _setup_sprite() -> void:
 	sprite_rid = RenderingServer.canvas_item_create()
@@ -47,20 +50,28 @@ func _setup_body() -> void:
 	PhysicsServer2D.body_set_collision_layer(body_rid,0)
 	PhysicsServer2D.body_set_collision_mask(body_rid,current_collision_mask)
 	PhysicsServer2D.body_attach_object_instance_id(body_rid,self.get_instance_id())
-	PhysicsServer2D.body_apply_central_force(body_rid,Vector2.from_angle(start_rotation).normalized() * projectile_stats.projectile_speed*100)
+	PhysicsServer2D.body_apply_central_impulse(body_rid,Vector2.from_angle(start_rotation).normalized() * projectile_stats.projectile_speed)
 	#might need to rework line above
 
-	#TODO possibly change velocity to be representative of actuall reality
+
 func _ready() -> void:
+	add_child(explode_timer)
+	explode_timer.timeout.connect(_explode)
 	var on_move = Callable(self,"_move_body")
 	_setup_body()
 	_setup_sprite()
 	PhysicsServer2D.body_set_force_integration_callback(body_rid, on_move, "_body_moved")
 	RenderingServer.canvas_item_reset_physics_interpolation(sprite_rid)
+	if projectile_stats.blast_radius > 0:
+		explode_timer.wait_time = ((end_position-start_position).length() / (projectile_stats.projectile_speed ) + 0.05)  #minimum timer length
+		print(explode_timer.wait_time)
+		explode_timer.start()
+	else:
+		explode_timer.start(5.0) 
 	if projectile_stats.projectile_speed == 0:
 		_hitscan_fire()
 	else:
-		velocity = Vector2.from_angle(start_rotation).normalized() * projectile_stats.projectile_speed * 100
+		velocity = Vector2.from_angle(start_rotation).normalized() * projectile_stats.projectile_speed 
 		#self.collision_mask = 12
 	#https://docs.godotengine.org/en/stable/tutorials/performance/using_servers.html
 	#later tho, now base implement # actually done!
@@ -92,6 +103,7 @@ func _deal_damage(body: Node2D) -> void:
 
 func _explode() -> void:	#TODO
 	#will increase collision shape size (gradually? or Instantly?)
+	print("boom")
 	_remove_self()
 	pass
 
@@ -113,8 +125,3 @@ func _remove_self()->void:
 	if shape_rid.is_valid():
 			PhysicsServer2D.free_rid(shape_rid)
 	queue_free()
-
-
-
-func _on_explode_timer_timeout() -> void:
-	_explode()

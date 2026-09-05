@@ -5,10 +5,3 @@
 [node name="Projectile" type="Node2D" unique_id=1300997352]
 script = ExtResource("1_yr2qt")
 metadata/_custom_type_script = "uid://ba1l4w0i3p1sk"
-
-[node name="ExplodeTimer" type="Timer" parent="." unique_id=821222935]
-wait_time = 5.0
-one_shot = true
-autostart = true
-
-[connection signal="timeout" from="ExplodeTimer" to="." method="_on_explode_timer_timeout"]

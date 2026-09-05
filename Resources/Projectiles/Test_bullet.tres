@@ -11,4 +11,5 @@ armour_damage = 1
 projectile_speed = 250.0
 type = "TEST"
 texture = ExtResource("2_8lwd8")
+blast_radius = 5.0
 metadata/_custom_type_script = "uid://du7mdtfhpywlw"
