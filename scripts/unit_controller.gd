@@ -4,7 +4,7 @@ class_name  Drone extends Node2D
 @export var collision_shape: RectangleShape2D
 @export var starting_position: Vector2 #TEMP
 @export var starting_rotation: float
-@export var rotation_ratio: float = 5			#larger values make for slower rotation, has to be >=1
+@export var rotation_ratio: float = 15			#larger values make for slower rotation, has to be >=1
 @export var max_engine_power: float = 10
 @export var acceleration_mult: float = 0.25
 var engine_power: float = 0
@@ -17,7 +17,8 @@ var sprite_rid: RID
 var body_rid: RID
 var shape_rid: RID
 var travel_direction: Vector2
-#var weight
+var estimated_distance_to_stop: float
+var weight: float
 
 #func _init(start_position:Vector2, start_rotation:float):
 #	position=start_position
@@ -58,6 +59,8 @@ func _ready() -> void:	#TEMP
 	RenderingServer.canvas_item_reset_physics_interpolation(sprite_rid)
 	self.status.on_death.connect(_on_death)
 	travel_direction = Vector2.from_angle(starting_rotation).normalized()
+	estimated_distance_to_stop = max_engine_power * (max_engine_power / acceleration_mult)
+	print(estimated_distance_to_stop)
 	#print((PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin()))
 
 
@@ -65,19 +68,25 @@ func Set_desired_coordinates(new_desired_position: Vector2) -> void:
 	desired_position = new_desired_position
 	#also will need to set up rotation here
 
+func _movement(delta:float)->void:
+	weight = 1 - exp(-(engine_power*2) * delta)		#TODO fix collision issues
+	current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
+	if abs(current_position - desired_position).length() >= 20:	#temp is position satisfied	#needs to aproximate distance necessary to stop  
+		#travel_direction = (travel_direction * rotation_ratio + (desired_position - current_position).normalized()).normalized() # * engine_power?	
+		engine_power += acceleration_mult
+		#PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction.angle(),current_position.lerp(current_position + (travel_direction * engine_power), weight)))
+		#TODO PINGS signal to get the next desired position from the pathfinding manager, HERE
+	else:
+		engine_power -= acceleration_mult * 2
+	travel_direction = (travel_direction * rotation_ratio + (desired_position - current_position).normalized()).normalized()
+	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction.angle(),current_position.lerp(current_position + (travel_direction * engine_power), weight)))
+	print(engine_power)
+	engine_power = clampf(engine_power,0,max_engine_power)
 
 func _physics_process(delta: float) -> void:
 	var weight : float = 1 - exp(-(engine_power*2) * delta)		#TODO fix collision issues
 	if(!self.is_queued_for_deletion()):
-		current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
-		if abs(current_position - desired_position).length() >= 30:	#temp is position satisfied
-			travel_direction = (travel_direction * rotation_ratio + (desired_position - current_position).normalized()).normalized() # * engine_power?	
-			engine_power += acceleration_mult
-			PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction.angle(),current_position.lerp(current_position + (travel_direction * engine_power), weight)))
-		else:
-			engine_power -= acceleration_mult * 2
-		print(engine_power)
-		engine_power = clampf(engine_power,0,max_engine_power)	
+		_movement(delta)
 		if Input.is_action_pressed("SPACE"):				#temp
 			desired_position = get_global_mouse_position()	#temp
 			#print(desired_position)
