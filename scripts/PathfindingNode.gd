@@ -2,6 +2,7 @@ class_name PathfindingNode extends Resource
 var position: Vector2i	#should be more performant	
 var type: node_type
 var neighbours: Array	#contains other PathfindingNodes
+var parent_sector_id: int #basically just a pointer to the parent sector see:  get_instance_from_id(instance_id: int)
 
 enum node_type{
 	INTERNAL, 	#when surrounded by other nodes of this sector

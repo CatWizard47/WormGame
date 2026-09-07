@@ -1,5 +1,5 @@
 class_name PathfindingSector extends Resource
-var position: Vector2i	#the centre of a specific sector, might be used for aproximating length of any given route
+var position: Vector2i	#the center of a specific sector, might be used for aproximating length of any given route
 var neighbours: Array 	 
 var contained_nodes:Dictionary[Vector2i, PathfindingNode] 
 
