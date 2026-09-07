@@ -1,14 +1,29 @@
 class_name PathfindingNode extends Resource
-var position: Vector2
-var is_accesible: bool = true
+var position: Vector2i	#should be more performant	
+var type: node_type
 var neighbours: Array	#contains other PathfindingNodes
-var score: int
-						#goes
-						#index'es are to be assigned according to how far away the desired position is
-						#ig, then I can use Array.pop_front()
-						#might be a bad idea actually
-						
-func _init(new_position: Vector2, accesible: bool, new_score = 0)->void:
-	position = new_position
-	is_accesible = accesible
-	score = new_score
+
+enum node_type{
+	INTERNAL, 	#when surrounded by other nodes of this sector
+	BORDER,		#when neighboring an node with a static body or one thats otherwise supposed to be inaccesible 
+	TRANSIT,	#when containing a straight pathway surrounded by inaccesible nodes
+	CROSSING	#when borders another pathfinding sector
+}
+enum node_array_direction{	#to avoid using a dict
+	NORTH,
+	SOUTH,
+	WEST,
+	EAST
+}
+
+	#note 4 later implementation
+	#main idea is to separate a map into sectors, and then make units pathfind within said sectors,
+	#then we can offload the entire pathfinding calc to multiple frames instead of one
+	#also the built in a* implement is designed for predefined static postitions so no go
+	#
+	#also we make units find their own path by doing a shortest-route algorithm on sectors 
+	#which necessitates either a constant sized sectors or placing 
+	#
+	#the most pressing issue is finding a specific memory data obj to contain individual sectors
+	#since arrays are more performant than dictionaries (even using Vector2i's) this might neccesitate some sort of heap or tree
+	#or we keep the things in this main dictionary while also maintaining their references within each node, leapfroging the lookup it's time 
