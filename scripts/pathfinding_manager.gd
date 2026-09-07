@@ -6,12 +6,16 @@ class_name PathfindingManager extends Node2D	#needs to be a 2D node, due to worl
 var shape_rid: RID
 var available_pathfinding_sectors: Array
 var space_state: PhysicsDirectSpaceState2D
+var next_node_vector:Vector2i
+var node_query_parameters: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
 
 
 func _ready() -> void:
 	space_state = get_world_2d().direct_space_state
 	shape_rid = PhysicsServer2D.rectangle_shape_create()
 	PhysicsServer2D.shape_set_data(shape_rid,Vector2(node_size,node_size))
+	next_node_vector = Vector2i(0,-node_size*2) #to point north 
+	node_query_parameters.shape_rid = shape_rid 
 	#var params: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
 	#var body_position: Vector2 = (PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin())
 	#params.motion = body_position
@@ -26,9 +30,26 @@ func generate_navmesh(starting_position:Vector2)->void:
 	pass
 
 func generate_pathfinding_sector(starting_position:Vector2i)->void: #->PathfindingSector
+	#start from the starting position
+	#
 	pass
 
-func generate_pathfinding_node(starting_position:Vector2i)->void: #->PathfindingNode
+func generate_pathfinding_node(center_position:Vector2i,starting_position:Vector2i)->void: #->PathfindingNode
+	#check if extends beyond possible size:
+	if (center_position - starting_position).length() >= (node_size * 2 * maximum_sector_size) + node_size:
+		#return null
+		pass
+	else:
+		for i: int in range(4):
+			node_query_parameters.motion=starting_position + next_node_vector
+			_check_collisions(space_state.intersect_shape(node_query_parameters,32))
+			#TODO actually implement how this is supposed to work/
+			pass
+	#check if any neighbors are innaccesible
+		#left = -x
+		#up = -y
+	#check for border and transit conditionals
+	#if none above are checked make an internal node
 	pass
 
 
