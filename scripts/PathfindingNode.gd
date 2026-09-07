@@ -16,6 +16,12 @@ enum node_array_direction{	#to avoid using a dict
 	EAST
 }
 
+func _init(new_position:Vector2i,new_type:node_type)->void:
+	type=new_type
+	position = new_position
+	#dunno if we will have neighbours at the moment of creation
+	#actually generating the nav nodes will probably not need to be optimized as thoroughly, since it will only be done occasionally
+
 	#note 4 later implementation
 	#main idea is to separate a map into sectors, and then make units pathfind within said sectors,
 	#then we can offload the entire pathfinding calc to multiple frames instead of one

@@ -7,15 +7,15 @@ func _ready() -> void:
 
 
 												#if z-levels are to be implemented, i have to dynamically change col_layer of obj
-func Find_path(PositionA:Vector2, PositionB:Vector2,CollisionMask:int = 12)->Array:
-	var Output:Array = Array()	#Returns an array of positions, individual units will pathfind to,
-	var nodes_parsed: Array = Array()
-	var nodes_unparsed: Array = Array()
-	var is_not_finished_flag: bool = true
-	nodes_unparsed.append(PathfindingNode.new(PositionA,true,0))	#provide starting node
-	var space_state = get_world_2d().direct_space_state
-	while is_not_finished_flag:
-		pass
+#func Find_path(PositionA:Vector2, PositionB:Vector2,CollisionMask:int = 12)->Array:
+	#var Output:Array = Array()	#Returns an array of positions, individual units will pathfind to,
+	#var nodes_parsed: Array = Array()
+	#var nodes_unparsed: Array = Array()
+	#var is_not_finished_flag: bool = true
+	#nodes_unparsed.append(PathfindingNode.new(PositionA,true,0))	#provide starting node
+	#var space_state = get_world_2d().direct_space_state
+	#while is_not_finished_flag:
+	#pass
 		
 		
 		
@@ -28,7 +28,7 @@ func Find_path(PositionA:Vector2, PositionB:Vector2,CollisionMask:int = 12)->Arr
 	#TODO 
 	#Try to figure out the best method of finding nodes, 
 	# like 5 pronged incomplete hexagram or sumthin
-	return Output
+	#return Output
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
