@@ -27,11 +27,18 @@ func _ready() -> void:
 	#needs to append to the A_P_S array:
 	#deleting  might be an issue tho
 func generate_navmesh(starting_position:Vector2)->void:
+	#this needs to just be a loooop generating sector nodes wherever possible, 
+	#jury's out on the stopping cond
+	#maximum distance from (0,0) could work
+	# 
 	pass
 
-func generate_pathfinding_sector(starting_position:Vector2i)->void: #->PathfindingSector
+func generate_pathfinding_sector(starting_position:Vector2i, is_starting_position_central:bool)->void: #->PathfindingSector
 	#start from the starting position
-	#
+	#will need to provide the center position as 
+	#(node_size * 2 * maximum_sector_size) + node_size
+	#from the initial starting node?
+	#in a given axis?
 	pass
 
 							#maybe change center position to maximum node count in sector?
