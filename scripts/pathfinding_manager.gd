@@ -34,31 +34,26 @@ func generate_pathfinding_sector(starting_position:Vector2i)->void: #->Pathfindi
 	#
 	pass
 
+							#maybe change center position to maximum node count in sector?
 func generate_pathfinding_node(center_position:Vector2i,starting_position:Vector2i)->void: #->PathfindingNode
 	#check if extends beyond possible size:
 	if (center_position - starting_position).length() >= (node_size * 2 * maximum_sector_size) + node_size:
 		#return null
 		pass
+	elif (center_position - starting_position).length() >= (node_size * 2 * (maximum_sector_size - 1)) + node_size:
+		pass
+		#needs to check whether a specific node past the length of the sector border is innacesible or inverse, applies crossing type apropriately
 	else:
-		for i: int in range(4):
-			next_node_vector.x = sin(i* (PI/2))
-			next_node_vector.y = cos(i* (PI/2))
-			node_query_parameters.motion=starting_position + next_node_vector
-			#rotate next_node_vector by PI/2 here
+		if _check_neighboring_node_collisions(starting_position):
 			if _check_collisions(space_state.intersect_shape(node_query_parameters,32)):
 				#return PathfindingNode.new(starting_position,PathfindingNode.node_type.BORDER)
 				pass
-			#TODO actually implement how this is supposed to work/
-			
-			
-			
-	#check if any neighbors are innaccesible
-		#left = -x
-		#up = -y
-	#check for border and transit conditionals
-	#if none above are checked make an internal node
+			else:
+				#return PathfindingNode.new(starting_position,PathfindingNode.node_type.INTERNAL)
+				pass
 	pass
 
+	#checks if any neighboring nodes are inaccesible
 func _check_neighboring_node_collisions(position_to_check:Vector2i)->bool:
 	for i: int in range(4):
 		next_node_vector.x = sin(i* (PI/2))
