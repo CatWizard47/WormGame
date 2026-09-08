@@ -6,10 +6,14 @@ var parent_sector_id: int #basically just a pointer to the parent sector see:  g
 var crossing_node_id: int = 0 #only applies to crossing nodes obv, points to next sector 	
 
 enum node_type{
-	INTERNAL, 	#when surrounded by other nodes of this sector
-	BORDER,		#when neighboring an node with a static body or one thats otherwise supposed to be inaccesible 
-	TRANSIT,	#when containing a straight pathway surrounded by inaccesible nodes
-	CROSSING	#when borders another pathfinding sector
+	INTERNAL = 1,  	#when surrounded by other nodes of this sector
+	BORDER = 2,		#when neighboring an node with a static body or one thats otherwise supposed to be inaccesible 
+	CROSSING = 3	#when borders another pathfinding sector
+	#TRANSIT,	#when containing a straight pathway surrounded by inaccesible nodes
+				#after some pondering decided that transit nodes are redundant
+				#since enums are also ints, nodes are in a sequence that equals their weight, 
+				#so units will avoid BORDER and CROSSING nodes whenever possible 
+				#applied weights since it starts at 0 on default
 }
 enum node_array_direction{	#to avoid using a dict
 	NORTH,

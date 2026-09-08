@@ -89,6 +89,16 @@ func _physics_process(delta: float) -> void:
 		_movement(delta)
 		if Input.is_action_pressed("SPACE"):				#temp
 			desired_position = get_global_mouse_position()	#temp
+			#var test:Vector2i
+			#for i: int in range(4):
+				#test.x =sin(i*(PI/2))
+				#test.y =cos(i*(PI/2))
+				#print(test)
+				#node_query_parameters.motion=starting_position + next_node_vector
+				#rotate next_node_vector by PI/2 here
+				#_check_collisions(space_state.intersect_shape(node_query_parameters,32))
+				#TODO actually implement how this is supposed to work/
+			pass
 			#print(desired_position)
 
 func _on_death()->void:

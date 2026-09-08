@@ -41,10 +41,17 @@ func generate_pathfinding_node(center_position:Vector2i,starting_position:Vector
 		pass
 	else:
 		for i: int in range(4):
+			next_node_vector.x = sin(i* (PI/2))
+			next_node_vector.y = cos(i* (PI/2))
 			node_query_parameters.motion=starting_position + next_node_vector
-			_check_collisions(space_state.intersect_shape(node_query_parameters,32))
+			#rotate next_node_vector by PI/2 here
+			if _check_collisions(space_state.intersect_shape(node_query_parameters,32)):
+				#return PathfindingNode.new(starting_position,PathfindingNode.node_type.BORDER)
+				pass
 			#TODO actually implement how this is supposed to work/
-			pass
+			
+			
+			
 	#check if any neighbors are innaccesible
 		#left = -x
 		#up = -y
@@ -52,14 +59,23 @@ func generate_pathfinding_node(center_position:Vector2i,starting_position:Vector
 	#if none above are checked make an internal node
 	pass
 
+func _check_neighboring_node_collisions(position_to_check:Vector2i)->bool:
+	for i: int in range(4):
+		next_node_vector.x = sin(i* (PI/2))
+		next_node_vector.y = cos(i* (PI/2))
+		node_query_parameters.motion=position_to_check + next_node_vector
+		if _check_collisions(space_state.intersect_shape(node_query_parameters,32)):
+			return true
+	return false
+
 
 	#needs to check whether a given node placement is accesible at all:
 func _check_collisions(shape_intersect:Array[Dictionary])->bool:
 	for result:Dictionary in shape_intersect:
 		if !result.is_empty() and instance_from_id(result.get("collider_id")) != null:
 			if instance_from_id(result.get("collider_id")).is_class("StaticBody2D"):
-				return false #provided I won't add any more stuff that's meant to block things, this should be fine 
-	return true	
+				return true #provided I won't add any more stuff that's meant to block things, this should be fine 
+	return false
 	#above thing might even need to be simplyfied since we will only be checking collision layer 4 specifically
 	#TODO check: /|\
 
