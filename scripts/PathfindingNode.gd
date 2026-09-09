@@ -6,16 +6,18 @@ var neighbours: Array	#contains other PathfindingNodes
 var parent_sector_id: int #basically just a pointer to the parent sector see:  get_instance_from_id(instance_id: int)
 var crossing_node_id: int = 0 #only applies to crossing nodes obv, points to next sector 	
 
-enum node_type{
-	INTERNAL = 1,  	#when surrounded by other nodes of this sector
-	BORDER = 2,		#when neighboring an node with a static body or one thats otherwise supposed to be inaccesible 
-	CROSSING = 3	#when borders another pathfinding sector
+	#we don't really need an entire enum type, if we could already use crossing_node_id 
+
+#enum node_type{		
+	#INTERNAL = 1,  	#when surrounded by other nodes of this sector
+	#BORDER = 2,		#when neighboring an node with a static body or one thats otherwise supposed to be inaccesible 
+	#CROSSING = 3	#when borders another pathfinding sector
 	#TRANSIT,	#when containing a straight pathway surrounded by inaccesible nodes
 				#after some pondering decided that transit nodes are redundant
 				#since enums are also ints, nodes are in a sequence that equals their weight, 
 				#so units will avoid BORDER and CROSSING nodes whenever possible 
 				#applied weights since it starts at 0 on default
-}
+#}
 enum node_array_direction{	#to avoid using a dict
 	NORTH,
 	SOUTH,
@@ -26,7 +28,13 @@ enum node_array_direction{	#to avoid using a dict
 func _init(new_position:Vector2i,new_is_border:bool,new_crossing_node_id:int = -1)->void:
 	is_border=new_is_border
 	position = new_position
-	crossing_node_id = new_crossing_node_id
+	crossing_node_id = new_crossing_node_id 	
+	
+	#crossing_node_id:
+	# = -1 if not a crossing
+	# = 0 if pending to be found
+	# = any different num > 0, probably valid
+	
 	#dunno if we will have neighbours at the moment of creation
 	#actually generating the nav nodes will probably not need to be optimized as thoroughly, since it will only be done occasionally
 

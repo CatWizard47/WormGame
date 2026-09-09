@@ -16,6 +16,7 @@ func _ready() -> void:
 	PhysicsServer2D.shape_set_data(shape_rid,Vector2(node_size,node_size))
 	next_node_vector = Vector2i(0,-node_size*2) #to point north 
 	node_query_parameters.shape_rid = shape_rid 
+	node_query_parameters.collision_mask = 8 #default value maybe will have to change it l8tr
 	#var params: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
 	#var body_position: Vector2 = (PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin())
 	#params.motion = body_position
@@ -42,23 +43,18 @@ func generate_pathfinding_sector(starting_position:Vector2i, is_starting_positio
 	pass
 
 							#maybe change center position to maximum node count in sector?
-func generate_pathfinding_node(center_position:Vector2i,starting_position:Vector2i)->void: #->PathfindingNode
+func generate_pathfinding_node(center_position:Vector2i,starting_position:Vector2i)->PathfindingNode:
 	#check if extends beyond possible size:
 	if (center_position - starting_position).length() >= (node_size * 2 * maximum_sector_size) + node_size:
-		#return null
-		pass
+		return null
 	elif (center_position - starting_position).length() >= (node_size * 2 * (maximum_sector_size - 1)) + node_size:
-		pass
+		return null #TO IMPLEMENT
 		#needs to check whether a specific node past the length of the sector border is innacesible or inverse, applies crossing type apropriately
 	else:
-		if _check_neighboring_node_collisions(starting_position).size()>0:
-			if _check_collisions(space_state.intersect_shape(node_query_parameters,32)):
-				#return PathfindingNode.new(starting_position,PathfindingNode.node_type.BORDER)
-				pass
-			else:
-				#return PathfindingNode.new(starting_position,PathfindingNode.node_type.INTERNAL)
-				pass
-	pass
+		if _check_neighboring_node_collisions(starting_position).size()>0 and _check_collisions(space_state.intersect_shape(node_query_parameters,32)) :
+			return PathfindingNode.new(starting_position,true)
+		else:
+			return PathfindingNode.new(starting_position,false)
 
 	#checks if any neighboring nodes are inaccesible, returns array of that equals node_direction enum
 func _check_neighboring_node_collisions(position_to_check:Vector2i)-> Array:
