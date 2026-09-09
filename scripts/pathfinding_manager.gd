@@ -51,7 +51,7 @@ func generate_pathfinding_node(center_position:Vector2i,starting_position:Vector
 		pass
 		#needs to check whether a specific node past the length of the sector border is innacesible or inverse, applies crossing type apropriately
 	else:
-		if _check_neighboring_node_collisions(starting_position):
+		if _check_neighboring_node_collisions(starting_position).size()>0:
 			if _check_collisions(space_state.intersect_shape(node_query_parameters,32)):
 				#return PathfindingNode.new(starting_position,PathfindingNode.node_type.BORDER)
 				pass
@@ -60,15 +60,16 @@ func generate_pathfinding_node(center_position:Vector2i,starting_position:Vector
 				pass
 	pass
 
-	#checks if any neighboring nodes are inaccesible
-func _check_neighboring_node_collisions(position_to_check:Vector2i)->bool:
+	#checks if any neighboring nodes are inaccesible, returns array of that equals node_direction enum
+func _check_neighboring_node_collisions(position_to_check:Vector2i)-> Array:
+	var output:Array = Array()
 	for i: int in range(4):
 		next_node_vector.x = sin(i* (PI/2))
 		next_node_vector.y = cos(i* (PI/2))
 		node_query_parameters.motion=position_to_check + next_node_vector
 		if _check_collisions(space_state.intersect_shape(node_query_parameters,32)):
-			return true
-	return false
+			output.append(i) #i is the exact same as node_direction enum
+	return output
 
 
 	#needs to check whether a given node placement is accesible at all:
