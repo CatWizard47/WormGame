@@ -35,17 +35,20 @@ func _ready() -> void:
 func generate_navmesh(current_position:Vector2i)->void:
 	current_navmesh.clear()	#probably unnecesary but whatevr
 	var positions_to_check:Array = Array() #in Vector2i
-	var temp_array:Array = Array()
+	var neighbours_of_node:Array = Array()
 	node_query_parameters.motion = current_position
 	if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
-		temp_array = generate_pathfinding_node(current_navmesh,current_position)
-		#current_navmesh[current_position] = generate_pathfinding_node(current_position)
-		for index in _check_neighboring_node_collisions(current_position):
-			positions_to_check.append(index*(PI/2))
-	else:
-		#error
-		pass
-	pass
+		neighbours_of_node = generate_pathfinding_node(current_navmesh,current_position)
+		for direction in neighbours_of_node:
+			positions_to_check.append(current_position + (node_size*2*(direction*(PI/2))))
+			
+		while positions_to_check.size()>0:
+			current_position = positions_to_check.pop_back()
+			neighbours_of_node = generate_pathfinding_node(current_navmesh,current_position)
+			for direction in neighbours_of_node:
+				if !positions_to_check.has(current_position + (node_size*2*(direction*(PI/2)))):
+					positions_to_check.append(current_position + (node_size*2*(direction*(PI/2))))
+
 
 func generate_pathfinding_sector(starting_position:Vector2i, is_starting_position_central:bool)->void: #->PathfindingSector
 	#start from the starting position
