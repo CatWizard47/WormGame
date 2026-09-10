@@ -33,7 +33,7 @@ func _ready() -> void:
 	#periodically it will call sector generator function, 
 	#which will carve out a certain area 
 func generate_navmesh(starting_position:Vector2)->void:
-
+	var positions_to_check:Array = Array() #in Vector2i
 	pass
 
 func generate_pathfinding_sector(starting_position:Vector2i, is_starting_position_central:bool)->void: #->PathfindingSector
@@ -46,20 +46,21 @@ func generate_pathfinding_sector(starting_position:Vector2i, is_starting_positio
 
 	#Has to be safeguarded and only provided accesible nodes, 
 func generate_pathfinding_node(node_position:Vector2i)->PathfindingNode:
-	if _check_neighboring_node_collisions(node_position).size()>0:
+	if _check_neighboring_node_collisions(node_position).size() < 4:
 		return PathfindingNode.new(node_position,true)
 	else:
 		return PathfindingNode.new(node_position,false)
 	
 
 	#checks if any neighboring nodes are inaccesible, returns array of that equals node_direction enum
+	#returned Array is all accesible nodes
 func _check_neighboring_node_collisions(position_to_check:Vector2i)-> Array:
 	var output:Array = Array()
 	for i: int in range(4):
 		next_node_vector.x = sin(i* (PI/2))
 		next_node_vector.y = cos(i* (PI/2))
 		node_query_parameters.motion=position_to_check + next_node_vector
-		if _check_collisions(space_state.intersect_shape(node_query_parameters,32)):
+		if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
 			output.append(i) #i is the exact same as node_direction enum
 	return output
 
