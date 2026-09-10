@@ -46,7 +46,7 @@ func generate_navmesh(current_position:Vector2i)->void:
 			current_position = positions_to_check.pop_back()
 			neighbours_of_node = generate_pathfinding_node(current_navmesh,current_position)
 			for direction in neighbours_of_node:
-				if !positions_to_check.has(current_position + (node_size*2*(direction*(PI/2)))):
+				if !current_navmesh.has(current_position + (node_size*2*(direction*(PI/2)))):
 					positions_to_check.append(current_position + (node_size*2*(direction*(PI/2))))
 
 
@@ -118,3 +118,10 @@ func _process(delta: float) -> void:
 
 
 	#maybe i just gotta make a navmesh first, then divide the thing into sectors
+
+func DEBUG_force_labels_on_nodes()->void:
+	for key in current_navmesh:
+		var debug_scene = preload("res://debug_test_label_scene.tscn").instantiate()
+		debug_scene.change_text("val= ",str(current_navmesh[key])," key= ",str(key))
+		debug_scene.position = key
+		add_child(debug_scene)

@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://dlchaea2nicd0"]
+
+[ext_resource type="Script" uid="uid://b4hdffhn5r20t" path="res://debug_test_label_scene.gd" id="1_ldvny"]
+
+[node name="DEBUG_TEST_LABEL_SCENE" type="Control" unique_id=197070227]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ldvny")
+
+[node name="Label" type="Label" parent="." unique_id=108678309]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
