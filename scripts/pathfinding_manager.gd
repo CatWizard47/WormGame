@@ -32,8 +32,19 @@ func _ready() -> void:
 	#this will generate a navmesh, appending it to the navmesh dict
 	#periodically it will call sector generator function, 
 	#which will carve out a certain area 
-func generate_navmesh(starting_position:Vector2)->void:
+func generate_navmesh(current_position:Vector2i)->void:
+	current_navmesh.clear()	#probably unnecesary but whatevr
 	var positions_to_check:Array = Array() #in Vector2i
+	var temp_array:Array = Array()
+	node_query_parameters.motion = current_position
+	if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
+		temp_array = generate_pathfinding_node(current_navmesh,current_position)
+		#current_navmesh[current_position] = generate_pathfinding_node(current_position)
+		for index in _check_neighboring_node_collisions(current_position):
+			positions_to_check.append(index*(PI/2))
+	else:
+		#error
+		pass
 	pass
 
 func generate_pathfinding_sector(starting_position:Vector2i, is_starting_position_central:bool)->void: #->PathfindingSector
@@ -45,11 +56,13 @@ func generate_pathfinding_sector(starting_position:Vector2i, is_starting_positio
 	pass
 
 	#Has to be safeguarded and only provided accesible nodes, 
-func generate_pathfinding_node(node_position:Vector2i)->PathfindingNode:
-	if _check_neighboring_node_collisions(node_position).size() < 4:
-		return PathfindingNode.new(node_position,true)
+func generate_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,PathfindingNode],node_position:Vector2i)->Array:
+	var neighbour_array: Array = _check_neighboring_node_collisions(node_position)
+	if neighbour_array.size() < 4:
+		dict_to_append_to[node_position] = PathfindingNode.new(node_position,true)
 	else:
-		return PathfindingNode.new(node_position,false)
+		dict_to_append_to[node_position] = PathfindingNode.new(node_position,false)
+	return neighbour_array
 	
 
 	#checks if any neighboring nodes are inaccesible, returns array of that equals node_direction enum
@@ -66,6 +79,7 @@ func _check_neighboring_node_collisions(position_to_check:Vector2i)-> Array:
 
 
 	#needs to check whether a given node placement is accesible at all:
+	#returns true when collisions present, false otherwise
 func _check_collisions(shape_intersect:Array[Dictionary])->bool:
 	for result:Dictionary in shape_intersect:
 		if !result.is_empty() and instance_from_id(result.get("collider_id")) != null:
