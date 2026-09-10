@@ -3,8 +3,9 @@ var position: Vector2i	#should be more performant
 var is_border:bool = false
 #var type: node_type
 var neighbours: Array	#contains other PathfindingNodes
-var parent_sector_id: int #basically just a pointer to the parent sector see:  get_instance_from_id(instance_id: int)
-var crossing_node_id: int = 0 #only applies to crossing nodes obv, points to next sector 	
+var parent_sector_id: int = 0	#basically just a pointer to the parent sector see:  get_instance_from_id(instance_id: int)
+								# 0 = orphaned, needs to be given a sector
+var crossing_node_id: Dictionary[node_array_direction, int]  #only applies to crossing nodes obv, points to next sector 	
 
 	#we don't really need an entire enum type, if we could already use crossing_node_id 
 
@@ -25,10 +26,10 @@ enum node_array_direction{	#to avoid using a dict
 	EAST
 }
 
-func _init(new_position:Vector2i,new_is_border:bool,new_crossing_node_id:int = -1)->void:
+func _init(new_position:Vector2i,new_is_border:bool)->void:
 	is_border=new_is_border
-	position = new_position
-	crossing_node_id = new_crossing_node_id 	
+	position = new_position	
+	crossing_node_id = {}
 	
 	#crossing_node_id:
 	# = -1 if not a crossing

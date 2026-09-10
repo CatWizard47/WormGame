@@ -8,7 +8,7 @@ var available_pathfinding_sectors: Array
 var space_state: PhysicsDirectSpaceState2D
 var next_node_vector:Vector2i
 var node_query_parameters: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
-
+var current_navmesh:Dictionary[Vector2i, PathfindingNode] 
 
 func _ready() -> void:
 	space_state = get_world_2d().direct_space_state
@@ -27,11 +27,13 @@ func _ready() -> void:
 
 	#needs to append to the A_P_S array:
 	#deleting  might be an issue tho
+	
+	#actually will be the primary loop thing here
+	#this will generate a navmesh, appending it to the navmesh dict
+	#periodically it will call sector generator function, 
+	#which will carve out a certain area 
 func generate_navmesh(starting_position:Vector2)->void:
-	#this needs to just be a loooop generating sector nodes wherever possible, 
-	#jury's out on the stopping cond
-	#maximum distance from (0,0) could work
-	# 
+
 	pass
 
 func generate_pathfinding_sector(starting_position:Vector2i, is_starting_position_central:bool)->void: #->PathfindingSector
@@ -42,24 +44,13 @@ func generate_pathfinding_sector(starting_position:Vector2i, is_starting_positio
 	#in a given axis?
 	pass
 
-							#maybe change center position to maximum node count in sector?
-func generate_pathfinding_node(center_position:Vector2i,starting_position:Vector2i)->PathfindingNode:
-	#check if extends beyond possible size:
-	if (center_position - starting_position).length() >= (node_size * 2 * maximum_sector_size) + node_size:
-		return null
-	elif (center_position - starting_position).length() >= (node_size * 2 * (maximum_sector_size - 1)) + node_size:
-		#return null #TO IMPLEMENT
-		#this won't work probs doesn't update node_query_parameters
-		if _check_neighboring_node_collisions(starting_position).size()>0 and _check_collisions(space_state.intersect_shape(node_query_parameters,32)) :
-			return PathfindingNode.new(starting_position,true,0)
-		else:
-			return PathfindingNode.new(starting_position,false,0)
-		#needs to check whether a specific node past the length of the sector border is innacesible or inverse, applies crossing type apropriately
+	#Has to be safeguarded and only provided accesible nodes, 
+func generate_pathfinding_node(node_position:Vector2i)->PathfindingNode:
+	if _check_neighboring_node_collisions(node_position).size()>0:
+		return PathfindingNode.new(node_position,true)
 	else:
-		if _check_neighboring_node_collisions(starting_position).size()>0 and _check_collisions(space_state.intersect_shape(node_query_parameters,32)) :
-			return PathfindingNode.new(starting_position,true)
-		else:
-			return PathfindingNode.new(starting_position,false)
+		return PathfindingNode.new(node_position,false)
+	
 
 	#checks if any neighboring nodes are inaccesible, returns array of that equals node_direction enum
 func _check_neighboring_node_collisions(position_to_check:Vector2i)-> Array:
@@ -106,3 +97,6 @@ func _process(delta: float) -> void:
 	# obv this is to change central node_position with maximum size?
 	#but then will have to make a more complex long range pathfinging algo 
 	#or not will just have to avg the position of every node to get the central position of sector ig 
+
+
+	#maybe i just gotta make a navmesh first, then divide the thing into sectors
