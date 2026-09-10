@@ -48,7 +48,12 @@ func generate_pathfinding_node(center_position:Vector2i,starting_position:Vector
 	if (center_position - starting_position).length() >= (node_size * 2 * maximum_sector_size) + node_size:
 		return null
 	elif (center_position - starting_position).length() >= (node_size * 2 * (maximum_sector_size - 1)) + node_size:
-		return null #TO IMPLEMENT
+		#return null #TO IMPLEMENT
+		#this won't work probs doesn't update node_query_parameters
+		if _check_neighboring_node_collisions(starting_position).size()>0 and _check_collisions(space_state.intersect_shape(node_query_parameters,32)) :
+			return PathfindingNode.new(starting_position,true,0)
+		else:
+			return PathfindingNode.new(starting_position,false,0)
 		#needs to check whether a specific node past the length of the sector border is innacesible or inverse, applies crossing type apropriately
 	else:
 		if _check_neighboring_node_collisions(starting_position).size()>0 and _check_collisions(space_state.intersect_shape(node_query_parameters,32)) :
@@ -93,3 +98,11 @@ func _check_collisions(shape_intersect:Array[Dictionary])->bool:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
+	
+	#current plan is as follows:
+	#generate a sector navmesh with all nodes  possesing a crossing_node_id = 0
+	# then do another pass of every node in a sector? 
+	#assigning referances to neighbours and checking for border / crossing cond?
+	# obv this is to change central node_position with maximum size?
+	#but then will have to make a more complex long range pathfinging algo 
+	#or not will just have to avg the position of every node to get the central position of sector ig 
