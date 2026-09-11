@@ -3,6 +3,7 @@ extends Control
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	self.scale=Vector2(0.5,0.5)
 	pass # Replace with function body.
 
 func _change_text(text:String)->void:

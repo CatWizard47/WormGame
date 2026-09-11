@@ -19,6 +19,7 @@ var shape_rid: RID
 var travel_direction: Vector2
 var estimated_distance_to_stop: float
 var lerp_weight: float
+var can_generate_navmesh: bool = true
 
 #func _init(start_position:Vector2, start_rotation:float):
 #	position=start_position
@@ -62,6 +63,8 @@ func _ready() -> void:	#TEMP
 	estimated_distance_to_stop = (max_engine_power / acceleration_mult) * acceleration_mult + max_engine_power 
 	print(estimated_distance_to_stop)
 	#print((PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin()))
+	
+	
 
 
 func Set_desired_coordinates(new_desired_position: Vector2) -> void:
@@ -87,8 +90,14 @@ func _physics_process(delta: float) -> void:
 	#var weight : float = 1 - exp(-(engine_power*2) * delta)		#TODO fix collision issues
 	if(!self.is_queued_for_deletion()):
 		_movement(delta)
-		if Input.is_action_pressed("SPACE"):				#temp
-			desired_position = get_global_mouse_position()	#temp
+		if Input.is_action_pressed("SPACE") and	can_generate_navmesh:			#temp
+			#TEMP
+			var PFM: PathfindingManager = PathfindingManager.new()
+			add_sibling(PFM)
+			PFM.generate_navmesh(Vector2i(150,300))
+			can_generate_navmesh = false
+			#TEMP
+			#desired_position = get_global_mouse_position()	#temp
 			#var test:Vector2i
 			#for i: int in range(4):
 				#test.x =sin(i*(PI/2))

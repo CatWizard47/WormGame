@@ -7,6 +7,11 @@ var parent_sector_id: int = 0	#basically just a pointer to the parent sector see
 								# 0 = orphaned, needs to be given a sector
 var crossing_node_id: Dictionary[node_array_direction, int]  #only applies to crossing nodes obv, points to next sector 	
 
+var is_finished: bool = false	#changed to true after border, 
+								#parent_sector_id and
+								#crossing_node_id 
+								#are filled out
+
 	#we don't really need an entire enum type, if we could already use crossing_node_id 
 
 #enum node_type{		

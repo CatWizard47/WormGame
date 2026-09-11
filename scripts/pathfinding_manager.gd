@@ -33,6 +33,7 @@ func _ready() -> void:
 	#periodically it will call sector generator function, 
 	#which will carve out a certain area 
 func generate_navmesh(current_position:Vector2i)->void:
+	print("generating navmesh")
 	current_navmesh.clear()	#probably unnecesary but whatevr
 	var positions_to_check:Array = Array() #in Vector2i
 	var neighbours_of_node:Array = Array()
@@ -50,13 +51,13 @@ func generate_navmesh(current_position:Vector2i)->void:
 					positions_to_check.append(current_position + (node_size*2*(direction*(PI/2))))
 
 
-func generate_pathfinding_sector(starting_position:Vector2i, is_starting_position_central:bool)->void: #->PathfindingSector
+#func generate_pathfinding_sector(starting_position:Vector2i, is_starting_position_central:bool)->void: #->PathfindingSector
 	#start from the starting position
 	#will need to provide the center position as 
 	#(node_size * 2 * maximum_sector_size) + node_size
 	#from the initial starting node?
 	#in a given axis?
-	pass
+	#pass
 
 	#Has to be safeguarded and only provided accesible nodes, 
 func generate_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,PathfindingNode],node_position:Vector2i)->Array:
@@ -65,6 +66,7 @@ func generate_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,Pathfinding
 		dict_to_append_to[node_position] = PathfindingNode.new(node_position,true)
 	else:
 		dict_to_append_to[node_position] = PathfindingNode.new(node_position,false)
+	DEBUG_make_label_for_position(node_position) #DEBUG #COMM OUT L8TR
 	return neighbour_array
 	
 
@@ -105,7 +107,7 @@ func _check_collisions(shape_intersect:Array[Dictionary])->bool:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 	
 	#current plan is as follows:
@@ -125,3 +127,9 @@ func DEBUG_force_labels_on_nodes()->void:
 		debug_scene.change_text("val= ",str(current_navmesh[key])," key= ",str(key))
 		debug_scene.position = key
 		add_child(debug_scene)
+
+func DEBUG_make_label_for_position(label_position:Vector2i)->void:
+	var debug_scene = preload("res://debug_test_label_scene.tscn").instantiate()
+	debug_scene.change_text("position= ",str(label_position))
+	debug_scene.position = label_position
+	add_child(debug_scene)
