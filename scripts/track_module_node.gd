@@ -8,6 +8,7 @@ var animation_stop_flag: bool = false
 func _ready() -> void:
 	if position.x < 0:
 		horizontal_orientation_inverted_flag = true	
+	#print(instance_from_id(self.get_instance_id()))
 	#left_module = get_node("Left_module")
 	#right_module = get_node("Right_module")
 	#animation_timer = get_node("Animation_timer")

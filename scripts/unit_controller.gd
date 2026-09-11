@@ -45,14 +45,15 @@ func _physics_body_setup() -> void:
 	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(starting_rotation,starting_position))
 	PhysicsServer2D.body_set_param(body_rid,PhysicsServer2D.BODY_PARAM_GRAVITY_SCALE,0)
 	#PhysicsServer2D.body_set_param(body_rid,PhysicsServer2D.BODY_PARAM_MASS,1)
-	PhysicsServer2D.body_set_collision_layer(body_rid,12)
+	PhysicsServer2D.body_set_collision_layer(body_rid,4)
 	PhysicsServer2D.body_set_collision_mask(body_rid,12)	#to make them slide below larger units
 	PhysicsServer2D.body_attach_object_instance_id(body_rid,self.get_instance_id())
 
 func _ready() -> void:	#TEMP
+	#print(instance_from_id(self.get_instance_id()))
 	desired_position = starting_position
-	print(desired_position)
-	print(starting_rotation)
+	#print(desired_position)
+	#print(starting_rotation)
 	var on_move: Callable = Callable(self,"_move_body")
 	_physics_body_setup()
 	_sprite_setup()
@@ -61,7 +62,7 @@ func _ready() -> void:	#TEMP
 	self.status.on_death.connect(_on_death)
 	travel_direction = Vector2.from_angle(starting_rotation).normalized()
 	estimated_distance_to_stop = (max_engine_power / acceleration_mult) * acceleration_mult + max_engine_power 
-	print(estimated_distance_to_stop)
+	#print(estimated_distance_to_stop)
 	#print((PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin()))
 	
 	

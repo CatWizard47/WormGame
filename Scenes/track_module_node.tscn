@@ -49,7 +49,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Track_module_node" type="StaticBody2D" unique_id=1524976993 node_paths=PackedStringArray("left_module", "right_module", "animation_timer")]
+[node name="Track_module_node" type="StaticBody2D" unique_id=1552222894 node_paths=PackedStringArray("left_module", "right_module", "animation_timer")]
 collision_layer = 2
 collision_mask = 12
 script = ExtResource("1_n7xal")

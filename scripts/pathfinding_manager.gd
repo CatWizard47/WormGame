@@ -1,8 +1,8 @@
 class_name PathfindingManager extends Node2D	#needs to be a 2D node, due to world2D usage
 # Called when the node enters the scene tree for the first time.
 #@export var node_border_lenght: int
-@export var node_size: int #dist from the center so a node with size 10 is 20x20 square 
-@export var maximum_sector_size: int #in nodes width from the center so 2* this for absolute width | height
+@export var node_size: int = 5#dist from the center so a node with size 10 is 20x20 square 
+@export var maximum_sector_size: int = 100#in nodes width from the center so 2* this for absolute width | height
 var shape_rid: RID
 var available_pathfinding_sectors: Array
 var space_state: PhysicsDirectSpaceState2D
@@ -17,6 +17,8 @@ func _ready() -> void:
 	next_node_vector = Vector2i(0,-node_size*2) #to point north 
 	node_query_parameters.shape_rid = shape_rid 
 	node_query_parameters.collision_mask = 8 #default value maybe will have to change it l8tr
+	print(node_query_parameters.shape)
+	print(node_query_parameters.shape_rid)
 	#var params: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
 	#var body_position: Vector2 = (PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin())
 	#params.motion = body_position
@@ -37,18 +39,31 @@ func generate_navmesh(current_position:Vector2i)->void:
 	current_navmesh.clear()	#probably unnecesary but whatevr
 	var positions_to_check:Array = Array() #in Vector2i
 	var neighbours_of_node:Array = Array()
+	var added_position:Vector2i = Vector2i.ZERO
 	node_query_parameters.motion = current_position
+	#PhysicsServer2D.body_set_shape_transform(shape_rid,0,Transform2D(0,current_position))
+	node_query_parameters.transform = Transform2D(0,current_position)
+	print(node_query_parameters.transform)
+	print(node_query_parameters.motion)
+	#print(instance_from_id(space_state.intersect_shape(node_query_parameters,32)[0].get("collider_id")).position)
+	
 	if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
 		neighbours_of_node = generate_pathfinding_node(current_navmesh,current_position)
 		for direction in neighbours_of_node:
-			positions_to_check.append(current_position + (node_size*2*(direction*(PI/2))))
-			
+			#added_position = (current_position + (node_size*2*(direction*(PI/2))))
+			added_position.x = (sin(direction * (PI/2)) * 2 * node_size) + current_position.x
+			added_position.y = (cos(direction * (PI/2)) * 2 * node_size) + current_position.y
+			positions_to_check.append(added_position) 
+		print(positions_to_check)
 		while positions_to_check.size()>0:
 			current_position = positions_to_check.pop_back()
 			neighbours_of_node = generate_pathfinding_node(current_navmesh,current_position)
 			for direction in neighbours_of_node:
-				if !current_navmesh.has(current_position + (node_size*2*(direction*(PI/2)))):
-					positions_to_check.append(current_position + (node_size*2*(direction*(PI/2))))
+				#added_position = current_position + (node_size*2*(direction*(PI/2)))
+				added_position.x = (sin(direction * (PI/2)) * 2 * node_size) + current_position.x
+				added_position.y = (cos(direction * (PI/2)) * 2 * node_size) + current_position.y
+				if !current_navmesh.has(added_position):
+					positions_to_check.append(added_position)
 
 
 #func generate_pathfinding_sector(starting_position:Vector2i, is_starting_position_central:bool)->void: #->PathfindingSector
@@ -80,6 +95,7 @@ func _check_neighboring_node_collisions(position_to_check:Vector2i)-> Array:
 		node_query_parameters.motion=position_to_check + next_node_vector
 		if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
 			output.append(i) #i is the exact same as node_direction enum
+	print(output)
 	return output
 
 
@@ -89,6 +105,7 @@ func _check_collisions(shape_intersect:Array[Dictionary])->bool:
 	for result:Dictionary in shape_intersect:
 		if !result.is_empty() and instance_from_id(result.get("collider_id")) != null:
 			if instance_from_id(result.get("collider_id")).is_class("StaticBody2D"):
+				#print(instance_from_id(result.get("collider_id")))
 				return true #provided I won't add any more stuff that's meant to block things, this should be fine 
 	return false
 	#above thing might even need to be simplyfied since we will only be checking collision layer 4 specifically
@@ -121,6 +138,9 @@ func _process(_delta: float) -> void:
 
 	#maybe i just gotta make a navmesh first, then divide the thing into sectors
 
+func _remove_this()->void:
+	PhysicsServer2D.free_rid(shape_rid)
+
 func DEBUG_force_labels_on_nodes()->void:
 	for key in current_navmesh:
 		var debug_scene = preload("res://debug_test_label_scene.tscn").instantiate()
@@ -130,6 +150,8 @@ func DEBUG_force_labels_on_nodes()->void:
 
 func DEBUG_make_label_for_position(label_position:Vector2i)->void:
 	var debug_scene = preload("res://debug_test_label_scene.tscn").instantiate()
-	debug_scene.change_text("position= ",str(label_position))
+	debug_scene.change_text(str("position= ",str(label_position)))
 	debug_scene.position = label_position
 	add_child(debug_scene)
+	
+	

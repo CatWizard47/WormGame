@@ -6,7 +6,7 @@ func _ready() -> void:
 	self.scale=Vector2(0.5,0.5)
 	pass # Replace with function body.
 
-func _change_text(text:String)->void:
+func change_text(text:String)->void:
 	label_node.text=text
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
