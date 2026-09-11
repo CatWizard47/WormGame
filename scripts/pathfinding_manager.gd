@@ -42,20 +42,16 @@ func generate_navmesh(current_position:Vector2i)->void:
 	if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
 		neighbours_of_node = _add_pathfinding_node(current_navmesh,positions_checked,current_position)
 		#neighbours_of_node = generate_pathfinding_node(current_navmesh,current_position)
-		positions_checked.append(current_position)
+		#positions_checked.append(current_position)
 		for direction in neighbours_of_node:
 			added_position = current_position +(_get_direction_vector(direction) * node_size * 2)
-			added_position.x = (int(sin(direction * (PI/2))) * 2 * node_size) + current_position.x
-			added_position.y = (int(cos(direction * (PI/2))) * 2 * node_size) + current_position.y
 			if positions_checked.find(added_position)==-1:
 				positions_to_check.append(added_position) 
-		#print(positions_to_check)
-		#print(current_navmesh)
 		while positions_to_check.size()>0:
 			current_position = positions_to_check.pop_back()
-			positions_checked.append(current_position)
-			#print(positions_checked)
-			neighbours_of_node = generate_pathfinding_node(current_navmesh,current_position)
+			neighbours_of_node = _add_pathfinding_node(current_navmesh,positions_checked,current_position)
+			#positions_checked.append(current_position)
+			#neighbours_of_node = generate_pathfinding_node(current_navmesh,current_position)
 			for direction in neighbours_of_node:
 				added_position = current_position + (_get_direction_vector(direction) * node_size * 2)
 				if positions_checked.find(added_position)==-1:
