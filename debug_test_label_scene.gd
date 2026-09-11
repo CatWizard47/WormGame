@@ -10,5 +10,5 @@ func change_text(text:String)->void:
 	label_node.text=text
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass

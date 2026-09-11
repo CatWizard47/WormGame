@@ -107,7 +107,7 @@ func _explode() -> void:	#TODO
 	PhysicsServer2D.shape_set_data(explosion_shape_rid, projectile_stats.blast_radius)
 	var params: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
 	var body_position: Vector2 = (PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin())
-	params.motion = body_position
+	params.transform = Transform2D(0,body_position)
 	params.shape_rid = explosion_shape_rid# Execute physics queries here...# Release the shape when done with physics queries.
 	var explosion_result = space_state.intersect_shape(params,32)
 	for result:Dictionary in explosion_result:
