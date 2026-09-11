@@ -1,7 +1,7 @@
 class_name PathfindingManager extends Node2D	#needs to be a 2D node, due to world2D usage
 # Called when the node enters the scene tree for the first time.
 #@export var node_border_lenght: int
-@export var node_size: int = 10#dist from the center so a node with size 10 is 20x20 square 
+@export var node_size: int = 15#dist from the center so a node with size 10 is 20x20 square 
 @export var maximum_sector_size: int = 100#in nodes width from the center so 2* this for absolute width | height
 var shape_rid: RID
 var available_pathfinding_sectors: Array
@@ -17,14 +17,6 @@ func _ready() -> void:
 	next_node_vector = Vector2i(0,-node_size*2) #to point north 
 	node_query_parameters.shape_rid = shape_rid 
 	node_query_parameters.collision_mask = 8 #default value maybe will have to change it l8tr
-	print(node_query_parameters.shape)
-	print(node_query_parameters.shape_rid)
-	#var params: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
-	#var body_position: Vector2 = (PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin())
-	#params.motion = body_position
-	#params.shape_rid = explosion_shape_rid# Execute physics queries here...# Release the shape when done with physics queries.
-	#var explosion_result = space_state.intersect_shape(params,32)
-	pass # Replace with function body.
 
 
 	#needs to append to the A_P_S array:
@@ -50,23 +42,26 @@ func generate_navmesh(current_position:Vector2i)->void:
 	if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
 		neighbours_of_node = _add_pathfinding_node(current_navmesh,positions_checked,current_position)
 		#neighbours_of_node = generate_pathfinding_node(current_navmesh,current_position)
-		#positions_checked.append(current_position)
+		positions_checked.append(current_position)
 		for direction in neighbours_of_node:
-			#added_position = (current_position + (node_size*2*(direction*(PI/2))))
+			added_position = current_position +(_get_direction_vector(direction) * node_size * 2)
 			added_position.x = (int(sin(direction * (PI/2))) * 2 * node_size) + current_position.x
 			added_position.y = (int(cos(direction * (PI/2))) * 2 * node_size) + current_position.y
-			positions_to_check.append(added_position) 
-		print(positions_to_check)
-		print(current_navmesh)
-		#while positions_to_check.size()>0:
-		#	current_position = positions_to_check.pop_back()
-		#	neighbours_of_node = generate_pathfinding_node(current_navmesh,current_position)
-		#	for direction in neighbours_of_node:
-		#		#added_position = current_position + (node_size*2*(direction*(PI/2)))
-		#		added_position.x = (sin(direction * (PI/2)) * 2 * node_size) + current_position.x
-		#		added_position.y = (cos(direction * (PI/2)) * 2 * node_size) + current_position.y
-		#		if !current_navmesh.has(added_position):
-		#			positions_to_check.append(added_position)
+			if positions_checked.find(added_position)==-1:
+				positions_to_check.append(added_position) 
+		#print(positions_to_check)
+		#print(current_navmesh)
+		while positions_to_check.size()>0:
+			current_position = positions_to_check.pop_back()
+			positions_checked.append(current_position)
+			#print(positions_checked)
+			neighbours_of_node = generate_pathfinding_node(current_navmesh,current_position)
+			for direction in neighbours_of_node:
+				added_position = current_position + (_get_direction_vector(direction) * node_size * 2)
+				if positions_checked.find(added_position)==-1:
+					positions_to_check.append(added_position) 
+	#print(current_navmesh)
+	DEBUG_force_labels_on_nodes()
 
 
 #func generate_pathfinding_sector(starting_position:Vector2i, is_starting_position_central:bool)->void: #->PathfindingSector
@@ -77,7 +72,20 @@ func generate_navmesh(current_position:Vector2i)->void:
 	#in a given axis?
 	#pass
 
-	 
+func _get_direction_vector(direction:int)->Vector2i:	#matches the direction enum of nodes
+	match direction:
+		0:
+			return Vector2i(0,-1)
+		1:
+			return Vector2i(1,0)
+		2:
+			return Vector2i(0,1)
+		3:
+			return Vector2i(-1,0)
+		_:
+			return Vector2i.ZERO
+	
+	
 	#returns an array of neighbours
 	#really only made to make code more readable, somewhat
 func _add_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,PathfindingNode],positions_checked:Array,position_to_check:Vector2i) -> Array:
@@ -91,7 +99,7 @@ func generate_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,Pathfinding
 		dict_to_append_to[node_position] = PathfindingNode.new(node_position,true)
 	else:
 		dict_to_append_to[node_position] = PathfindingNode.new(node_position,false)
-	DEBUG_make_label_for_position(node_position) #DEBUG #COMM OUT L8TR
+	#DEBUG_make_label_for_position(node_position) #DEBUG #COMM OUT L8TR
 	return neighbour_array
 	
 
@@ -100,12 +108,11 @@ func generate_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,Pathfinding
 func _check_neighboring_node_collisions(position_to_check:Vector2i)-> Array:
 	var output:Array = Array()
 	for i: int in range(4):
-		next_node_vector.x = int(sin(i* (PI/2)))
-		next_node_vector.y = int(cos(i* (PI/2)))
+		next_node_vector = _get_direction_vector(i)
 		node_query_parameters.transform=Transform2D(0,position_to_check + next_node_vector)
 		if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)) and node_query_parameters.transform.origin:
 			output.append(i) #i is the exact same as node_direction enum
-	print(output)
+	#print(output)
 	return output
 
 
@@ -154,7 +161,7 @@ func _remove_this()->void:
 func DEBUG_force_labels_on_nodes()->void:
 	for key in current_navmesh:
 		var debug_scene = preload("res://debug_test_label_scene.tscn").instantiate()
-		debug_scene.change_text("val= ",str(current_navmesh[key])," key= ",str(key))
+		debug_scene.change_text(str(key))
 		debug_scene.position = key
 		add_child(debug_scene)
 

@@ -38,6 +38,12 @@ func _ready() -> void:
 	_update_weapon_groups()
 	player_controlled_weapon_group = weapon_groups.ONE #TEMP
 	#get_node("weapon_group_1/player_main_turret").allowed_ammunition_type = "TEST" #TEMP
+	#TEMP
+	var test:Vector2i = Vector2i.ZERO
+	for i: int in range(4):
+		test.x = int(cos(i* (PI/2)))
+		test.y = int(sin(i* (PI/2)))
+		print(test)
 
 func _update_locomotive_nodes()->void:
 	locomotive_nodes.clear()
