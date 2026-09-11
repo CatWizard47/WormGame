@@ -37,7 +37,8 @@ func _ready() -> void:
 func generate_navmesh(current_position:Vector2i)->void:
 	print("generating navmesh")
 	current_navmesh.clear()	#probably unnecesary but whatevr
-	var positions_to_check:Array = Array() #in Vector2i
+	var positions_to_check:	Array = Array() #in Vector2i
+	var positions_checked: 	Array = Array()
 	var neighbours_of_node:Array = Array()
 	var added_position:Vector2i = Vector2i.ZERO
 	node_query_parameters.motion = current_position
@@ -47,7 +48,9 @@ func generate_navmesh(current_position:Vector2i)->void:
 	#print(instance_from_id(space_state.intersect_shape(node_query_parameters,32)[0].get("collider_id")).position)
 	
 	if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
-		neighbours_of_node = generate_pathfinding_node(current_navmesh,current_position)
+		neighbours_of_node = _add_pathfinding_node(current_navmesh,positions_checked,current_position)
+		#neighbours_of_node = generate_pathfinding_node(current_navmesh,current_position)
+		#positions_checked.append(current_position)
 		for direction in neighbours_of_node:
 			#added_position = (current_position + (node_size*2*(direction*(PI/2))))
 			added_position.x = (int(sin(direction * (PI/2))) * 2 * node_size) + current_position.x
@@ -74,7 +77,14 @@ func generate_navmesh(current_position:Vector2i)->void:
 	#in a given axis?
 	#pass
 
-	#Has to be safeguarded and only provided accesible nodes, 
+	 
+	#returns an array of neighbours
+	#really only made to make code more readable, somewhat
+func _add_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,PathfindingNode],positions_checked:Array,position_to_check:Vector2i) -> Array:
+	positions_checked.append(position_to_check)
+	return generate_pathfinding_node(dict_to_append_to,position_to_check)
+	
+	#Has to be safeguarded and only provided accesible nodes,
 func generate_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,PathfindingNode],node_position:Vector2i)->Array:
 	var neighbour_array: Array = _check_neighboring_node_collisions(node_position)
 	if neighbour_array.size() < 4:
