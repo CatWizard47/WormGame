@@ -1,8 +1,8 @@
 class_name PathfindingNode extends Resource
 var position: Vector2i	#should be more performant	
 var is_border:bool = false
-#var type: node_type
-var neighbours: Array	#contains other PathfindingNodes
+var neighbours: Dictionary[node_array_direction,PathfindingNode]	#contains other PathfindingNodes, originally Array, buuut, could be effed when 
+												#no neighbour between two others
 var parent_sector_id: int = 0	#basically just a pointer to the parent sector see:  get_instance_from_id(instance_id: int)
 								# 0 = orphaned, needs to be given a sector
 var crossing_node_id: Dictionary[node_array_direction, int]  #only applies to crossing nodes obv, points to next sector 	
@@ -12,18 +12,6 @@ var is_finished: bool = false	#changed to true after border,
 								#crossing_node_id 
 								#are filled out
 
-	#we don't really need an entire enum type, if we could already use crossing_node_id 
-
-#enum node_type{		
-	#INTERNAL = 1,  	#when surrounded by other nodes of this sector
-	#BORDER = 2,		#when neighboring an node with a static body or one thats otherwise supposed to be inaccesible 
-	#CROSSING = 3	#when borders another pathfinding sector
-	#TRANSIT,	#when containing a straight pathway surrounded by inaccesible nodes
-				#after some pondering decided that transit nodes are redundant
-				#since enums are also ints, nodes are in a sequence that equals their weight, 
-				#so units will avoid BORDER and CROSSING nodes whenever possible 
-				#applied weights since it starts at 0 on default
-#}
 enum node_array_direction{	#to avoid using a dict
 	NORTH,
 	SOUTH,

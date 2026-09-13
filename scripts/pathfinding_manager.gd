@@ -51,7 +51,9 @@ func generate_navmesh(start_position:Vector2)->void:
 				positions_to_check.append(added_position) 
 	
 	_apply_node_neighbour_references()
-	print(current_navmesh)
+	#var test = current_navmesh.keys().pick_random()
+	#print(current_navmesh[test].neighbours)
+	#print(test)
 	DEBUG_force_labels_on_nodes()
 
 
@@ -90,8 +92,8 @@ func get_direction_vector(direction:int)->Vector2i:	#matches the direction enum 
 	
 	#returns an array of neighbours
 	#really only made to make code more readable, somewhat
-func add_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,PathfindingNode],positions_checked:Array,position_to_check:Vector2i) -> Array:
-	positions_checked.append(position_to_check)
+func add_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,PathfindingNode],positions_already_checked:Array,position_to_check:Vector2i) -> Array:
+	positions_already_checked.append(position_to_check)
 	return _generate_pathfinding_node(dict_to_append_to,position_to_check)
 	
 	#Has to be safeguarded and only provided accesible nodes,
@@ -121,10 +123,13 @@ func _check_neighboring_node_collisions(position_to_check:Vector2i)-> Array:
 	#print(output)
 	return output
 
+	#this  is so ass, but will probably save on lookup time  
 func _apply_node_neighbour_references()->void:
-	for position in current_navmesh:
-		print(current_navmesh[position])
-	pass
+	for node_position in current_navmesh:
+		for i: int in range(4):
+			next_node_vector = get_direction_vector(i) * node_size * 2
+			if current_navmesh.has(node_position + next_node_vector):
+				current_navmesh[node_position].neighbours[i] = current_navmesh[node_position + next_node_vector]
 
 	#needs to check whether a given node placement is accesible at all:
 	#returns true when collisions present, false otherwise
