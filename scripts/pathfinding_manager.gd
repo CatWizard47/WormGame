@@ -10,14 +10,17 @@ var space_state: PhysicsDirectSpaceState2D
 var next_node_vector:Vector2i
 var node_query_parameters: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
 var current_navmesh:Dictionary[Vector2i, PathfindingNode] 
+var positions_checked: 	Array = Array()	#placed here in case of using generate_navmesh to append rather than generate
 
+	#TODO This whole thing will probably be using a separate thread rhather than running on main,
+	
 func _ready() -> void:
 	space_state = get_world_2d().direct_space_state
 	shape_rid = PhysicsServer2D.rectangle_shape_create()
 	PhysicsServer2D.shape_set_data(shape_rid,Vector2(node_size,node_size))
-	#next_node_vector = Vector2i(0,-node_size * 2 ) #to point north 
 	node_query_parameters.shape_rid = shape_rid 
 	node_query_parameters.collision_mask = 8 #default value maybe will have to change it l8tr
+	current_navmesh.clear()	#probably unnecesary but whatevr
 	
 	#print(_check_neighboring_node_collisions(Vector2i(300,300)))
 
@@ -29,18 +32,14 @@ func _ready() -> void:
 	#this will generate a navmesh, appending it to the navmesh dict
 	#periodically it will call sector generator function, 
 	#which will carve out a certain area 
+	#should be fine to use for appending navmesh too
 func generate_navmesh(start_position:Vector2)->void:
 	print("generating navmesh")
 	var current_position : Vector2i = flatten_coordinates_to_int(start_position)
-	current_navmesh.clear()	#probably unnecesary but whatevr
-	var positions_to_check:	Array = Array() #in Vector2i
-	var positions_checked: 	Array = Array()
 	var neighbours_of_node: Array = Array()
 	var added_position:Vector2i = Vector2i.ZERO
 	node_query_parameters.transform = Transform2D(0,current_position)
-	#print(node_query_parameters.transform)
-	#print(node_query_parameters.motion)
-	#print(instance_from_id(space_state.intersect_shape(node_query_parameters,32)[0].get("collider_id")).position)
+	var positions_to_check:	Array = Array() #in Vector2i
 	
 	if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
 		neighbours_of_node = _add_pathfinding_node(current_navmesh,positions_checked,current_position)
@@ -66,6 +65,9 @@ func generate_navmesh(start_position:Vector2)->void:
 	#from the initial starting node?
 	#in a given axis?
 	#pass
+
+func clear_navmesh()->void:
+	current_navmesh.clear()
 
 	#this is ass but should work for our purposes
 func flatten_coordinates_to_int(old_coordinates:Vector2) -> Vector2i:
