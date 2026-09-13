@@ -1,7 +1,8 @@
 class_name PathfindingManager extends Node2D	#needs to be a 2D node, due to world2D usage
 # Called when the node enters the scene tree for the first time.
 #@export var node_border_lenght: int
-@export var node_size: int = 25#dist from the center so a node with size 10 is 20x20 square 
+@export var node_size: int = 10 #dist from the center so a node with size 10 is 20x20 square 
+								#needs to be suitably small or navmesh will be innacurate
 @export var maximum_sector_size: int = 100#in nodes width from the center so 2* this for absolute width | height
 var shape_rid: RID
 var available_pathfinding_sectors: Array
@@ -54,7 +55,7 @@ func generate_navmesh(start_position:Vector2)->void:
 				added_position = current_position + (_get_direction_vector(direction) * node_size * 2)
 				if positions_checked.find(added_position)==-1:
 					positions_to_check.append(added_position) 
-	print(current_navmesh)
+	#print(current_navmesh)
 	#DEBUG_force_labels_on_nodes()
 
 
@@ -97,11 +98,14 @@ func _add_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,PathfindingNode
 	#Has to be safeguarded and only provided accesible nodes,
 func generate_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,PathfindingNode],node_position:Vector2i)->Array:
 	var neighbour_array: Array = _check_neighboring_node_collisions(node_position)
+	node_query_parameters.transform = Transform2D(0,node_position)
 	if !dict_to_append_to.has(node_position):
 		if neighbour_array.size() < 4:
-			dict_to_append_to[node_position] = PathfindingNode.new(node_position,true)
+			if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
+				dict_to_append_to[node_position] = PathfindingNode.new(node_position,true)
 		else:
-			dict_to_append_to[node_position] = PathfindingNode.new(node_position,false)
+			if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
+				dict_to_append_to[node_position] = PathfindingNode.new(node_position,false)
 	DEBUG_make_label_for_position(node_position) #DEBUG #COMM OUT L8TR
 	return neighbour_array
 	
@@ -130,6 +134,7 @@ func _check_collisions(shape_intersect:Array[Dictionary])->bool:
 	return false
 	#above thing might even need to be simplyfied since we will only be checking collision layer 4 specifically
 	#TODO check: /|\
+	#appended, col_layer 4 in _ready
 
 												#if z-levels are to be implemented, i have to dynamically change col_layer of obj
 
