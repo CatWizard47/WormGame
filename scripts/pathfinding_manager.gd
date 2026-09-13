@@ -28,8 +28,9 @@ func _ready() -> void:
 	#this will generate a navmesh, appending it to the navmesh dict
 	#periodically it will call sector generator function, 
 	#which will carve out a certain area 
-func generate_navmesh(current_position:Vector2i)->void:
+func generate_navmesh(start_position:Vector2)->void:
 	print("generating navmesh")
+	var current_position : Vector2i = flatten_coordinates_to_int(start_position)
 	current_navmesh.clear()	#probably unnecesary but whatevr
 	var positions_to_check:	Array = Array() #in Vector2i
 	var positions_checked: 	Array = Array()
@@ -64,6 +65,14 @@ func generate_navmesh(current_position:Vector2i)->void:
 	#from the initial starting node?
 	#in a given axis?
 	#pass
+
+	#this is ass but should work for our purposes
+func flatten_coordinates_to_int(old_coordinates:Vector2) -> Vector2i:
+	var new_coordinates: Vector2i = Vector2i.ZERO
+	#node size * 2 = grid square size
+	new_coordinates.x = int(old_coordinates.x) - (int(old_coordinates.x)% (node_size * 2 )) 
+	new_coordinates.y = int(old_coordinates.y) - (int(old_coordinates.y)% (node_size * 2 ))
+	return new_coordinates
 
 func _get_direction_vector(direction:int)->Vector2i:	#matches the direction enum of nodes
 	match direction:
@@ -161,7 +170,7 @@ func DEBUG_force_labels_on_nodes()->void:
 
 func DEBUG_make_label_for_position(label_position:Vector2i)->void:
 	var debug_scene = preload("res://debug_test_label_scene.tscn").instantiate()
-	#debug_scene.change_text(str("position= ",str(label_position)))
+	debug_scene.change_text(str("position= ",str(label_position)))
 	debug_scene.position = label_position
 	add_child(debug_scene)
 	

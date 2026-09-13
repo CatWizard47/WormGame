@@ -14,13 +14,16 @@ size = Vector2(675.4075, 653.5239)
 size = Vector2(9, 729)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_e6bpy"]
-size = Vector2(491, 4)
+size = Vector2(504, 4)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xlhaj"]
 size = Vector2(8, 726)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dwlkq"]
 size = Vector2(502, 7)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o40nt"]
+size = Vector2(232, 20)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ty0pc"]
 texture = ExtResource("3_2ipxj")
@@ -82,7 +85,7 @@ position = Vector2(-5.5, 354.5)
 shape = SubResource("RectangleShape2D_4ogdj")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D2" unique_id=1558308302]
-position = Vector2(235.5, -8)
+position = Vector2(242, -8)
 shape = SubResource("RectangleShape2D_e6bpy")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D2" unique_id=783659043]
@@ -92,6 +95,10 @@ shape = SubResource("RectangleShape2D_xlhaj")
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="StaticBody2D2" unique_id=1082226766]
 position = Vector2(241, 714.5)
 shape = SubResource("RectangleShape2D_dwlkq")
+
+[node name="CollisionShape2D5" type="CollisionShape2D" parent="StaticBody2D2" unique_id=1597212812]
+position = Vector2(375, 101)
+shape = SubResource("RectangleShape2D_o40nt")
 
 [node name="Player" parent="." unique_id=399082900 instance=ExtResource("2_4ogdj")]
 visibility_layer = 3
