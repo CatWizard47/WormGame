@@ -42,16 +42,16 @@ func generate_navmesh(start_position:Vector2)->void:
 	var positions_to_check:	Array = Array() #in Vector2i
 	
 	if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
-		neighbours_of_node = _add_pathfinding_node(current_navmesh,positions_checked,current_position)
+		neighbours_of_node = add_pathfinding_node(current_navmesh,positions_checked,current_position)
 		for direction in neighbours_of_node:
-			added_position = current_position +(_get_direction_vector(direction) * (node_size ))
+			added_position = current_position +(get_direction_vector(direction) * (node_size ))
 			if positions_checked.find(added_position)==-1:
 				positions_to_check.append(added_position) 
 		while positions_to_check.size()>0:
 			current_position = positions_to_check.pop_back()
-			neighbours_of_node = _add_pathfinding_node(current_navmesh,positions_checked,current_position)
+			neighbours_of_node = add_pathfinding_node(current_navmesh,positions_checked,current_position)
 			for direction in neighbours_of_node:
-				added_position = current_position + (_get_direction_vector(direction) * (node_size ))
+				added_position = current_position + (get_direction_vector(direction) * (node_size ))
 				if positions_checked.find(added_position)==-1:
 					positions_to_check.append(added_position) 
 	print(current_navmesh)
@@ -77,7 +77,7 @@ func flatten_coordinates_to_int(old_coordinates:Vector2) -> Vector2i:
 	new_coordinates.y = int(old_coordinates.y) - (int(old_coordinates.y)% (node_size ))
 	return new_coordinates
 
-func _get_direction_vector(direction:int)->Vector2i:	#matches the direction enum of nodes
+func get_direction_vector(direction:int)->Vector2i:	#matches the direction enum of nodes
 	match direction:
 		0:
 			return Vector2i(0,-1)
@@ -93,12 +93,12 @@ func _get_direction_vector(direction:int)->Vector2i:	#matches the direction enum
 	
 	#returns an array of neighbours
 	#really only made to make code more readable, somewhat
-func _add_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,PathfindingNode],positions_checked:Array,position_to_check:Vector2i) -> Array:
+func add_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,PathfindingNode],positions_checked:Array,position_to_check:Vector2i) -> Array:
 	positions_checked.append(position_to_check)
-	return generate_pathfinding_node(dict_to_append_to,position_to_check)
+	return _generate_pathfinding_node(dict_to_append_to,position_to_check)
 	
 	#Has to be safeguarded and only provided accesible nodes,
-func generate_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,PathfindingNode],node_position:Vector2i)->Array:
+func _generate_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,PathfindingNode],node_position:Vector2i)->Array:
 	var neighbour_array: Array = _check_neighboring_node_collisions(node_position)
 	node_query_parameters.transform = Transform2D(0,node_position)
 	if !dict_to_append_to.has(node_position):
@@ -117,7 +117,7 @@ func generate_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,Pathfinding
 func _check_neighboring_node_collisions(position_to_check:Vector2i)-> Array:
 	var output:Array = Array()
 	for i: int in range(4):
-		next_node_vector = _get_direction_vector(i)
+		next_node_vector = get_direction_vector(i)
 		node_query_parameters.transform=Transform2D(0,position_to_check + next_node_vector)
 		if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
 			output.append(i) #i is the exact same as node_direction enum
