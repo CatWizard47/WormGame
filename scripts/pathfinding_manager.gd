@@ -40,20 +40,15 @@ func generate_navmesh(start_position:Vector2)->void:
 	var added_position:Vector2i = Vector2i.ZERO
 	node_query_parameters.transform = Transform2D(0,current_position)
 	var positions_to_check:	Array = Array() #in Vector2i
-	
-	if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
+	positions_to_check.append(start_position)
+	while positions_to_check.size()>0:
+		current_position = positions_to_check.pop_back()
 		neighbours_of_node = add_pathfinding_node(current_navmesh,positions_checked,current_position)
 		for direction in neighbours_of_node:
-			added_position = current_position +(get_direction_vector(direction) * (node_size ))
+			added_position = current_position + (get_direction_vector(direction) * (node_size ))
 			if positions_checked.find(added_position)==-1:
 				positions_to_check.append(added_position) 
-		while positions_to_check.size()>0:
-			current_position = positions_to_check.pop_back()
-			neighbours_of_node = add_pathfinding_node(current_navmesh,positions_checked,current_position)
-			for direction in neighbours_of_node:
-				added_position = current_position + (get_direction_vector(direction) * (node_size ))
-				if positions_checked.find(added_position)==-1:
-					positions_to_check.append(added_position) 
+	
 	print(current_navmesh)
 	#DEBUG_force_labels_on_nodes()
 
