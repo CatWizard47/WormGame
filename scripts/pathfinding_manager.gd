@@ -1,7 +1,7 @@
 class_name PathfindingManager extends Node2D	#needs to be a 2D node, due to world2D usage
 # Called when the node enters the scene tree for the first time.
 #@export var node_border_lenght: int
-@export var node_size: int = 15 #dist from the center so a node with size 10 is 20x20 square 
+@export var node_size: int = 10 #dist from the center so a node with size 10 is 20x20 square 
 								#needs to be suitably small or navmesh will be innacurate
 @export var maximum_sector_size: int = 100#in nodes width from the center so 2* this for absolute width | height
 var shape_rid: RID
@@ -11,6 +11,7 @@ var next_node_vector:Vector2i
 var node_query_parameters: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
 var current_navmesh:Dictionary[Vector2i, PathfindingNode] 
 var positions_checked: 	Array = Array()	#placed here in case of using generate_navmesh to append rather than generate
+signal finished_navmesh_generation
 
 	#TODO This whole thing will probably be using a separate thread rhather than running on main,
 	
@@ -45,12 +46,13 @@ func generate_navmesh(start_position:Vector2)->void:
 		current_position = positions_to_check.pop_back()
 		neighbours_of_node = add_pathfinding_node(current_navmesh,positions_checked,current_position)
 		for direction in neighbours_of_node:
-			added_position = current_position + (get_direction_vector(direction) * (node_size ))
+			added_position = current_position + (get_direction_vector(direction) * (node_size * 2))
 			if positions_checked.find(added_position)==-1:
 				positions_to_check.append(added_position) 
 	
+	_apply_node_neighbour_references()
 	print(current_navmesh)
-	#DEBUG_force_labels_on_nodes()
+	DEBUG_force_labels_on_nodes()
 
 
 #func generate_pathfinding_sector(starting_position:Vector2i, is_starting_position_central:bool)->void: #->PathfindingSector
@@ -68,8 +70,8 @@ func clear_navmesh()->void:
 func flatten_coordinates_to_int(old_coordinates:Vector2) -> Vector2i:
 	var new_coordinates: Vector2i = Vector2i.ZERO
 	#node size * 2 = grid square size
-	new_coordinates.x = int(old_coordinates.x) - (int(old_coordinates.x)% (node_size )) 
-	new_coordinates.y = int(old_coordinates.y) - (int(old_coordinates.y)% (node_size ))
+	new_coordinates.x = int(old_coordinates.x) - (int(old_coordinates.x)% (node_size * 2)) 
+	new_coordinates.y = int(old_coordinates.y) - (int(old_coordinates.y)% (node_size * 2))
 	return new_coordinates
 
 func get_direction_vector(direction:int)->Vector2i:	#matches the direction enum of nodes
@@ -103,7 +105,7 @@ func _generate_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,Pathfindin
 		else:
 			if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
 				dict_to_append_to[node_position] = PathfindingNode.new(node_position,false)
-	DEBUG_make_label_for_position(node_position) #DEBUG #COMM OUT L8TR
+	#DEBUG_make_label_for_position(node_position) #DEBUG #COMM OUT L8TR
 	return neighbour_array
 	
 
@@ -112,13 +114,17 @@ func _generate_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,Pathfindin
 func _check_neighboring_node_collisions(position_to_check:Vector2i)-> Array:
 	var output:Array = Array()
 	for i: int in range(4):
-		next_node_vector = get_direction_vector(i)
+		next_node_vector = get_direction_vector(i) * node_size * 2
 		node_query_parameters.transform=Transform2D(0,position_to_check + next_node_vector)
 		if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
 			output.append(i) #i is the exact same as node_direction enum
 	#print(output)
 	return output
 
+func _apply_node_neighbour_references()->void:
+	for position in current_navmesh:
+		print(current_navmesh[position])
+	pass
 
 	#needs to check whether a given node placement is accesible at all:
 	#returns true when collisions present, false otherwise
