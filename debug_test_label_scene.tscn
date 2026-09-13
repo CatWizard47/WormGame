@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://b4hdffhn5r20t" path="res://debug_test_label_scene.gd" id="1_ldvny"]
 [ext_resource type="Texture2D" uid="uid://ycig5x8crjk6" path="res://test_PFM.png" id="2_l8w60"]
 
-[node name="DEBUG_TEST_LABEL_SCENE" type="Control" unique_id=197070227 node_paths=PackedStringArray("label_node")]
+[node name="DEBUG_TEST_LABEL_SCENE" type="Control" unique_id=197070227 node_paths=PackedStringArray("label_node", "texture_node")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,16 +12,12 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ldvny")
 label_node = NodePath("Label")
+texture_node = NodePath("Sprite2D")
 
 [node name="Label" type="Label" parent="." unique_id=108678309]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
 
-[node name="TextureRect" type="TextureRect" parent="." unique_id=1255595151]
-layout_mode = 0
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1158326659]
 texture = ExtResource("2_l8w60")

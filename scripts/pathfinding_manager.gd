@@ -1,7 +1,7 @@
 class_name PathfindingManager extends Node2D	#needs to be a 2D node, due to world2D usage
 # Called when the node enters the scene tree for the first time.
 #@export var node_border_lenght: int
-@export var node_size: int = 10 #dist from the center so a node with size 10 is 20x20 square 
+@export var node_size: int = 15 #dist from the center so a node with size 10 is 20x20 square 
 								#needs to be suitably small or navmesh will be innacurate
 @export var maximum_sector_size: int = 100#in nodes width from the center so 2* this for absolute width | height
 var shape_rid: RID
@@ -15,7 +15,7 @@ func _ready() -> void:
 	space_state = get_world_2d().direct_space_state
 	shape_rid = PhysicsServer2D.rectangle_shape_create()
 	PhysicsServer2D.shape_set_data(shape_rid,Vector2(node_size,node_size))
-	next_node_vector = Vector2i(0,-node_size*2) #to point north 
+	#next_node_vector = Vector2i(0,-node_size * 2 ) #to point north 
 	node_query_parameters.shape_rid = shape_rid 
 	node_query_parameters.collision_mask = 8 #default value maybe will have to change it l8tr
 	
@@ -45,17 +45,17 @@ func generate_navmesh(start_position:Vector2)->void:
 	if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
 		neighbours_of_node = _add_pathfinding_node(current_navmesh,positions_checked,current_position)
 		for direction in neighbours_of_node:
-			added_position = current_position +(_get_direction_vector(direction) * node_size * 2)
+			added_position = current_position +(_get_direction_vector(direction) * (node_size ))
 			if positions_checked.find(added_position)==-1:
 				positions_to_check.append(added_position) 
 		while positions_to_check.size()>0:
 			current_position = positions_to_check.pop_back()
 			neighbours_of_node = _add_pathfinding_node(current_navmesh,positions_checked,current_position)
 			for direction in neighbours_of_node:
-				added_position = current_position + (_get_direction_vector(direction) * node_size * 2)
+				added_position = current_position + (_get_direction_vector(direction) * (node_size ))
 				if positions_checked.find(added_position)==-1:
 					positions_to_check.append(added_position) 
-	#print(current_navmesh)
+	print(current_navmesh)
 	#DEBUG_force_labels_on_nodes()
 
 
@@ -71,8 +71,8 @@ func generate_navmesh(start_position:Vector2)->void:
 func flatten_coordinates_to_int(old_coordinates:Vector2) -> Vector2i:
 	var new_coordinates: Vector2i = Vector2i.ZERO
 	#node size * 2 = grid square size
-	new_coordinates.x = int(old_coordinates.x) - (int(old_coordinates.x)% (node_size * 2 )) 
-	new_coordinates.y = int(old_coordinates.y) - (int(old_coordinates.y)% (node_size * 2 ))
+	new_coordinates.x = int(old_coordinates.x) - (int(old_coordinates.x)% (node_size )) 
+	new_coordinates.y = int(old_coordinates.y) - (int(old_coordinates.y)% (node_size ))
 	return new_coordinates
 
 func _get_direction_vector(direction:int)->Vector2i:	#matches the direction enum of nodes
@@ -175,7 +175,7 @@ func DEBUG_force_labels_on_nodes()->void:
 
 func DEBUG_make_label_for_position(label_position:Vector2i)->void:
 	var debug_scene = preload("res://debug_test_label_scene.tscn").instantiate()
-	debug_scene.change_text(str("position= ",str(label_position)))
+	#debug_scene.change_text(str("position= ",str(label_position)))
 	debug_scene.position = label_position
 	add_child(debug_scene)
 	
