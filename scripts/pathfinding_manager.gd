@@ -64,10 +64,26 @@ func generate_navmesh(start_position:Vector2)->void:
 	#from the initial starting node?
 	#in a given axis?
 	#pass
-
-#func find_nearest_node(position_to_check: Vector2) -> Vector2i:
-	#var node_position: Vector2i = flatten_coordinates_to_int(position_to_check)	#this will adjust this to the grid
-	 
+	
+	
+	#will return null if too far, max distance is like 3 
+func find_nearest_node(position_to_check: Vector2) -> Vector2i:
+	var node_position: Vector2i = flatten_coordinates_to_int(position_to_check)	#this will adjust this to the grid
+	#var positions_pending: Array = Array()
+	#var positions_searched: Array = Array()
+	var checking_vector: Vector2 = Vector2.ZERO
+	var max_division:int
+	if current_navmesh.has(node_position):
+		return node_position
+	else:
+		for i:int in range(3,5):
+			max_division = (i**2)	#+1 since range stops b4 second value
+			for j:int in range((i-1)**2,max_division+1):
+				checking_vector = Vector2.from_angle((2*PI) * (j/max_division)).normalized() * 2 *node_size *(i-2)
+				node_position = flatten_coordinates_to_int(checking_vector)
+				if current_navmesh.has(node_position):
+					return node_position
+	return Vector2i(1,1) #this is shite, but, nodes generally won't be able to get this value under no circumstances
 
 func find_path(start_position:Vector2,end_position: Vector2) -> void: #->Array: #of vector2i s
 	pass
