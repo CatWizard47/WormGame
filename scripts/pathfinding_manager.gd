@@ -188,3 +188,7 @@ func DEBUG_make_label_for_position(label_position:Vector2i)->void:
 	add_child(debug_scene)
 	
 	
+	#backup if i ever 4 get 
+func _on_tree_exiting() -> void:
+	_remove_this()
+	

@@ -19,7 +19,7 @@ var shape_rid: RID
 var travel_direction: Vector2
 var estimated_distance_to_stop: float
 var lerp_weight: float
-var can_generate_navmesh: bool = true
+var can_generate_navmesh: bool = true	#TEMP
 
 #func _init(start_position:Vector2, start_rotation:float):
 #	position=start_position
@@ -66,11 +66,10 @@ func _ready() -> void:	#TEMP
 	#print((PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin()))
 	
 	
-
-
 func Set_desired_coordinates(new_desired_position: Vector2) -> void:
 	desired_position = new_desired_position
 	#also will need to set up rotation here
+
 
 func _movement(delta:float)->void:
 	lerp_weight = 1 - exp(-(engine_power*2) * delta)		#TODO fix collision issues
@@ -86,6 +85,7 @@ func _movement(delta:float)->void:
 	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction.angle(),current_position.lerp(current_position + (travel_direction * engine_power), lerp_weight)))
 	#print(engine_power)
 	engine_power = clampf(engine_power,0,max_engine_power)
+
 
 func _physics_process(delta: float) -> void:
 	#var weight : float = 1 - exp(-(engine_power*2) * delta)		#TODO fix collision issues
@@ -108,11 +108,11 @@ func _physics_process(delta: float) -> void:
 				#rotate next_node_vector by PI/2 here
 				#_check_collisions(space_state.intersect_shape(node_query_parameters,32))
 				#TODO actually implement how this is supposed to work/
-			pass
-			#print(desired_position)
+
 
 func _on_death()->void:
 	_remove_this()	
+
 
 func _remove_this()->void:
 	#print("sprite",sprite_rid,"body=",body_rid,"shape=",shape_rid)
