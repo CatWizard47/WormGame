@@ -65,6 +65,13 @@ func generate_navmesh(start_position:Vector2)->void:
 	#in a given axis?
 	#pass
 
+#func find_nearest_node(position_to_check: Vector2) -> Vector2i:
+	#var node_position: Vector2i = flatten_coordinates_to_int(position_to_check)	#this will adjust this to the grid
+	 
+
+func find_path(start_position:Vector2,end_position: Vector2) -> void: #->Array: #of vector2i s
+	pass
+
 func clear_navmesh()->void:
 	current_navmesh.clear()
 

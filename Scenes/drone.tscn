@@ -4,3 +4,5 @@
 
 [node name="Drone" type="Node2D" unique_id=351390122]
 script = ExtResource("1_ws5iu")
+
+[connection signal="tree_exiting" from="." to="." method="_on_tree_exiting"]

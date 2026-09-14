@@ -5,3 +5,5 @@
 [node name="Projectile" type="Node2D" unique_id=1300997352]
 script = ExtResource("1_yr2qt")
 metadata/_custom_type_script = "uid://ba1l4w0i3p1sk"
+
+[connection signal="tree_exiting" from="." to="." method="_on_tree_exiting"]

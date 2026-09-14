@@ -128,3 +128,7 @@ func _remove_this()->void:
 		if shape_rid.is_valid():
 			PhysicsServer2D.free_rid(shape_rid)
 	queue_free()
+
+	#backup if i ever 4 get	
+func _on_tree_exiting() -> void:
+	_remove_this()
