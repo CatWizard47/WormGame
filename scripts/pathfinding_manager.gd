@@ -69,8 +69,6 @@ func generate_navmesh(start_position:Vector2)->void:
 	#will return null if too far, max distance is like 3 
 func find_nearest_node(position_to_check: Vector2) -> Variant:
 	var node_position: Vector2i = flatten_coordinates_to_int(position_to_check)	#this will adjust this to the grid
-	#var positions_pending: Array = Array()
-	#var positions_searched: Array = Array()
 	var checking_vector: Vector2 = Vector2.ZERO
 	var max_division:int
 	if current_navmesh.has(node_position):
@@ -86,11 +84,14 @@ func find_nearest_node(position_to_check: Vector2) -> Variant:
 	return null 
 	
 	
-func find_path(start_position:Vector2,end_position: Vector2) -> void: #->Array: #of vector2i s
+func find_path(initial_start_position:Vector2,initial_end_position: Vector2) -> void: #->Array: #of vector2i-s
+	var start_position: Vector2i = find_nearest_node(initial_start_position)
+	var end_position: Vector2i = find_nearest_node(initial_end_position)
 	pass
 
 func clear_navmesh()->void:
 	current_navmesh.clear()
+	positions_checked.clear()
 
 	#this is ass but should work for our purposes
 func flatten_coordinates_to_int(old_coordinates:Vector2) -> Vector2i:
