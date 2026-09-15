@@ -83,12 +83,11 @@ func find_nearest_node(position_to_check: Vector2) -> Variant:
 			for j:int in range(0,max_division):
 				checking_vector = Vector2.from_angle(((2*PI) * j)/max_division).normalized() * 2 * node_size * (i-1)
 				resulting_vector = node_position+flatten_coordinates_to_int(checking_vector)
+				print(resulting_vector)
 				if !possible_positions_checked.has(resulting_vector):				#Not sure if it's actually worth it to check 
 					possible_positions_checked.append(resulting_vector)				#could be if current_navmesh is yuge
 					if current_navmesh.has(resulting_vector):						#since dict lookup times are worse than arrays, 
 						return node_position
-				else:
-					print(node_position+flatten_coordinates_to_int(checking_vector))
 	return null 
 	
 	
