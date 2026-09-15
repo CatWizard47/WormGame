@@ -67,20 +67,28 @@ func generate_navmesh(start_position:Vector2)->void:
 	
 	
 	#will return null if too far, max distance is like 3 
+	#this is bad actually, makes 65 nodes, but only 48 unique
+	#probably a result 'rings' the iterator makes overlapping, not sure if worth fixing
 func find_nearest_node(position_to_check: Vector2) -> Variant:
 	var node_position: Vector2i = flatten_coordinates_to_int(position_to_check)	#this will adjust this to the grid
 	var checking_vector: Vector2 = Vector2.ZERO
 	var max_division:int
+	var possible_positions_checked:Array = Array()
+	var resulting_vector: Vector2i #
 	if current_navmesh.has(node_position):
 		return node_position
 	else:
 		for i:int in range(2,6):
-			max_division = (2**i)	#+1 since range stops b4 second value
-			for j:int in range(0,max_division+1):
+			max_division = (2**i)	
+			for j:int in range(0,max_division):
 				checking_vector = Vector2.from_angle(((2*PI) * j)/max_division).normalized() * 2 * node_size * (i-1)
-				print(node_position + flatten_coordinates_to_int(checking_vector))
-				if current_navmesh.has(node_position + flatten_coordinates_to_int(checking_vector)):
-					return node_position
+				resulting_vector = node_position+flatten_coordinates_to_int(checking_vector)
+				if !possible_positions_checked.has(resulting_vector):				#Not sure if it's actually worth it to check 
+					possible_positions_checked.append(resulting_vector)				#could be if current_navmesh is yuge
+					if current_navmesh.has(resulting_vector):						#since dict lookup times are worse than arrays, 
+						return node_position
+				else:
+					print(node_position+flatten_coordinates_to_int(checking_vector))
 	return null 
 	
 	
