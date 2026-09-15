@@ -74,12 +74,12 @@ func find_nearest_node(position_to_check: Vector2) -> Variant:
 	if current_navmesh.has(node_position):
 		return node_position
 	else:
-		for i:int in range(3,5):
-			max_division = (i**2)	#+1 since range stops b4 second value
-			for j:int in range((i-1)**2,max_division+1):
-				checking_vector = Vector2.from_angle((2*PI) * (j/max_division)).normalized() * 2 *node_size *(i-2)
-				node_position = flatten_coordinates_to_int(checking_vector)
-				if current_navmesh.has(node_position):
+		for i:int in range(2,6):
+			max_division = (2**i)	#+1 since range stops b4 second value
+			for j:int in range(0,max_division+1):
+				checking_vector = Vector2.from_angle(((2*PI) * j)/max_division).normalized() * 2 * node_size * (i-1)
+				print(node_position + flatten_coordinates_to_int(checking_vector))
+				if current_navmesh.has(node_position + flatten_coordinates_to_int(checking_vector)):
 					return node_position
 	return null 
 	
@@ -87,6 +87,7 @@ func find_nearest_node(position_to_check: Vector2) -> Variant:
 func find_path(initial_start_position:Vector2,initial_end_position: Vector2) -> void: #->Array: #of vector2i-s
 	var start_position: Vector2i = find_nearest_node(initial_start_position)
 	var end_position: Vector2i = find_nearest_node(initial_end_position)
+	
 	pass
 
 func clear_navmesh()->void:

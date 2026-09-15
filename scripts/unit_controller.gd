@@ -96,6 +96,7 @@ func _physics_process(delta: float) -> void:
 			var PFM: PathfindingManager = PathfindingManager.new()
 			add_sibling(PFM)
 			PFM.generate_navmesh(Vector2i(300,300))
+			print(PFM.find_nearest_node(Vector2(600,30)))
 			can_generate_navmesh = false
 			#TEMP
 			#desired_position = get_global_mouse_position()	#temp
