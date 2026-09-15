@@ -14,9 +14,13 @@ var is_finished: bool = false	#changed to true after border,
 
 enum node_array_direction{	#to avoid using a dict
 	NORTH,
+	NORTH_EAST,
+	EAST,
+	SOUTH_EAST,
 	SOUTH,
+	SOUTH_WEST,
 	WEST,
-	EAST
+	NORTH_WEST
 }
 
 func _init(new_position:Vector2i,new_is_border:bool)->void:

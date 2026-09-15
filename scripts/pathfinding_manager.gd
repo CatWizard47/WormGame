@@ -83,7 +83,7 @@ func find_nearest_node(position_to_check: Vector2) -> Variant:
 			for j:int in range(0,max_division):
 				checking_vector = Vector2.from_angle(((2*PI) * j)/max_division).normalized() * 2 * node_size * (i-1)
 				resulting_vector = node_position+flatten_coordinates_to_int(checking_vector)
-				print(resulting_vector)
+				#print(resulting_vector)
 				if !possible_positions_checked.has(resulting_vector):				#Not sure if it's actually worth it to check 
 					possible_positions_checked.append(resulting_vector)				#could be if current_navmesh is yuge
 					if current_navmesh.has(resulting_vector):						#since dict lookup times are worse than arrays, 
@@ -111,14 +111,22 @@ func flatten_coordinates_to_int(old_coordinates:Vector2) -> Vector2i:
 
 func get_direction_vector(direction:int)->Vector2i:	#matches the direction enum of nodes
 	match direction:
-		0:
-			return Vector2i(0,-1)
-		1:
+		0:	#NORTH
+			return Vector2i(0,-1)	
+		1:	#NORTH_EAST
+			return Vector2i(1,-1)
+		2:	#EAST
 			return Vector2i(1,0)
-		2:
+		3:	#SOUTH_EAST
+			return Vector2i(1,1)
+		4: #SOUTH
 			return Vector2i(0,1)
-		3:
+		5: #SOUTH_WEST
+			return Vector2i(-1,1)
+		6: #WEST
 			return Vector2i(-1,0)
+		7: #NORTH_WEST
+			return Vector2i(-1,-1)
 		_:	#needs to have a default output, so just as a contingency
 			return Vector2i.ZERO
 	
@@ -148,7 +156,7 @@ func _generate_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,Pathfindin
 	#returned Array is all accesible nodes
 func _check_neighboring_node_collisions(position_to_check:Vector2i)-> Array:
 	var output:Array = Array()
-	for i: int in range(4):
+	for i: int in range(8):
 		next_node_vector = get_direction_vector(i) * node_size * 2
 		node_query_parameters.transform=Transform2D(0,position_to_check + next_node_vector)
 		if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
@@ -159,10 +167,11 @@ func _check_neighboring_node_collisions(position_to_check:Vector2i)-> Array:
 	#this  is so ass, but will probably save on lookup time  
 func _apply_node_neighbour_references()->void:
 	for node_position in current_navmesh:
-		for i: int in range(4):
+		for i: int in range(8):
 			next_node_vector = get_direction_vector(i) * node_size * 2
 			if current_navmesh.has(node_position + next_node_vector):
 				current_navmesh[node_position].neighbours[i] = current_navmesh[node_position + next_node_vector]
+	#print(current_navmesh.values().pick_random().neighbours)
 
 	#needs to check whether a given node placement is accesible at all:
 	#returns true when collisions present, false otherwise
