@@ -90,10 +90,20 @@ func find_nearest_node(position_to_check: Vector2) -> Variant:
 						return node_position
 	return null 
 	
-	
+	#uses A* as outlined b4hand
+	#h can be a simple distance measure start->end
 func find_path(initial_start_position:Vector2,initial_end_position: Vector2) -> void: #->Array: #of vector2i-s
 	var start_position: Vector2i = find_nearest_node(initial_start_position)
 	var end_position: Vector2i = find_nearest_node(initial_end_position)
+	var nodes_to_check: Array = Array()	#this to be prioque
+							#using Vector2i 
+	var came_from: Dictionary[Vector2i,int]
+	var g_score: Dictionary[Vector2i,int]	#
+	var f_score: Dictionary[Vector2i,int] 	#
+	#nodes_to_check.append(start_position)
+	#possibly append the furthest from dest first? so pop_back will work?
+	while !nodes_to_check.is_empty():
+		pass
 	
 	pass
 
@@ -109,6 +119,7 @@ func flatten_coordinates_to_int(old_coordinates:Vector2) -> Vector2i:
 	new_coordinates.y = int(old_coordinates.y) - (int(old_coordinates.y)% (node_size * 2))
 	return new_coordinates
 
+	#possibly bad, but still more performant than generating nodes
 func get_direction_vector(direction:int)->Vector2i:	#matches the direction enum of nodes
 	match direction:
 		0:	#NORTH
