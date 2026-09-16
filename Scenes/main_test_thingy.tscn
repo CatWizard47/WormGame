@@ -14,16 +14,28 @@ size = Vector2(675.4075, 653.5239)
 size = Vector2(9, 729)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_e6bpy"]
-size = Vector2(504, 4)
+size = Vector2(1512, 4)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xlhaj"]
-size = Vector2(2, 726)
+size = Vector2(19, 726)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dwlkq"]
-size = Vector2(502, 25)
+size = Vector2(1517, 25)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_o40nt"]
 size = Vector2(169, 11)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_leoyb"]
+size = Vector2(13, 99)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xy320"]
+size = Vector2(13.5, 220.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pfs1t"]
+size = Vector2(526, 20)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_gft63"]
+radius = 48.373547
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ty0pc"]
 texture = ExtResource("3_2ipxj")
@@ -85,20 +97,36 @@ position = Vector2(-5.5, 354.5)
 shape = SubResource("RectangleShape2D_4ogdj")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D2" unique_id=1558308302]
-position = Vector2(242, -8)
+position = Vector2(746, -8)
 shape = SubResource("RectangleShape2D_e6bpy")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D2" unique_id=783659043]
-position = Vector2(486, 353)
+position = Vector2(1502.5, 353)
 shape = SubResource("RectangleShape2D_xlhaj")
 
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="StaticBody2D2" unique_id=1082226766]
-position = Vector2(241, 716.5)
+position = Vector2(748.5, 716.5)
 shape = SubResource("RectangleShape2D_dwlkq")
 
 [node name="CollisionShape2D5" type="CollisionShape2D" parent="StaticBody2D2" unique_id=1597212812]
 position = Vector2(406.5, 130.5)
 shape = SubResource("RectangleShape2D_o40nt")
+
+[node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D2" unique_id=2016738282]
+position = Vector2(496.5, 86.5)
+shape = SubResource("RectangleShape2D_leoyb")
+
+[node name="CollisionShape2D7" type="CollisionShape2D" parent="StaticBody2D2" unique_id=824202516]
+position = Vector2(495, 248)
+shape = SubResource("RectangleShape2D_xy320")
+
+[node name="CollisionShape2D8" type="CollisionShape2D" parent="StaticBody2D2" unique_id=179493543]
+position = Vector2(753, 362)
+shape = SubResource("RectangleShape2D_pfs1t")
+
+[node name="CollisionShape2D9" type="CollisionShape2D" parent="StaticBody2D2" unique_id=1237785418]
+position = Vector2(697, 148)
+shape = SubResource("CircleShape2D_gft63")
 
 [node name="Player" parent="." unique_id=399082900 instance=ExtResource("2_4ogdj")]
 visibility_layer = 3
