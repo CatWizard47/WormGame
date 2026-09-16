@@ -103,6 +103,10 @@ func _physics_process(delta: float) -> void:
 			var heaptest:PathfindingNodeHeap = PathfindingNodeHeap.new()
 			for i:int in range(10):
 				heaptest.insert(PathfindingNode.new(Vector2i(1,1),false),randi_range(0,100))
+				#print(heaptest.heap)
+			for i:int in range(10):
+				#print(heaptest.pop_min())
+				heaptest.pop_min()
 				print(heaptest.heap)
 			can_generate_navmesh = false
 			#TEMP
