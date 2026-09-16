@@ -54,7 +54,7 @@ func generate_navmesh(start_position:Vector2)->void:
 	#var test = current_navmesh.keys().pick_random()
 	#print(current_navmesh[test].neighbours)
 	#print(test)
-	DEBUG_force_labels_on_nodes()
+	#DEBUG_force_labels_on_nodes()
 
 
 #func generate_pathfinding_sector(starting_position:Vector2i, is_starting_position_central:bool)->void: #->PathfindingSector
@@ -93,7 +93,9 @@ func find_nearest_node(position_to_check: Vector2) -> Variant:
 	#uses A* as outlined b4hand
 	#h can be a simple distance measure start->end
 func find_path(initial_start_position:Vector2,initial_end_position: Vector2) -> Variant: #->Array: #of vector2i-s
-	var start_position: Vector2i = find_nearest_node(initial_start_position)
+	if find_nearest_node(initial_start_position) == null or find_nearest_node(initial_end_position) == null:
+		return null
+	var start_position: Vector2i = find_nearest_node(initial_start_position)	
 	var end_position: Vector2i = find_nearest_node(initial_end_position)
 	var current_node: PathfindingNode = current_navmesh[start_position]
 	var nodes_to_check: PathfindingNodeHeap = PathfindingNodeHeap.new()
@@ -134,7 +136,8 @@ func _recover_path(came_from: Dictionary[Vector2i,PathfindingNode],current_node:
 	while came_from.has(current_node.position):
 		current_node = came_from[current_node.position]
 		Path.push_front(current_node.position)
-		print(current_node.position)
+		#print(current_node.position)
+		DEBUG_make_label_for_position(current_node.position)
 	return Path
 
 func clear_navmesh()->void:
