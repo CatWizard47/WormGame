@@ -100,8 +100,10 @@ func find_path(initial_start_position:Vector2,initial_end_position: Vector2) -> 
 	nodes_to_check.insert(current_navmesh[start_position],0.0)
 	var came_from: Dictionary[Vector2i,PathfindingNode]
 	var g_score: Dictionary[Vector2i,float]	#
+	_make_default_navmesh_dict_value(g_score,1.79769e308) #terrible, consider making it better somehow
 	g_score[start_position] = 0
 	var f_score: Dictionary[Vector2i,float] 							#TODO check if (thing below) is a good idea
+	_make_default_navmesh_dict_value(f_score,1.79769e308)
 	f_score[start_position] = start_position.distance_to(end_position)	#distance_to(end_position) will be our heuristic measure, ig, 
 	#nodes_to_check.append(start_position)							
 	var neighbour_node: PathfindingNode
@@ -117,17 +119,22 @@ func find_path(initial_start_position:Vector2,initial_end_position: Vector2) -> 
 				came_from[neighbour_node.position] = current_node
 				g_score[neighbour_node.position] = current_score
 				f_score[neighbour_node.position] = current_score + neighbour_node.position.distance_to(end_position)
-				if !nodes_to_check.has(neighbour_node.position):
+				if !nodes_to_check.has(neighbour_node):
 					nodes_to_check.insert(neighbour_node,neighbour_node.position.distance_to(end_position))
 	return null
 
-
+func _make_default_navmesh_dict_value(dictionary_to_modify:Dictionary[Vector2i,float],new_default_value:float)->void:
+	for key in current_navmesh:
+		dictionary_to_modify[key] = new_default_value
+	
+	
 func _recover_path(came_from: Dictionary[Vector2i,PathfindingNode],current_node: PathfindingNode ) -> Array:
 	var Path: Array = Array()
 	Path.append(current_node.position)
 	while came_from.has(current_node.position):
 		current_node = came_from[current_node.position]
-		Path.push_front(current_node)
+		Path.push_front(current_node.position)
+		print(current_node.position)
 	return Path
 
 func clear_navmesh()->void:
@@ -206,9 +213,9 @@ func _apply_node_neighbour_references()->void:
 			if current_navmesh.has(node_position + next_node_vector):
 				current_navmesh[node_position].neighbours[i] = current_navmesh[node_position + next_node_vector]
 	#print(current_navmesh.values().pick_random().neighbours)
-	var current_node = current_navmesh.values().pick_random()
-	for neighbour:int in current_node.neighbours:
-		print(current_node.neighbours[neighbour])
+	#var current_node = current_navmesh.values().pick_random()
+	#for neighbour:int in current_node.neighbours:
+		#print(current_node.neighbours[neighbour])
 
 	#needs to check whether a given node placement is accesible at all:
 	#returns true when collisions present, false otherwise

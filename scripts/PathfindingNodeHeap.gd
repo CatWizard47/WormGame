@@ -47,3 +47,15 @@ func pop_min() -> PathfindingNode:
 		else:
 			break		
 	return output
+	
+func is_empty() ->bool:
+	if heap.size() > 0:
+		return false
+	else:
+		return true
+		
+func has(node_to_check:PathfindingNode) -> bool:
+	for node in heap:
+		if node.pathfinding_node == node_to_check:
+			return true
+	return false
