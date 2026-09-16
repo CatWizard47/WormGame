@@ -2,7 +2,7 @@ class_name PathfindingNodeHeap extends Resource
 
 var heap:Array = Array()
 
-func insert(added_node:PathfindingNode,priority:int)->void:
+func insert(added_node:PathfindingNode,priority:float)->void:
 	var new_element: PathfindingNodeHeapElement = PathfindingNodeHeapElement.new(added_node,priority)
 	heap.append(new_element)
 	var index: int = heap.size() -1 
