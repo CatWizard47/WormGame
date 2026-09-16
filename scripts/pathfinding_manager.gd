@@ -92,27 +92,43 @@ func find_nearest_node(position_to_check: Vector2) -> Variant:
 	
 	#uses A* as outlined b4hand
 	#h can be a simple distance measure start->end
-func find_path(initial_start_position:Vector2,initial_end_position: Vector2) -> void: #->Array: #of vector2i-s
-	#var start_position: Vector2i = find_nearest_node(initial_start_position)
-	#var end_position: Vector2i = find_nearest_node(initial_end_position)
-	var current_node: PathfindingNode = current_navmesh[find_nearest_node(initial_start_position)]
-	var end_node: PathfindingNode = current_navmesh[find_nearest_node(initial_end_position)]
-	var nodes_to_check: PathfindingNodeHeap = PathfindingNodeHeap.new()	#this to be prioque
-	nodes_to_check.insert(current_node,0.0)
-	var came_from: Dictionary[Vector2i,int]
-	var g_score: Dictionary[Vector2i,int]	#
-	var f_score: Dictionary[Vector2i,int] 	#
-	#nodes_to_check.append(start_position)
-	#possibly append the furthest from dest first? so pop_back will work?
+func find_path(initial_start_position:Vector2,initial_end_position: Vector2) -> Variant: #->Array: #of vector2i-s
+	var start_position: Vector2i = find_nearest_node(initial_start_position)
+	var end_position: Vector2i = find_nearest_node(initial_end_position)
+	var current_node: PathfindingNode = current_navmesh[start_position]
+	var nodes_to_check: PathfindingNodeHeap = PathfindingNodeHeap.new()
+	nodes_to_check.insert(current_navmesh[start_position],0.0)
+	var came_from: Dictionary[Vector2i,PathfindingNode]
+	var g_score: Dictionary[Vector2i,float]	#
+	g_score[start_position] = 0
+	var f_score: Dictionary[Vector2i,float] 							#TODO check if (thing below) is a good idea
+	f_score[start_position] = start_position.distance_to(end_position)	#distance_to(end_position) will be our heuristic measure, ig, 
+	#nodes_to_check.append(start_position)							
+	var neighbour_node: PathfindingNode
+	var current_score: float
 	while !nodes_to_check.is_empty():
 		current_node = nodes_to_check.pop_min()
-		if current_node == end_node:
-			pass	#return path
-		for neighbour in current_node.neighbours:
-			pass
-		#check neighbours
-		
-	pass
+		if current_node == current_navmesh[end_position]:
+			return _recover_path(came_from,current_node)	#return path
+		for key in current_node.neighbours:
+			neighbour_node = current_node.neighbours[key]
+			current_score = g_score[current_node.position] + current_node.position.distance_to(neighbour_node.position)
+			if current_score < g_score[neighbour_node.position]:
+				came_from[neighbour_node.position] = current_node
+				g_score[neighbour_node.position] = current_score
+				f_score[neighbour_node.position] = current_score + neighbour_node.position.distance_to(end_position)
+				if !nodes_to_check.has(neighbour_node.position):
+					nodes_to_check.insert(neighbour_node,neighbour_node.position.distance_to(end_position))
+	return null
+
+
+func _recover_path(came_from: Dictionary[Vector2i,PathfindingNode],current_node: PathfindingNode ) -> Array:
+	var Path: Array = Array()
+	Path.append(current_node.position)
+	while came_from.has(current_node.position):
+		current_node = came_from[current_node.position]
+		Path.push_front(current_node)
+	return Path
 
 func clear_navmesh()->void:
 	current_navmesh.clear()
