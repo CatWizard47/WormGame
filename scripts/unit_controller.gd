@@ -65,6 +65,9 @@ func _ready() -> void:	#TEMP
 	#print(estimated_distance_to_stop)
 	#print((PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin()))
 	
+	#TEMP
+	#TEMP
+	
 	
 func Set_desired_coordinates(new_desired_position: Vector2) -> void:
 	desired_position = new_desired_position
@@ -93,10 +96,14 @@ func _physics_process(delta: float) -> void:
 		_movement(delta)
 		if Input.is_action_pressed("SPACE") and	can_generate_navmesh:			#temp
 			#TEMP
-			var PFM: PathfindingManager = PathfindingManager.new()
-			add_sibling(PFM)
-			PFM.generate_navmesh(Vector2i(300,300))
-			print(PFM.find_nearest_node(Vector2(600,30)))
+			#var PFM: PathfindingManager = PathfindingManager.new()
+			#add_sibling(PFM)
+			#PFM.generate_navmesh(Vector2i(300,300))
+			#print(PFM.find_nearest_node(Vector2(600,30)))
+			var heaptest:PathfindingNodeHeap = PathfindingNodeHeap.new()
+			for i:int in range(10):
+				heaptest.insert(PathfindingNode.new(Vector2i(1,1),false),randi_range(0,100))
+				print(heaptest.heap)
 			can_generate_navmesh = false
 			#TEMP
 			#desired_position = get_global_mouse_position()	#temp
