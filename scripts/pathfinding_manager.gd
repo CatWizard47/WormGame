@@ -93,18 +93,25 @@ func find_nearest_node(position_to_check: Vector2) -> Variant:
 	#uses A* as outlined b4hand
 	#h can be a simple distance measure start->end
 func find_path(initial_start_position:Vector2,initial_end_position: Vector2) -> void: #->Array: #of vector2i-s
-	var start_position: Vector2i = find_nearest_node(initial_start_position)
-	var end_position: Vector2i = find_nearest_node(initial_end_position)
-	var nodes_to_check: Array = Array()	#this to be prioque
-							#using Vector2i 
+	#var start_position: Vector2i = find_nearest_node(initial_start_position)
+	#var end_position: Vector2i = find_nearest_node(initial_end_position)
+	var current_node: PathfindingNode = current_navmesh[find_nearest_node(initial_start_position)]
+	var end_node: PathfindingNode = current_navmesh[find_nearest_node(initial_end_position)]
+	var nodes_to_check: PathfindingNodeHeap = PathfindingNodeHeap.new()	#this to be prioque
+	nodes_to_check.insert(current_node,0.0)
 	var came_from: Dictionary[Vector2i,int]
 	var g_score: Dictionary[Vector2i,int]	#
 	var f_score: Dictionary[Vector2i,int] 	#
 	#nodes_to_check.append(start_position)
 	#possibly append the furthest from dest first? so pop_back will work?
 	while !nodes_to_check.is_empty():
-		pass
-	
+		current_node = nodes_to_check.pop_min()
+		if current_node == end_node:
+			pass	#return path
+		for neighbour in current_node.neighbours:
+			pass
+		#check neighbours
+		
 	pass
 
 func clear_navmesh()->void:
@@ -183,6 +190,9 @@ func _apply_node_neighbour_references()->void:
 			if current_navmesh.has(node_position + next_node_vector):
 				current_navmesh[node_position].neighbours[i] = current_navmesh[node_position + next_node_vector]
 	#print(current_navmesh.values().pick_random().neighbours)
+	var current_node = current_navmesh.values().pick_random()
+	for neighbour:int in current_node.neighbours:
+		print(current_node.neighbours[neighbour])
 
 	#needs to check whether a given node placement is accesible at all:
 	#returns true when collisions present, false otherwise

@@ -96,18 +96,18 @@ func _physics_process(delta: float) -> void:
 		_movement(delta)
 		if Input.is_action_pressed("SPACE") and	can_generate_navmesh:			#temp
 			#TEMP
-			#var PFM: PathfindingManager = PathfindingManager.new()
-			#add_sibling(PFM)
-			#PFM.generate_navmesh(Vector2i(300,300))
+			var PFM: PathfindingManager = PathfindingManager.new()
+			add_sibling(PFM)
+			PFM.generate_navmesh(Vector2i(300,300))
 			#print(PFM.find_nearest_node(Vector2(600,30)))
-			var heaptest:PathfindingNodeHeap = PathfindingNodeHeap.new()
-			for i:int in range(10):
-				heaptest.insert(PathfindingNode.new(Vector2i(1,1),false),randi_range(0,100))
+			#var heaptest:PathfindingNodeHeap = PathfindingNodeHeap.new()
+			#for i:int in range(10):
+			#	heaptest.insert(PathfindingNode.new(Vector2i(1,1),false),randi_range(0,100))
 				#print(heaptest.heap)
-			for i:int in range(10):
+			#for i:int in range(10):
 				#print(heaptest.pop_min())
-				heaptest.pop_min()
-				print(heaptest.heap)
+			#	heaptest.pop_min()
+		#		print(heaptest.heap)
 			can_generate_navmesh = false
 			#TEMP
 			#desired_position = get_global_mouse_position()	#temp
