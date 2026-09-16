@@ -45,7 +45,7 @@ func _update_locomotive_nodes()->void:
 		for node: Node in get_node("locomotion_nodes").get_children():
 			locomotive_nodes.append(node)
 
-func _update_weapon_groups()->void:	#potentially also shit, but less than get_node every time a fire action is called
+func _update_weapon_groups()->void:	#potentially also terrible, but less than get_node every time a fire action is called
 	weapon_group_1.clear()
 	if !get_node("weapon_group_1").get_children().is_empty():	
 		for node: Node in get_node("weapon_group_1").get_children():

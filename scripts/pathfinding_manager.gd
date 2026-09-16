@@ -208,7 +208,7 @@ func _check_neighboring_node_collisions(position_to_check:Vector2i)-> Array:
 	#print(output)
 	return output
 
-	#this  is so ass, but will probably save on lookup time  
+	#this  is so bad, but will probably save on lookup time  
 func _apply_node_neighbour_references()->void:
 	for node_position in current_navmesh:
 		for i: int in range(8):
