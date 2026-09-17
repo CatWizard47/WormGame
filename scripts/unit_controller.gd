@@ -100,6 +100,7 @@ func _physics_process(delta: float) -> void:
 			add_sibling(PFM)
 			PFM.generate_navmesh(Vector2i(300,300))
 			#print(PFM.find_nearest_node(Vector2(600,30)))
+			#PFM.find_nearest_node(get_global_mouse_position())
 			print(PFM.find_path(current_position,get_global_mouse_position()))
 			#var heaptest:PathfindingNodeHeap = PathfindingNodeHeap.new()
 			#for i:int in range(10):
