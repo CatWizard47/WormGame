@@ -110,7 +110,7 @@ func find_path(initial_start_position:Vector2,initial_end_position: Vector2) -> 
 	_make_default_navmesh_dict_value(g_score,1.79769e308) #terrible, consider making it better somehow
 	g_score[start_position] = 0
 	_make_default_navmesh_dict_value(f_score,1.79769e308) #TODO check if this is a good idea
-	f_score[start_position] = start_position.distance_to(end_position)	#distance_to(end_position) will be our heuristic measure, ig, 				
+	f_score[start_position] = (start_position-end_position).length()	#distance_to(end_position) will be our heuristic measure, ig, 				
 	while !nodes_to_check.is_empty():
 		current_node = nodes_to_check.pop_min()
 		if current_node == current_navmesh[end_position]:
@@ -240,25 +240,12 @@ func _check_collisions(shape_intersect:Array[Dictionary])->bool:
 	#https://en.wikipedia.org/wiki/A*_search_algorithm # maybe?
 	#possibly make this a new thread # will check perf before doing that
 	#https://docs.godotengine.org/en/stable/tutorials/performance/using_multiple_threads.html
-	#TODO 
-	#Try to figure out the best method of finding nodes, 
-	# like 5 pronged incomplete hexagram or sumthin
-	#return Output
-
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
 	
-	#current plan is as follows:
-	#generate a sector navmesh with all nodes  possesing a crossing_node_id = 0
-	# then do another pass of every node in a sector? 
-	#assigning referances to neighbours and checking for border / crossing cond?
-	# obv this is to change central node_position with maximum size?
-	#but then will have to make a more complex long range pathfinging algo 
-	#or not will just have to avg the position of every node to get the central position of sector ig 
-
-
 	#maybe i just gotta make a navmesh first, then divide the thing into sectors
 
 func _remove_this()->void:
