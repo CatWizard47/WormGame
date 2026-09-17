@@ -39,8 +39,8 @@ func generate_navmesh(start_position:Vector2)->void:
 	var current_position : Vector2i = flatten_coordinates_to_int(start_position)
 	var neighbours_of_node: Array = Array()
 	var added_position:Vector2i = Vector2i.ZERO
-	node_query_parameters.transform = Transform2D(0,current_position)
 	var positions_to_check:	Array = Array() #in Vector2i
+	node_query_parameters.transform = Transform2D(0,current_position)
 	positions_to_check.append(start_position)
 	while positions_to_check.size()>0:
 		current_position = positions_to_check.pop_back()
@@ -99,17 +99,16 @@ func find_path(initial_start_position:Vector2,initial_end_position: Vector2) -> 
 	var end_position: Vector2i = find_nearest_node(initial_end_position)
 	var current_node: PathfindingNode = current_navmesh[start_position]
 	var nodes_to_check: PathfindingNodeHeap = PathfindingNodeHeap.new()
-	nodes_to_check.insert(current_navmesh[start_position],0.0)
 	var came_from: Dictionary[Vector2i,PathfindingNode]
-	var g_score: Dictionary[Vector2i,float]	#
+	var g_score: Dictionary[Vector2i,float]
+	var f_score: Dictionary[Vector2i,float]
+	var neighbour_node: PathfindingNode
+	var current_score: float 
+	nodes_to_check.insert(current_navmesh[start_position],0.0)	
 	_make_default_navmesh_dict_value(g_score,1.79769e308) #terrible, consider making it better somehow
 	g_score[start_position] = 0
-	var f_score: Dictionary[Vector2i,float] 							#TODO check if (thing below) is a good idea
-	_make_default_navmesh_dict_value(f_score,1.79769e308)
-	f_score[start_position] = start_position.distance_to(end_position)	#distance_to(end_position) will be our heuristic measure, ig, 
-	#nodes_to_check.append(start_position)							
-	var neighbour_node: PathfindingNode
-	var current_score: float
+	_make_default_navmesh_dict_value(f_score,1.79769e308) #TODO check if this is a good idea
+	f_score[start_position] = start_position.distance_to(end_position)	#distance_to(end_position) will be our heuristic measure, ig, 				
 	while !nodes_to_check.is_empty():
 		current_node = nodes_to_check.pop_min()
 		if current_node == current_navmesh[end_position]:
