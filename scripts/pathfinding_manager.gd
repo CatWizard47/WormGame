@@ -17,8 +17,8 @@ signal finished_navmesh_generation
 	
 func _ready() -> void:
 	space_state = get_world_2d().direct_space_state
-	shape_rid = PhysicsServer2D.circle_shape_create()
-	PhysicsServer2D.shape_set_data(shape_rid,node_size)
+	shape_rid = PhysicsServer2D.rectangle_shape_create()
+	PhysicsServer2D.shape_set_data(shape_rid,Vector2(node_size,node_size))
 	node_query_parameters.shape_rid = shape_rid 
 	node_query_parameters.collision_mask = 8 #default value maybe will have to change it l8tr
 	current_navmesh.clear()	#probably unnecesary but whatevr
@@ -117,13 +117,13 @@ func find_path(initial_start_position:Vector2,initial_end_position: Vector2) -> 
 			return _recover_path(came_from,current_node)	#return path
 		for key in current_node.neighbours:
 			neighbour_node = current_node.neighbours[key]
-			current_score = g_score[current_node.position] + current_node.position.distance_to(neighbour_node.position)
+			current_score = g_score[current_node.position] + current_node.position.distance_squared_to(neighbour_node.position)
 			if current_score < g_score[neighbour_node.position]:
 				came_from[neighbour_node.position] = current_node
 				g_score[neighbour_node.position] = current_score
-				f_score[neighbour_node.position] = current_score + neighbour_node.position.distance_to(end_position)
+				f_score[neighbour_node.position] = current_score + (current_node.position - neighbour_node.position).length() #(node_size * 2)
 				if !nodes_to_check.has(neighbour_node):
-					nodes_to_check.insert(neighbour_node,neighbour_node.position.distance_to(end_position))
+					nodes_to_check.insert(neighbour_node,current_score)#neighbour_node.position.distance_squared_to(end_position))
 	return null
 
 func _make_default_navmesh_dict_value(dictionary_to_modify:Dictionary[Vector2i,float],new_default_value:float)->void:
@@ -138,7 +138,7 @@ func _recover_path(came_from: Dictionary[Vector2i,PathfindingNode],current_node:
 		current_node = came_from[current_node.position]
 		Path.push_front(current_node.position)
 		#print(current_node.position)
-		#DEBUG_make_label_for_position(current_node.position)
+		DEBUG_make_label_for_position(current_node.position)
 	return Path
 
 func clear_navmesh()->void:
