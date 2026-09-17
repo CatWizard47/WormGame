@@ -4,7 +4,7 @@ class_name  Drone extends Node2D
 @export var collision_shape: RectangleShape2D
 @export var starting_position: Vector2 #TEMP
 @export var starting_rotation: float
-@export var rotation_ratio: float = 15			#larger values make for slower rotation, has to be >=1
+@export var rotation_ratio: float = 5			#larger values make for slower rotation, has to be >=1
 @export var max_engine_power: float = 10
 @export var acceleration_mult: float = 0.25
 var engine_power: float = 0
@@ -20,6 +20,8 @@ var travel_direction: Vector2
 var estimated_distance_to_stop: float
 var lerp_weight: float
 var can_generate_navmesh: bool = true	#TEMP
+#TEMP#
+var Move_path: Array = Array()
 
 #func _init(start_position:Vector2, start_rotation:float):
 #	position=start_position
@@ -85,6 +87,8 @@ func _movement(delta:float)->void:
 		#TODO PINGS signal to get the next desired position from the pathfinding manager, HERE
 	else:
 		engine_power -= acceleration_mult * 2
+		if Move_path.size() > 0:
+			desired_position = Move_path.pop_back()
 	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction.angle(),current_position.lerp(current_position + (travel_direction * engine_power), lerp_weight)))
 	#print(engine_power)
 	engine_power = clampf(engine_power,0,max_engine_power)
@@ -101,7 +105,8 @@ func _physics_process(delta: float) -> void:
 			PFM.generate_navmesh(Vector2i(300,300))
 			#print(PFM.find_nearest_node(Vector2(600,30)))
 			#PFM.find_nearest_node(get_global_mouse_position())
-			print(PFM.find_path(current_position,get_global_mouse_position()))
+			Move_path = PFM.find_path(current_position,get_global_mouse_position())
+			#print(PFM.find_path(current_position,get_global_mouse_position()))
 			#var heaptest:PathfindingNodeHeap = PathfindingNodeHeap.new()
 			#for i:int in range(10):
 			#	heaptest.insert(PathfindingNode.new(Vector2i(1,1),false),randi_range(0,100))

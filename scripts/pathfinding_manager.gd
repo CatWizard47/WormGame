@@ -136,7 +136,8 @@ func _recover_path(came_from: Dictionary[Vector2i,PathfindingNode],current_node:
 	Path.append(current_node.position)
 	while came_from.has(current_node.position):
 		current_node = came_from[current_node.position]
-		Path.push_front(current_node.position)
+		Path.append(current_node.position) #more perfromant, also we can use pop_back() for reading paths
+		#Path.push_front(current_node.position)
 		#print(current_node.position)
 		DEBUG_make_label_for_position(current_node.position)
 	return Path
