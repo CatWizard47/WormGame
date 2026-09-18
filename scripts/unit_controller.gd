@@ -12,6 +12,8 @@ var engine_power: float = 0
 #+possibly weapon
 var desired_position: Vector2
 var current_position: Vector2
+var next_position : Vector2 
+var soft_collisions_params : PhysicsShapeQueryParameters2D =PhysicsShapeQueryParameters2D.new()
  #the actual thing won't be pathfinding, this is simply to move the drone from A to B, a short segment that will be actually gotten via a drone group controller,
 var sprite_rid: RID
 var body_rid: RID
@@ -50,6 +52,9 @@ func _physics_body_setup() -> void:
 	PhysicsServer2D.body_set_collision_layer(body_rid,4)
 	PhysicsServer2D.body_set_collision_mask(body_rid,12)	#to make them slide below larger units
 	PhysicsServer2D.body_attach_object_instance_id(body_rid,self.get_instance_id())
+	#soft collision setup below
+	soft_collisions_params.shape_rid = shape_rid
+	soft_collisions_params.collision_mask = 12
 
 func _ready() -> void:	#TEMP
 	#print(instance_from_id(self.get_instance_id()))
@@ -80,15 +85,17 @@ func _movement(delta:float)->void:
 	lerp_weight = 1 - exp(-(engine_power*2) * delta)		#TODO fix collision issues
 	current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
 	if abs(current_position - desired_position).length() >= estimated_distance_to_stop:	#temp is position satisfied	#needs to aproximate distance necessary to stop  
-		#travel_direction = (travel_direction * rotation_ratio + (desired_position - current_position).normalized()).normalized() # * engine_power?	
 		engine_power += acceleration_mult
-		#PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction.angle(),current_position.lerp(current_position + (travel_direction * engine_power), weight)))
 		travel_direction = (travel_direction * rotation_ratio + (desired_position - current_position).normalized()).normalized()
 		#TODO PINGS signal to get the next desired position from the pathfinding manager, HERE
 	else:
 		engine_power -= acceleration_mult * 2
 		if Move_path.size() > 0:
 			desired_position = Move_path.pop_back()
+	soft_collisions_params.transform = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM) 
+	#next_position = current_position - current_position.lerp(current_position + (travel_direction * engine_power), lerp_weight)
+	soft_collisions_params.motion = current_position - current_position.lerp(current_position + (travel_direction * engine_power), lerp_weight)
+	#print(PhysicsDirectSpaceState2D.new())
 	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction.angle(),current_position.lerp(current_position + (travel_direction * engine_power), lerp_weight)))
 	#print(engine_power)
 	engine_power = clampf(engine_power,0,max_engine_power)

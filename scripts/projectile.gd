@@ -14,6 +14,10 @@ var shape_rid: RID
 var velocity: Vector2
 var current_collision_mask:int
 var explode_timer: Timer = Timer.new()
+var space_state: PhysicsDirectSpaceState2D 
+var body_position: Vector2
+var ray_query: PhysicsRayQueryParameters2D
+var ray_result: Dictionary
 
 
 func _init(new_position: Vector2, new_rotation: float, NewProjectile:ProjectileRes,RIDS_to_exclude:Array,collision_mask:int,aimpoint:Vector2)->void:
@@ -55,6 +59,7 @@ func _setup_body() -> void:
 
 
 func _ready() -> void:
+	space_state = get_world_2d().direct_space_state
 	add_child(explode_timer)
 	explode_timer.timeout.connect(_explode)
 	var on_move:Callable = Callable(self,"_move_body")
@@ -79,11 +84,11 @@ func is_valid_target(id: int) -> bool:
 
 
 func _physics_process(_delta: float) -> void: 
-	var space_state: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
-	var body_position: Vector2 = (PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin())
-	var ray_query :PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(body_position, body_position + velocity.normalized()*10 )
+	#var space_state: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
+	body_position = (PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin())
+	ray_query = PhysicsRayQueryParameters2D.create(body_position, body_position + velocity.normalized()*10 )
 	ray_query.exclude = excluded_RIDS # possibly redundant line # actually not, since not setting collision mask, might be change later
-	var ray_result = space_state.intersect_ray(ray_query)
+	ray_result = space_state.intersect_ray(ray_query)
 	if !ray_result.is_empty() and instance_from_id(ray_result.get("collider_id")) != null:
 		#print(ray_result)
 		if is_valid_target(ray_result.get("collider_id")):

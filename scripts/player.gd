@@ -140,6 +140,7 @@ func _fire_weapon_group()-> void:
 		node.Load(test_projectile)
 		node.Load(test_projectile)
 		node.Load(test_projectile)
+		node.Load(test_projectile)
 		node.fire()
 
 
