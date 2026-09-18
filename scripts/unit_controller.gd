@@ -20,7 +20,8 @@ var space_state: PhysicsDirectSpaceState2D	#TODO consider changing this to init 
 var sprite_rid: RID
 var body_rid: RID
 var shape_rid: RID
-var travel_direction: Vector2
+var travel_vector: Vector2
+var travel_direction: float
 var estimated_distance_to_stop: float
 var lerp_weight: float
 var can_take_orders: bool = true	#TEMP
@@ -80,7 +81,7 @@ func _ready() -> void:	#TEMP
 	PhysicsServer2D.body_set_force_integration_callback(body_rid, on_move, "_body_moved")
 	RenderingServer.canvas_item_reset_physics_interpolation(sprite_rid)
 	self.status.on_death.connect(_on_death)
-	travel_direction = Vector2.from_angle(starting_rotation).normalized()
+	travel_vector = Vector2.from_angle(starting_rotation).normalized()
 	estimated_distance_to_stop = (max_engine_power / acceleration_mult) * acceleration_mult + max_engine_power 
 	#print(estimated_distance_to_stop)
 	#print((PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).get_origin()))
@@ -99,7 +100,11 @@ func _movement(delta:float)->void:
 	current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
 	if abs(current_position - desired_position).length() >= estimated_distance_to_stop:	#temp is position satisfied	#needs to aproximate distance necessary to stop  
 		engine_power += acceleration_mult
-		travel_direction = (travel_direction * rotation_ratio + (desired_position - current_position).normalized()).normalized()
+		#travel_vector = (travel_direction * rotation_ratio + (desired_position - current_position).normalized()).normalized()
+		travel_direction = (travel_direction * rotation_ratio) + (desired_position - current_position).angle()
+		travel_vector = (travel_vector.normalized() * rotation_ratio + (desired_position - current_position).normalized()).normalized()
+		print((desired_position - current_position).angle(), travel_vector)
+		#print(travel_direction)
 		#TODO PINGS signal to get the next desired position from the pathfinding manager, HERE
 	else:
 		engine_power -= acceleration_mult * 2
@@ -107,10 +112,10 @@ func _movement(delta:float)->void:
 			desired_position = Move_path.pop_back()
 	soft_collisions_query_params.transform = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM) 
 	#next_position = current_position - current_position.lerp(current_position + (travel_direction * engine_power), lerp_weight)
-	soft_collisions_query_params.motion =  current_position.lerp(current_position + (travel_direction * engine_power), lerp_weight)
+	soft_collisions_query_params.motion =  current_position.lerp(current_position + (travel_vector * engine_power), lerp_weight)
 	soft_collisions_query_result = space_state.cast_motion(soft_collisions_query_params)
-	print(soft_collisions_query_result)
-	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction.angle(),current_position.lerp(current_position + (travel_direction * engine_power), lerp_weight)))
+	#print(soft_collisions_query_result)
+	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_vector.angle(),current_position.lerp(current_position + (travel_vector * engine_power), lerp_weight)))
 	#print(engine_power)
 	engine_power = clampf(engine_power,0,max_engine_power)
 
