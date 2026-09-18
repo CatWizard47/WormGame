@@ -21,7 +21,6 @@ var sprite_rid: RID
 var body_rid: RID
 var shape_rid: RID
 var travel_vector: Vector2
-var travel_direction: float
 var estimated_distance_to_stop: float
 var lerp_weight: float
 var can_take_orders: bool = true	#TEMP
@@ -100,11 +99,9 @@ func _movement(delta:float)->void:
 	current_position = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM).origin
 	if abs(current_position - desired_position).length() >= estimated_distance_to_stop:	#temp is position satisfied	#needs to aproximate distance necessary to stop  
 		engine_power += acceleration_mult
-		#travel_vector = (travel_direction * rotation_ratio + (desired_position - current_position).normalized()).normalized()
-		travel_direction = (travel_direction * rotation_ratio) + (desired_position - current_position).angle()
-		travel_vector = (travel_vector.normalized() * rotation_ratio + (desired_position - current_position).normalized()).normalized()
-		print((desired_position - current_position).angle(), travel_vector)
-		#print(travel_direction)
+		travel_vector = (travel_vector * rotation_ratio + (desired_position - current_position).normalized()).normalized()
+		if(abs((desired_position - current_position).angle()) >= PI):	#terrible, however works 
+			travel_vector = Vector2.from_angle(travel_vector.angle() + signi(randi_range(-10,10))*PI/8).normalized()
 		#TODO PINGS signal to get the next desired position from the pathfinding manager, HERE
 	else:
 		engine_power -= acceleration_mult * 2
