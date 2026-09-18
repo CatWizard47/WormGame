@@ -13,7 +13,9 @@ var engine_power: float = 0
 var desired_position: Vector2
 var current_position: Vector2
 var next_position : Vector2 
-var soft_collisions_params : PhysicsShapeQueryParameters2D =PhysicsShapeQueryParameters2D.new()
+var soft_collisions_query_params: PhysicsShapeQueryParameters2D =PhysicsShapeQueryParameters2D.new()
+var soft_collisions_query_result: PackedFloat32Array
+var space_state: PhysicsDirectSpaceState2D	#TODO consider changing this to init arg? 
  #the actual thing won't be pathfinding, this is simply to move the drone from A to B, a short segment that will be actually gotten via a drone group controller,
 var sprite_rid: RID
 var body_rid: RID
@@ -21,9 +23,12 @@ var shape_rid: RID
 var travel_direction: Vector2
 var estimated_distance_to_stop: float
 var lerp_weight: float
-var can_generate_navmesh: bool = true	#TEMP
+var can_take_orders: bool = true	#TEMP
 #TEMP#
 var Move_path: Array = Array()
+var order_cooldown:float = 0.5
+var order_timer:Timer = Timer.new()
+var PFM: PathfindingManager = PathfindingManager.new() #TEMP
 
 #func _init(start_position:Vector2, start_rotation:float):
 #	position=start_position
@@ -50,15 +55,23 @@ func _physics_body_setup() -> void:
 	PhysicsServer2D.body_set_param(body_rid,PhysicsServer2D.BODY_PARAM_GRAVITY_SCALE,0)
 	#PhysicsServer2D.body_set_param(body_rid,PhysicsServer2D.BODY_PARAM_MASS,1)
 	PhysicsServer2D.body_set_collision_layer(body_rid,4)
-	PhysicsServer2D.body_set_collision_mask(body_rid,12)	#to make them slide below larger units
+	PhysicsServer2D.body_set_collision_mask(body_rid,12)	#to make them slide below larger units	#TODO check if 12 is oke on layer 2,4 probly not
 	PhysicsServer2D.body_attach_object_instance_id(body_rid,self.get_instance_id())
 	#soft collision setup below
-	soft_collisions_params.shape_rid = shape_rid
-	soft_collisions_params.collision_mask = 12
+	soft_collisions_query_params.shape_rid = shape_rid
+	soft_collisions_query_params.collision_mask = 12
 
 func _ready() -> void:	#TEMP
 	#print(instance_from_id(self.get_instance_id()))
+	#TEMP
+	add_child(PFM)
+	PFM.generate_navmesh(Vector2i(300,300))
+	#TEMP	
+	space_state = get_world_2d().direct_space_state
 	desired_position = starting_position
+	order_timer.wait_time = order_cooldown
+	order_timer.timeout.connect(_on_order_cooldown_timeout)
+	self.add_child(order_timer)
 	#print(desired_position)
 	#print(starting_rotation)
 	var on_move: Callable = Callable(self,"_move_body")
@@ -92,10 +105,11 @@ func _movement(delta:float)->void:
 		engine_power -= acceleration_mult * 2
 		if Move_path.size() > 0:
 			desired_position = Move_path.pop_back()
-	soft_collisions_params.transform = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM) 
+	soft_collisions_query_params.transform = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM) 
 	#next_position = current_position - current_position.lerp(current_position + (travel_direction * engine_power), lerp_weight)
-	soft_collisions_params.motion = current_position - current_position.lerp(current_position + (travel_direction * engine_power), lerp_weight)
-	#print(PhysicsDirectSpaceState2D.new())
+	soft_collisions_query_params.motion =  current_position.lerp(current_position + (travel_direction * engine_power), lerp_weight)
+	soft_collisions_query_result = space_state.cast_motion(soft_collisions_query_params)
+	print(soft_collisions_query_result)
 	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction.angle(),current_position.lerp(current_position + (travel_direction * engine_power), lerp_weight)))
 	#print(engine_power)
 	engine_power = clampf(engine_power,0,max_engine_power)
@@ -105,14 +119,13 @@ func _physics_process(delta: float) -> void:
 	#var weight : float = 1 - exp(-(engine_power*2) * delta)		#TODO fix collision issues
 	if(!self.is_queued_for_deletion()):
 		_movement(delta)
-		if Input.is_action_pressed("SPACE") and	can_generate_navmesh:			#temp
+		if Input.is_action_pressed("SPACE") and	can_take_orders:			#temp
 			#TEMP
-			var PFM: PathfindingManager = PathfindingManager.new()
-			add_sibling(PFM)
-			PFM.generate_navmesh(Vector2i(300,300))
 			#print(PFM.find_nearest_node(Vector2(600,30)))
 			#PFM.find_nearest_node(get_global_mouse_position())
 			Move_path = PFM.find_path(current_position,get_global_mouse_position())
+			can_take_orders = false
+			order_timer.start()
 			#print(PFM.find_path(current_position,get_global_mouse_position()))
 			#var heaptest:PathfindingNodeHeap = PathfindingNodeHeap.new()
 			#for i:int in range(10):
@@ -122,7 +135,6 @@ func _physics_process(delta: float) -> void:
 				#print(heaptest.pop_min())
 			#	heaptest.pop_min()
 		#		print(heaptest.heap)
-			can_generate_navmesh = false
 			#TEMP
 			#desired_position = get_global_mouse_position()	#temp
 			#var test:Vector2i
@@ -158,3 +170,6 @@ func _remove_this()->void:
 	#backup if i ever 4 get	
 func _on_tree_exiting() -> void:
 	_remove_this()
+	
+func _on_order_cooldown_timeout() -> void:
+	can_take_orders = true
