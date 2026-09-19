@@ -58,7 +58,7 @@ func Load(new_ammunition: ProjectileRes) -> bool:
 
 
 func fire() -> void: 
-	if can_fire_flag:
+	if can_fire_flag and abs(desired_rotation) < 0.01:
 		current_burst_count = burst_fire_count
 		Burst_direction = Burst_direction * -1
 		get_node("BurstFireCooldownTimer").timeout.emit()
@@ -68,7 +68,8 @@ func fire() -> void:
 func _rotate() -> void:
 	mouse_position = get_local_mouse_position()
 	desired_rotation = mouse_position.angle() 
-	if abs(rotation - desired_rotation) > accuracy_margin_radian:
+	print( desired_rotation)
+	if abs(desired_rotation) > accuracy_margin_radian:	#seemingly unneeded?
 		if desired_rotation > 0:
 			rotation += rotation_speed
 		else:
