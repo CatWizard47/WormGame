@@ -17,16 +17,10 @@ func _ready() -> void:
 		print("ERR")
 
 
-func on_active_weapon_group_changed()->void:
+func update_ammunition_counters()->void:
 	pass
 	
 	
-func on_weapon_fired()->void:
-	pass
-	
-	
-func on_ammunition_loaded()->void:
-	pass
 
 
 func _adjust_ui_rotation()->void:

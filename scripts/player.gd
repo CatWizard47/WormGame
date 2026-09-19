@@ -6,6 +6,7 @@ extends RigidBody2D
 @export var traction_Coefficient : float = 0.02 #MUST BE SMOL
 @export var locomotion_node_rotation_speed: float = 0.025 # in radians
 @export var test_projectile: ProjectileRes
+@export var player_viewport:Node
 var node_rids: Array = Array()
 var screen_size # Size of the game window. # temp
 var velocity: Vector2
@@ -26,10 +27,10 @@ var weapon_group_2: Array = Array()
 var weapon_group_3: Array = Array()
 var weapon_group_4: Array = Array()
 var player_controlled_weapon_group: int	
-var projectile_scene
+var projectile_scene: Projectile
 signal weapon_fired
-signal ammunition_loaded
-signal active_weapon_group_changed(weapon_group)
+signal ui_update_ammunition(magazine_state)	#mag_state is Array of Arrays containing at least 2 salvos of weapons in active groups
+
 
 
 func _ready() -> void:
@@ -40,7 +41,19 @@ func _ready() -> void:
 	_update_all_rids()
 	_update_weapon_groups()
 	player_controlled_weapon_group = weapon_groups.ONE #TEMP
+	ui_update_ammunition.connect(player_viewport.update_ammunition_counters)
 	#get_node("weapon_group_1/player_main_turret").allowed_ammunition_type = "TEST" #TEMP
+
+
+func switch_weapon_group(new_weapon_group:int) -> void: 
+	ui_update_ammunition.emit(get_weapon_mag_state())
+
+
+func get_weapon_mag_state() -> Array:
+	var Output:Array=Array()
+	for turret:PlayerMainTurret in self.get("weapon_group_"+str(player_controlled_weapon_group)):
+		Output.append(turret.get_n_ammunition_load(turret.burst_fire_count))
+	return Output
 
 func _update_locomotive_nodes()->void:
 	locomotive_nodes.clear()
