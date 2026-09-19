@@ -27,6 +27,9 @@ var weapon_group_3: Array = Array()
 var weapon_group_4: Array = Array()
 var player_controlled_weapon_group: int	
 var projectile_scene
+signal weapon_fired
+signal ammunition_loaded
+signal active_weapon_group_changed(weapon_group)
 
 
 func _ready() -> void:

@@ -4,8 +4,12 @@ var PlayerUnit: RigidBody2D
 @export var rotation_value: Label
 @export var loco_node_rotation_value: Label
 @export var mouse_pos_value: Label
+@export var current_salvo_value: Label
+@export var next_salvo_value: Label
 
-# Called when the node enters the scene tree for the first time.
+	#As a remainder, every player signal that deals with UI will be connected with functions here,
+	#they have to be connected from player script tho, due to ui being a child of the player node
+	#this is generally only to follow general style conventions 
 func _ready() -> void:
 	if get_parent()!=null:
 		PlayerUnit = get_parent()
@@ -13,9 +17,26 @@ func _ready() -> void:
 		print("ERR")
 
 
+func on_active_weapon_group_changed()->void:
+	pass
+	
+	
+func on_weapon_fired()->void:
+	pass
+	
+	
+func on_ammunition_loaded()->void:
+	pass
+
+
+func _adjust_ui_rotation()->void:
+	rotation = -PlayerUnit.global_rotation
+		
+	
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:		#TEMP, 
-	rotation = -PlayerUnit.global_rotation
+	_adjust_ui_rotation()
 	position_value.text = str(PlayerUnit.position)
 	rotation_value.text = str(PlayerUnit.rotation)
 	loco_node_rotation_value.text = str(PlayerUnit.locomotive_rotation)

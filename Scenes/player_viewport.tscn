@@ -6,14 +6,14 @@
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_38m77")
-position_value = NodePath("HBoxContainer/VerticalStatValueContainer/PositionValue")
-rotation_value = NodePath("HBoxContainer/VerticalStatValueContainer/RotationValue")
-loco_node_rotation_value = NodePath("HBoxContainer/VerticalStatValueContainer/LocoNodeRotationValue")
-mouse_pos_value = NodePath("HBoxContainer/VerticalStatValueContainer/MousePosValue")
+position_value = NodePath("HBoxGeneralStatsContainer/VerticalStatValueContainer/PositionValue")
+rotation_value = NodePath("HBoxGeneralStatsContainer/VerticalStatValueContainer/RotationValue")
+loco_node_rotation_value = NodePath("HBoxGeneralStatsContainer/VerticalStatValueContainer/LocoNodeRotationValue")
+mouse_pos_value = NodePath("HBoxGeneralStatsContainer/VerticalStatValueContainer/MousePosValue")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=714849236]
 
-[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=2034869054]
+[node name="HBoxGeneralStatsContainer" type="HBoxContainer" parent="." unique_id=2034869054]
 propagate_maximum_size = false
 layout_mode = 0
 offset_left = -799.0
@@ -21,42 +21,65 @@ offset_top = 206.0
 offset_right = -633.0
 offset_bottom = 310.0
 
-[node name="VerticalStatLabelContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=388709512]
+[node name="VerticalStatLabelContainer" type="VBoxContainer" parent="HBoxGeneralStatsContainer" unique_id=388709512]
 propagate_maximum_size = false
 layout_mode = 2
 
-[node name="PositionLabel" type="Label" parent="HBoxContainer/VerticalStatLabelContainer" unique_id=1604064263]
+[node name="PositionLabel" type="Label" parent="HBoxGeneralStatsContainer/VerticalStatLabelContainer" unique_id=1604064263]
 layout_mode = 2
 text = "Position:"
 
-[node name="RotationLabel" type="Label" parent="HBoxContainer/VerticalStatLabelContainer" unique_id=1919468568]
+[node name="RotationLabel" type="Label" parent="HBoxGeneralStatsContainer/VerticalStatLabelContainer" unique_id=1919468568]
 layout_mode = 2
 text = "Rotation"
 
-[node name="LocoNodeRotationLabel" type="Label" parent="HBoxContainer/VerticalStatLabelContainer" unique_id=1719951700]
+[node name="LocoNodeRotationLabel" type="Label" parent="HBoxGeneralStatsContainer/VerticalStatLabelContainer" unique_id=1719951700]
 layout_mode = 2
 text = "LocoNodeRot:"
 
-[node name="MousePositionLabel" type="Label" parent="HBoxContainer/VerticalStatLabelContainer" unique_id=846780673]
+[node name="MousePositionLabel" type="Label" parent="HBoxGeneralStatsContainer/VerticalStatLabelContainer" unique_id=846780673]
 layout_mode = 2
 text = "MousePos:"
 
-[node name="VerticalStatValueContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=496566221]
+[node name="VerticalStatValueContainer" type="VBoxContainer" parent="HBoxGeneralStatsContainer" unique_id=496566221]
 propagate_maximum_size = false
 layout_mode = 2
 
-[node name="PositionValue" type="Label" parent="HBoxContainer/VerticalStatValueContainer" unique_id=1466019290]
+[node name="PositionValue" type="Label" parent="HBoxGeneralStatsContainer/VerticalStatValueContainer" unique_id=1466019290]
 layout_mode = 2
 text = "Value1"
 
-[node name="RotationValue" type="Label" parent="HBoxContainer/VerticalStatValueContainer" unique_id=631935656]
+[node name="RotationValue" type="Label" parent="HBoxGeneralStatsContainer/VerticalStatValueContainer" unique_id=631935656]
 layout_mode = 2
 text = "Value2"
 
-[node name="LocoNodeRotationValue" type="Label" parent="HBoxContainer/VerticalStatValueContainer" unique_id=1855804367]
+[node name="LocoNodeRotationValue" type="Label" parent="HBoxGeneralStatsContainer/VerticalStatValueContainer" unique_id=1855804367]
 layout_mode = 2
 text = "Value3"
 
-[node name="MousePosValue" type="Label" parent="HBoxContainer/VerticalStatValueContainer" unique_id=1476304956]
+[node name="MousePosValue" type="Label" parent="HBoxGeneralStatsContainer/VerticalStatValueContainer" unique_id=1476304956]
 layout_mode = 2
 text = "Value4"
+
+[node name="HBoxWeaponDataContainer" type="HBoxContainer" parent="." unique_id=1010575643]
+layout_mode = 0
+offset_left = 459.0
+offset_top = 239.0
+offset_right = 798.0
+offset_bottom = 449.0
+
+[node name="Ammunition_container" type="VBoxContainer" parent="HBoxWeaponDataContainer" unique_id=1813515511]
+layout_mode = 2
+
+[node name="CurrentSalvoLabel" type="Label" parent="HBoxWeaponDataContainer/Ammunition_container" unique_id=225753225]
+layout_mode = 2
+text = "Current Salvo:"
+
+[node name="CurrentSalvoValue" type="Label" parent="HBoxWeaponDataContainer/Ammunition_container" unique_id=1233867772]
+layout_mode = 2
+
+[node name="NextSalvoLabel" type="Label" parent="HBoxWeaponDataContainer/Ammunition_container" unique_id=525592166]
+layout_mode = 2
+
+[node name="NextSalvoValue" type="Label" parent="HBoxWeaponDataContainer/Ammunition_container" unique_id=1930849784]
+layout_mode = 2

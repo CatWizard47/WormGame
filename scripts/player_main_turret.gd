@@ -59,26 +59,19 @@ func Load(new_ammunition: ProjectileRes) -> bool:
 
 func fire() -> void: 
 	if can_fire_flag and abs(desired_rotation) < 0.01:
+		print(get_n_ammunition_load(5))
 		current_burst_count = burst_fire_count
 		Burst_direction = Burst_direction * -1
 		get_node("BurstFireCooldownTimer").timeout.emit()
 		get_node("CooldownTimer").start()
 		can_fire_flag = false
 
-func _rotate() -> void:
-	mouse_position = get_local_mouse_position()
-	desired_rotation = mouse_position.angle() 
-	print( desired_rotation)
-	if abs(desired_rotation) > accuracy_margin_radian:	#seemingly unneeded?
-		if desired_rotation > 0:
-			rotation += rotation_speed
-		else:
-			rotation -= rotation_speed
-		if is_rotation_limited:
-			rotation = clampf(rotation, left_rotation_limit, right_rotation_limit)
-		else:
-			if abs(rotation) > PI:
-				rotation = -signf(rotation) * PI
+
+func get_n_ammunition_load(n:int)->Array:
+	var output:Array = Array()
+	for i:int in range(n):
+		output.append(loaded_ammunition[-i])
+	return output
 
 
 func get_new_bullet_position() -> Vector2:
@@ -100,6 +93,21 @@ func _physics_process(_delta: float) -> void:
 	if is_weapon_active: #place this into the player node instead
 		_rotate()
 		
+		
+func _rotate() -> void:
+	mouse_position = get_local_mouse_position()
+	desired_rotation = mouse_position.angle() 
+	#print( desired_rotation)
+	if abs(desired_rotation) > accuracy_margin_radian:	
+		if desired_rotation > 0:
+			rotation += rotation_speed
+		else:
+			rotation -= rotation_speed
+		if is_rotation_limited:
+			rotation = clampf(rotation, left_rotation_limit, right_rotation_limit)
+		else:
+			if abs(rotation) > PI:
+				rotation = -signf(rotation) * PI
 
 
 func _on_cooldown_timer_timeout() -> void:

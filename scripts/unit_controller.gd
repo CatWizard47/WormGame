@@ -73,8 +73,6 @@ func _ready() -> void:	#TEMP
 	order_timer.wait_time = order_cooldown
 	order_timer.timeout.connect(_on_order_cooldown_timeout)
 	self.add_child(order_timer)
-	#print(desired_position)
-	#print(starting_rotation)
 	var on_move: Callable = Callable(self,"_move_body")
 	_physics_body_setup()
 	_sprite_setup()
@@ -115,7 +113,7 @@ func _movement(delta:float)->void:
 	soft_collisions_query_params.transform = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM) 
 	soft_collisions_query_params.motion =  current_position.lerp(current_position + (travel_vector * engine_power), lerp_weight)
 	soft_collisions_query_result = space_state.cast_motion(soft_collisions_query_params)
-	print(soft_collisions_query_result)		#next_position isn't really necessary but 4 readability
+	#print(soft_collisions_query_result)		#next_position isn't really necessary but 4 readability
 	next_position = current_position.lerp(current_position + (travel_vector * engine_power) * soft_collisions_query_result[0], lerp_weight) 
 	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction,next_position))
 	#print(engine_power)
