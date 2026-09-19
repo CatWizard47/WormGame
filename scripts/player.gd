@@ -49,32 +49,14 @@ func _update_locomotive_nodes()->void:
 			locomotive_nodes.append(node)
 
 func _update_weapon_groups()->void:	#potentially also terrible, but less than get_node every time a fire action is called
-	weapon_group_1.clear()
-	if !get_node("weapon_group_1").get_children().is_empty():	
-		for node: Node in get_node("weapon_group_1").get_children():
-			weapon_group_1.append(node)
-			if weapon_group_1[-1].projectile_fired.has_connections(): 
-				weapon_group_1[-1].projectile_fired.disconnect()
-			weapon_group_1[-1].projectile_fired.connect(_instantiate_projectile)
-	weapon_group_2.clear()
-	if !get_node("weapon_group_2").get_children().is_empty():	
-		for node: Node in get_node("weapon_group_2").get_children():
-			weapon_group_2.append(node)
-			if weapon_group_2[-1].projectile_fired.has_connections():
-				weapon_group_2[-1].projectile_fired.disconnect()
-			weapon_group_2[-1].projectile_fired.connect(_instantiate_projectile)
-	if !get_node("weapon_group_3").get_children().is_empty():	
-		for node: Node in get_node("weapon_group_3").get_children():
-			weapon_group_3.append(node)
-			if weapon_group_3[-1].projectile_fired.has_connections():
-				weapon_group_3[-1].projectile_fired.disconnect()
-			weapon_group_3[-1].projectile_fired.connect(_instantiate_projectile)
-	if !get_node("weapon_group_4").get_children().is_empty():	
-		for node: Node in get_node("weapon_group_4").get_children():
-			weapon_group_4.append(node)
-			if weapon_group_4[-1].projectile_fired.has_connections():
-				weapon_group_4[-1].projectile_fired.disconnect()
-			weapon_group_4[-1].projectile_fired.connect(_instantiate_projectile)
+	for i:int in range(1,5):
+		self.get("weapon_group_"+str(i)).clear
+		if !get_node("weapon_group_"+str(i)).get_children().is_empty():
+			for node: Node in get_node("weapon_group_"+str(i)).get_children():
+				self.get("weapon_group_"+str(i)).append(node)
+				if self.get("weapon_group_"+str(i))[-1].projectile_fired.has_connections(): 
+					self.get("weapon_group_"+str(i))[-1].projectile_fired.disconnect()
+				self.get("weapon_group_"+str(i))[-1].projectile_fired.connect(_instantiate_projectile)	
 
 
 func _update_all_rids() -> void:
