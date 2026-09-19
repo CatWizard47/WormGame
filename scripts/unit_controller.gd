@@ -1,4 +1,4 @@
-class_name  Drone extends Node2D 
+class_name  Drone extends Node2D 	#TODO when instantiating, change this to Resource -> direct world state in _init
 @export var status: Status = Status.new(10,10,10)
 @export var sprite: Texture2D
 @export var collision_shape: RectangleShape2D
@@ -21,6 +21,7 @@ var sprite_rid: RID
 var body_rid: RID
 var shape_rid: RID
 var travel_vector: Vector2
+var travel_direction: float
 var estimated_distance_to_stop: float
 var lerp_weight: float
 var can_take_orders: bool = true	#TEMP
@@ -55,11 +56,11 @@ func _physics_body_setup() -> void:
 	PhysicsServer2D.body_set_param(body_rid,PhysicsServer2D.BODY_PARAM_GRAVITY_SCALE,0)
 	#PhysicsServer2D.body_set_param(body_rid,PhysicsServer2D.BODY_PARAM_MASS,1)
 	PhysicsServer2D.body_set_collision_layer(body_rid,4)
-	PhysicsServer2D.body_set_collision_mask(body_rid,12)	#to make them slide below larger units	#TODO check if 12 is oke on layer 2,4 probly not
+	PhysicsServer2D.body_set_collision_mask(body_rid,10)	#to make them slide below larger units	#TODO check if 12 is oke on layer 2,4 probly not
 	PhysicsServer2D.body_attach_object_instance_id(body_rid,self.get_instance_id())
 	#soft collision setup below
 	soft_collisions_query_params.shape_rid = shape_rid
-	soft_collisions_query_params.collision_mask = 12
+	soft_collisions_query_params.collision_mask = 10
 
 func _ready() -> void:	#TEMP
 	#print(instance_from_id(self.get_instance_id()))
@@ -100,19 +101,23 @@ func _movement(delta:float)->void:
 	if abs(current_position - desired_position).length() >= estimated_distance_to_stop:	#temp is position satisfied	#needs to aproximate distance necessary to stop  
 		engine_power += acceleration_mult
 		travel_vector = (travel_vector * rotation_ratio + (desired_position - current_position).normalized()).normalized()
+		travel_direction = travel_vector.angle()
 		if(abs((desired_position - current_position).angle()) >= PI):	#terrible, however works 
-			travel_vector = Vector2.from_angle(travel_vector.angle() + signi(randi_range(-10,10))*PI/8).normalized()
+			if randi_range(0,1) == 1:
+				travel_vector = Vector2.from_angle(travel_vector.angle() + PI/8).normalized()
+			else:
+				travel_vector = Vector2.from_angle(travel_vector.angle() - PI/8).normalized()
 		#TODO PINGS signal to get the next desired position from the pathfinding manager, HERE
 	else:
 		engine_power -= acceleration_mult * 2
 		if Move_path.size() > 0:
 			desired_position = Move_path.pop_back()
 	soft_collisions_query_params.transform = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM) 
-	#next_position = current_position - current_position.lerp(current_position + (travel_direction * engine_power), lerp_weight)
 	soft_collisions_query_params.motion =  current_position.lerp(current_position + (travel_vector * engine_power), lerp_weight)
 	soft_collisions_query_result = space_state.cast_motion(soft_collisions_query_params)
-	#print(soft_collisions_query_result)
-	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_vector.angle(),current_position.lerp(current_position + (travel_vector * engine_power), lerp_weight)))
+	print(soft_collisions_query_result)		#next_position isn't really necessary but 4 readability
+	next_position = current_position.lerp(current_position + (travel_vector * engine_power) * soft_collisions_query_result[0], lerp_weight) 
+	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction,next_position))
 	#print(engine_power)
 	engine_power = clampf(engine_power,0,max_engine_power)
 
