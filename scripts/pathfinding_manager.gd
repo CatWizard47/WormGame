@@ -1,6 +1,6 @@
-class_name PathfindingManager extends Node2D	#needs to be a 2D node, due to world2D usage
-# Called when the node enters the scene tree for the first time.
-#@export var node_border_lenght: int
+class_name PathfindingManager extends Node2D	#needs to be a 2D node, due to world2D usage 
+												#consider changing to resource with _init to get direct_space_state, 
+												#will prolly be in map scene properties, 
 @export var node_size: int = 10 #dist from the center so a node with size 10 is 20x20 square 
 								#needs to be suitably small or navmesh will be innacurate
 @export var maximum_sector_size: int = 100#in nodes width from the center so 2* this for absolute width | height

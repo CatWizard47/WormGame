@@ -55,7 +55,7 @@ func _physics_body_setup() -> void:
 	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(starting_rotation,starting_position))
 	PhysicsServer2D.body_set_param(body_rid,PhysicsServer2D.BODY_PARAM_GRAVITY_SCALE,0)
 	#PhysicsServer2D.body_set_param(body_rid,PhysicsServer2D.BODY_PARAM_MASS,1)
-	PhysicsServer2D.body_set_collision_layer(body_rid,4)
+	PhysicsServer2D.body_set_collision_layer(body_rid,2)
 	PhysicsServer2D.body_set_collision_mask(body_rid,10)	#to make them slide below larger units	#TODO check if 12 is oke on layer 2,4 probly not
 	PhysicsServer2D.body_attach_object_instance_id(body_rid,self.get_instance_id())
 	#soft collision setup below
