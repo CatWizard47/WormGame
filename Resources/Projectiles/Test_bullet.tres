@@ -5,6 +5,8 @@
 
 [resource]
 script = ExtResource("1_w5nq3")
+name = "Test projectile"
+description = "just 4 testing"
 health_damage = 1
 structure_damage = 1
 armour_damage = 1

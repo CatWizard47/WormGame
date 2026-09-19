@@ -1,5 +1,7 @@
 class_name ProjectileRes extends Resource
-	
+
+@export var name: String
+@export var description: String
 @export var health_damage: int
 @export var structure_damage: int
 @export var armour_damage: int
@@ -16,3 +18,6 @@ enum damage_type {
 	COLD,
 	ELECTRIC
 }
+
+func _to_string() -> String:
+	return type + " " + name  

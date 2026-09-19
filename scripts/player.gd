@@ -138,7 +138,8 @@ func _movement(delta: float) -> void:
 func _fire_weapon_group()-> void:
 	#var projectile 
 	#var weapon_group_node: Node = get_node("weapon_group_" + str(player_controlled_weapon_group))
-	for node: Node in get_node("weapon_group_" + str(player_controlled_weapon_group)).get_children():
+	#for node: Node in get_node("weapon_group_" + str(player_controlled_weapon_group)).get_children():
+	for node: Node in self.get(str("weapon_group_" + str(player_controlled_weapon_group))):
 		node.Load(test_projectile) #TEMP
 		node.Load(test_projectile)
 		node.Load(test_projectile)

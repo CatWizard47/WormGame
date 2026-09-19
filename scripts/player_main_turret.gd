@@ -70,7 +70,7 @@ func fire() -> void:
 func get_n_ammunition_load(n:int)->Array:
 	var output:Array = Array()
 	for i:int in range(n):
-		output.append(loaded_ammunition[-i])
+		output.append(available_ammunition_types[loaded_ammunition[-i]])
 	return output
 
 
