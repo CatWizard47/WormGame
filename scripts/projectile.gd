@@ -68,7 +68,7 @@ func _ready() -> void:
 	PhysicsServer2D.body_set_force_integration_callback(body_rid, on_move, "_body_moved")
 	RenderingServer.canvas_item_reset_physics_interpolation(sprite_rid)
 	#if projectile_stats.blast_radius > 0:	#to mimic hitting the ground 
-	explode_timer.wait_time = ((end_position-start_position).length() / (projectile_stats.projectile_speed ) + 0.05)  #minimum timer length
+	explode_timer.wait_time = ((end_position-start_position).length() / (projectile_stats.projectile_speed ) * randfn(1.1,0.1) + 0.05)  #minimum timer length
 	explode_timer.start()
 	if projectile_stats.projectile_speed == 0:
 		_hitscan_fire()

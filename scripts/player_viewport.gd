@@ -17,10 +17,14 @@ func _ready() -> void:
 		print("ERR")
 
 
-func update_ammunition_counters()->void:
+func update_ammunition_counters(Combined_magazine_state:Array)->void:
+	#will prolly need to figure out a procedural method of making and breaking H & Vbox cells 4 this 
 	pass
 	
-	
+
+func update_viewport_position()->void:
+	#the camera is to move with mouse movements, may have to do this with a toggle 
+	pass
 
 
 func _adjust_ui_rotation()->void:

@@ -28,9 +28,8 @@ var weapon_group_3: Array = Array()
 var weapon_group_4: Array = Array()
 var player_controlled_weapon_group: int	
 var projectile_scene: Projectile
-signal weapon_fired
 signal ui_update_ammunition(magazine_state)	#mag_state is Array of Arrays containing at least 2 salvos of weapons in active groups
-
+signal ui_update_weapons(weapon_amount,salvo_counts) #wep amount is number of guns, salvo counts: Array of every weapons burst count
 
 
 func _ready() -> void:
@@ -52,14 +51,16 @@ func switch_weapon_group(new_weapon_group:int) -> void:
 func get_weapon_mag_state() -> Array:
 	var Output:Array=Array()
 	for turret:PlayerMainTurret in self.get("weapon_group_"+str(player_controlled_weapon_group)):
-		Output.append(turret.get_n_ammunition_load(turret.burst_fire_count))
+		Output.append(turret.get_n_ammunition_load(turret.burst_fire_count * 2))
 	return Output
+
 
 func _update_locomotive_nodes()->void:
 	locomotive_nodes.clear()
 	if !get_node("locomotion_nodes").get_children().is_empty():	
 		for node: Node in get_node("locomotion_nodes").get_children():
 			locomotive_nodes.append(node)
+
 
 func _update_weapon_groups()->void:	#potentially also terrible, but less than get_node every time a fire action is called
 	for i:int in range(1,5):
@@ -76,7 +77,7 @@ func _update_all_rids() -> void:
 	for loco_node: Node in locomotive_nodes:
 		node_rids.append(loco_node.get_rid())
 	node_rids.append(self.get_rid())
-	
+
 
 func _rotate_locomotive_nodes(rotation_speed:float) ->void:
 	locomotive_rotation = 0
@@ -87,13 +88,13 @@ func _rotate_locomotive_nodes(rotation_speed:float) ->void:
 		locomotive_nodes_rotated_this_tick = false
 	else:	 
 		locomotive_nodes_rotated_this_tick = true
-	
-		
+
+
 func _animate_locomotive_nodes(speed:float)->void:
 	for loco_node: Node in locomotive_nodes:
 		loco_node.animate(speed)
-		
-		
+
+
 func _stop_locomotive_node_animation()->void:
 	for loco_node: Node in locomotive_nodes:
 		loco_node.pause_animation()		
@@ -141,6 +142,7 @@ func _fire_weapon_group()-> void:
 		node.Load(test_projectile)
 		node.Load(test_projectile)
 		node.fire()
+		ui_update_ammunition.emit(get_weapon_mag_state())
 
 
 func _instantiate_projectile(projectile_position:Vector2, projectile_rotation:float, created_projectile:ProjectileRes) -> void:

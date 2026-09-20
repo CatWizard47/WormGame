@@ -14,7 +14,9 @@ var positions_checked: 	Array = Array()	#placed here in case of using generate_n
 signal finished_navmesh_generation
 
 	#TODO This whole thing will probably be using a separate thread rhather than running on main,
-	
+
+
+
 func _ready() -> void:
 	space_state = get_world_2d().direct_space_state
 	shape_rid = PhysicsServer2D.rectangle_shape_create()

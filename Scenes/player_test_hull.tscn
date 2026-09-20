@@ -25,12 +25,13 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Player_test_hull" type="RigidBody2D" unique_id=87806676]
+[node name="Player_test_hull" type="RigidBody2D" unique_id=87806676 node_paths=PackedStringArray("player_viewport")]
 collision_mask = 8
 mass = 1000.0
 gravity_scale = 0.0
 script = ExtResource("1_6t5aa")
 test_projectile = SubResource("Resource_d55l8")
+player_viewport = NodePath("player_viewport")
 
 [node name="hull_collision_shape" type="CollisionShape2D" parent="." unique_id=743409537]
 position = Vector2(0.5, 0)
