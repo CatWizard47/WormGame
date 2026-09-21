@@ -111,13 +111,21 @@ func _movement(delta:float)->void:
 		if Move_path.size() > 0:
 			desired_position = Move_path.pop_back()
 	soft_collisions_query_params.transform = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM) 
-	soft_collisions_query_params.motion =  current_position.lerp(current_position + (travel_vector * engine_power), lerp_weight)
+	soft_collisions_query_params.motion = current_position + collision_shape.size #current_position.lerp(current_position + (travel_vector * engine_power), lerp_weight)
 	soft_collisions_query_result = space_state.cast_motion(soft_collisions_query_params)
 	#print(soft_collisions_query_result)		#next_position isn't really necessary but 4 readability
+	if soft_collisions_query_result != PackedFloat32Array([1.0,1.0]):
+		if randi_range(0,1) == 1:
+			travel_vector = Vector2.from_angle(travel_vector.angle() + PI/16).normalized()
+		else:
+			travel_vector = Vector2.from_angle(travel_vector.angle() - PI/16).normalized()
 	next_position = current_position.lerp(current_position + (travel_vector * engine_power) * soft_collisions_query_result[0], lerp_weight) 
 	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction,next_position))
 	#print(engine_power)
 	engine_power = clampf(engine_power,0,max_engine_power)
+	
+	#Consider this
+	#https://en.wikipedia.org/wiki/PID_controller
 
 
 func _physics_process(delta: float) -> void:
