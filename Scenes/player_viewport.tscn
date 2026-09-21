@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bejfhcca0203f" path="res://scripts/player_viewport.gd" id="1_38m77"]
 
-[node name="player_viewport_controller" type="Control" unique_id=658114410 node_paths=PackedStringArray("position_value", "rotation_value", "loco_node_rotation_value", "mouse_pos_value")]
+[node name="player_viewport_controller" type="Control" unique_id=658114410 node_paths=PackedStringArray("position_value", "rotation_value", "loco_node_rotation_value", "mouse_pos_value", "current_salvo_value", "next_salvo_value")]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_38m77")
@@ -10,6 +10,8 @@ position_value = NodePath("HBoxGeneralStatsContainer/VerticalStatValueContainer/
 rotation_value = NodePath("HBoxGeneralStatsContainer/VerticalStatValueContainer/RotationValue")
 loco_node_rotation_value = NodePath("HBoxGeneralStatsContainer/VerticalStatValueContainer/LocoNodeRotationValue")
 mouse_pos_value = NodePath("HBoxGeneralStatsContainer/VerticalStatValueContainer/MousePosValue")
+current_salvo_value = NodePath("HBoxWeaponDataContainer/Ammunition_container/CurrentSalvoValue")
+next_salvo_value = NodePath("HBoxWeaponDataContainer/Ammunition_container/NextSalvoValue")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=714849236]
 

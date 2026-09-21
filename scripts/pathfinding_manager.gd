@@ -15,6 +15,7 @@ signal finished_navmesh_generation
 
 	#TODO This whole thing will probably be using a separate thread rhather than running on main,
 
+	#TODO implement node removal method
 
 
 func _ready() -> void:
