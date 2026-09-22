@@ -13,8 +13,10 @@ var engine_power: float = 0
 var desired_position: Vector2
 var current_position: Vector2
 var next_position : Vector2 
-var soft_collisions_query_params: PhysicsShapeQueryParameters2D =PhysicsShapeQueryParameters2D.new()
+var soft_collisions_query_params: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()	
 var soft_collisions_query_result: PackedFloat32Array
+#var ray_collisions_query_params: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.new()
+#var ray_collisions_query_result: Dictionary[String,Variant]
 var space_state: PhysicsDirectSpaceState2D	#TODO consider changing this to init arg? 
  #the actual thing won't be pathfinding, this is simply to move the drone from A to B, a short segment that will be actually gotten via a drone group controller,
 var sprite_rid: RID
@@ -60,7 +62,7 @@ func _physics_body_setup() -> void:
 	PhysicsServer2D.body_attach_object_instance_id(body_rid,self.get_instance_id())
 	#soft collision setup below
 	soft_collisions_query_params.shape_rid = shape_rid
-	soft_collisions_query_params.collision_mask = 10
+	soft_collisions_query_params.collision_mask = 2
 
 func _ready() -> void:	#TEMP
 	#print(instance_from_id(self.get_instance_id()))
@@ -111,7 +113,7 @@ func _movement(delta:float)->void:
 		if Move_path.size() > 0:
 			desired_position = Move_path.pop_back()
 	soft_collisions_query_params.transform = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM) 
-	soft_collisions_query_params.motion = current_position + collision_shape.size #current_position.lerp(current_position + (travel_vector * engine_power), lerp_weight)
+	soft_collisions_query_params.motion = current_position + collision_shape.size	#TODO FIX #current_position.lerp(current_position + (travel_vector * engine_power), lerp_weight)
 	soft_collisions_query_result = space_state.cast_motion(soft_collisions_query_params)
 	#print(soft_collisions_query_result)		#next_position isn't really necessary but 4 readability
 	if soft_collisions_query_result != PackedFloat32Array([1.0,1.0]):
@@ -124,7 +126,7 @@ func _movement(delta:float)->void:
 	#print(engine_power)
 	engine_power = clampf(engine_power,0,max_engine_power)
 	
-	#Consider this
+	#Consider this	
 	#https://en.wikipedia.org/wiki/PID_controller
 
 
