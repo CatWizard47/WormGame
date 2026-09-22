@@ -15,8 +15,10 @@ var current_position: Vector2
 var next_position : Vector2 
 var soft_collisions_query_params: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()	
 var soft_collisions_query_result: PackedFloat32Array
-#var ray_collisions_query_params: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.new()
-#var ray_collisions_query_result: Dictionary[String,Variant]
+var ray_collisions_query_params: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.new()
+var ray_collisions_query_result: Dictionary[String,Variant]
+var object_to_avoid: Node = null
+var object_to_avoid_last_position:Vector2
 var space_state: PhysicsDirectSpaceState2D	#TODO consider changing this to init arg? 
  #the actual thing won't be pathfinding, this is simply to move the drone from A to B, a short segment that will be actually gotten via a drone group controller,
 var sprite_rid: RID
@@ -28,7 +30,7 @@ var estimated_distance_to_stop: float
 var lerp_weight: float
 var can_take_orders: bool = true	#TEMP
 #TEMP#
-var Move_path: Array = Array()
+var move_path: Array = Array()
 var order_cooldown:float = 0.5
 var order_timer:Timer = Timer.new()
 var PFM: PathfindingManager = PathfindingManager.new() #TEMP
@@ -61,8 +63,11 @@ func _physics_body_setup() -> void:
 	PhysicsServer2D.body_set_collision_mask(body_rid,10)	#to make them slide below larger units	#TODO check if 12 is oke on layer 2,4 probly not
 	PhysicsServer2D.body_attach_object_instance_id(body_rid,self.get_instance_id())
 	#soft collision setup below
-	soft_collisions_query_params.shape_rid = shape_rid
-	soft_collisions_query_params.collision_mask = 2
+	#soft_collisions_query_params.shape_rid = shape_rid
+	#soft_collisions_query_params.collision_mask = 2
+	
+	ray_collisions_query_params.collide_with_areas = true
+	ray_collisions_query_params.collision_mask = 2
 
 func _ready() -> void:	#TEMP
 	#print(instance_from_id(self.get_instance_id()))
@@ -110,24 +115,56 @@ func _movement(delta:float)->void:
 		#TODO PINGS signal to get the next desired position from the pathfinding manager, HERE
 	else:
 		engine_power -= acceleration_mult * 2
-		if Move_path.size() > 0:
-			desired_position = Move_path.pop_back()
-	soft_collisions_query_params.transform = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM) 
-	soft_collisions_query_params.motion = current_position + collision_shape.size	#TODO FIX #current_position.lerp(current_position + (travel_vector * engine_power), lerp_weight)
-	soft_collisions_query_result = space_state.cast_motion(soft_collisions_query_params)
+		if move_path.size() > 0:
+			desired_position = move_path.pop_back()
+			
+	ray_collisions_query_params.from = current_position
+	ray_collisions_query_params.to = current_position.lerp(current_position + (travel_vector * engine_power), lerp_weight)
+	ray_collisions_query_result = space_state.intersect_ray(ray_collisions_query_params)
+	if !ray_collisions_query_result.is_empty():
+		_avoid_collisions(move_path,ray_collisions_query_result)
+	#soft_collisions_query_params.transform = PhysicsServer2D.body_get_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM) 
+	#soft_collisions_query_params.motion = current_position + collision_shape.size	#TODO FIX #current_position.lerp(current_position + (travel_vector * engine_power), lerp_weight)
+	#soft_collisions_query_result = space_state.cast_motion(soft_collisions_query_params)
 	#print(soft_collisions_query_result)		#next_position isn't really necessary but 4 readability
-	if soft_collisions_query_result != PackedFloat32Array([1.0,1.0]):
-		if randi_range(0,1) == 1:
-			travel_vector = Vector2.from_angle(travel_vector.angle() + PI/16).normalized()
-		else:
-			travel_vector = Vector2.from_angle(travel_vector.angle() - PI/16).normalized()
-	next_position = current_position.lerp(current_position + (travel_vector * engine_power) * soft_collisions_query_result[0], lerp_weight) 
+	#if soft_collisions_query_result != PackedFloat32Array([1.0,1.0]):
+	#	if randi_range(0,1) == 1:
+	#		travel_vector = Vector2.from_angle(travel_vector.angle() + PI/16).normalized()
+	#	else:
+	#		travel_vector = Vector2.from_angle(travel_vector.angle() - PI/16).normalized()
+	#next_position = current_position.lerp(current_position + (travel_vector * engine_power) * soft_collisions_query_result[0], lerp_weight) 
+	next_position = current_position.lerp(current_position + (travel_vector * engine_power), lerp_weight) 
 	PhysicsServer2D.body_set_state(body_rid,PhysicsServer2D.BODY_STATE_TRANSFORM,Transform2D(travel_direction,next_position))
 	#print(engine_power)
 	engine_power = clampf(engine_power,0,max_engine_power)
 	
 	#Consider this	
 	#https://en.wikipedia.org/wiki/PID_controller
+
+
+func _avoid_collisions(path_to_edit:Array,ray_intersect:Dictionary[String,Variant]) -> Array:
+	#this thing will have to presumably use ray normals to dynamically generate a short path around a given entity
+	#It needs to 
+	#get obj rect or radius
+	# make a circular, or trapezoid sort of path outside of obj
+	#also it will need to replace the path items on innaccessible tiles
+	#also dynamically change it's manufactured path in case avoided object moves
+	#which in turn neccesitates more collision checks <- this might be redundant if we're already doing it while genning navmesh
+		#maybe instead make method in PFM to check accesability
+		#or just make a circular path avoiding x nodes
+	if object_to_avoid != null:
+		if object_to_avoid.is_class("Resource"):
+			#in this case have to use current_position rather than position, 
+			#will legit only work when I change drones to a Resource derived class,
+			#which is what they are supposed to b
+			pass
+			#in this case we can use position
+			#ray_intersect.get("position")
+		else:
+			pass
+	else:
+		object_to_avoid = instance_from_id(ray_intersect.get("collider_id"))
+	return path_to_edit
 
 
 func _physics_process(delta: float) -> void:
@@ -138,7 +175,7 @@ func _physics_process(delta: float) -> void:
 			#TEMP
 			#print(PFM.find_nearest_node(Vector2(600,30)))
 			#PFM.find_nearest_node(get_global_mouse_position())
-			Move_path = PFM.find_path(current_position,get_global_mouse_position())
+			move_path = PFM.find_path(current_position,get_global_mouse_position())
 			can_take_orders = false
 			order_timer.start()
 			#print(PFM.find_path(current_position,get_global_mouse_position()))
