@@ -30,11 +30,9 @@ func _ready() -> void:
 	collision_shape_rid = PhysicsServer2D.circle_shape_create()
 	collision_query_parameters.shape_rid = collision_shape_rid
 	collision_query_parameters.collision_mask = 8
+	self.set_process(false)
 	#print(_check_neighboring_node_collisions(Vector2i(300,300)))
 
-
-	#needs to append to the A_P_S array:
-	#deleting  might be an issue tho
 	
 	#actually will be the primary loop thing here
 	#this will generate a navmesh, appending it to the navmesh dict
@@ -73,7 +71,7 @@ func generate_navmesh(start_position:Vector2)->void:
 	#pass
 	
 	
-	#will return null if too far, max distance is like 3 
+	#will return null if too far, max distance is like 5 or 6 nodes or so
 	#this is bad actually, makes 65 nodes, but only 48 unique
 	#probably a result 'rings' the iterator makes overlapping, not sure if worth fixing
 func find_nearest_node(position_to_check: Vector2) -> Variant:
@@ -121,9 +119,8 @@ func find_path(initial_start_position:Vector2,initial_end_position: Vector2, uni
 	while !nodes_to_check.is_empty():
 		current_node = nodes_to_check.pop_min()
 		if current_node == current_navmesh[end_position]:
-			#TODO check if path is accomodating enough to unit size
-			var output_path = _recover_path(came_from,current_node)
-			if _validate_path(output_path,unit_size):
+			var output_path : Array = _recover_path(came_from,current_node)
+			if _validate_path_for_unit_size(output_path,unit_size):
 				return output_path	#return path
 		for key in current_node.neighbours:
 			neighbour_node = current_node.neighbours[key]
@@ -141,7 +138,7 @@ func _make_default_navmesh_dict_value(dictionary_to_modify:Dictionary[Vector2i,f
 		dictionary_to_modify[key] = new_default_value
 
 
-func _validate_path(path: Array, unit_size: float) -> bool:
+func _validate_path_for_unit_size(path: Array, unit_size: float) -> bool:
 	PhysicsServer2D.shape_set_data(collision_shape_rid,unit_size)
 	for checking_position: Vector2i in path:
 		collision_query_parameters.transform = Transform2D(0,checking_position)
@@ -256,8 +253,6 @@ func _check_collisions(shape_intersect:Array[Dictionary])->bool:
 
 												#if z-levels are to be implemented, i have to dynamically change col_layer of obj
 
-	#https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html
-	#https://en.wikipedia.org/wiki/A*_search_algorithm # maybe?
 	#possibly make this a new thread # will check perf before doing that
 	#https://docs.godotengine.org/en/stable/tutorials/performance/using_multiple_threads.html
 	

@@ -31,7 +31,7 @@ var estimated_distance_to_stop: float
 var lerp_weight: float
 var can_take_orders: bool = true	#TEMP
 #TEMP#
-var move_path: Array = Array()
+var move_path: Array = Array()	#has to be variant to be able to be Null
 var order_cooldown:float = 0.5
 var order_timer:Timer = Timer.new()
 var PFM: PathfindingManager = PathfindingManager.new() #TEMP
@@ -176,7 +176,9 @@ func _physics_process(delta: float) -> void:
 			#TEMP
 			#print(PFM.find_nearest_node(Vector2(600,30)))
 			#PFM.find_nearest_node(get_global_mouse_position())
-			move_path = PFM.find_path(current_position,get_global_mouse_position())
+			var new_path : Variant = PFM.find_path(current_position,get_global_mouse_position(),20.0)
+			if new_path!=null:
+				move_path =new_path
 			can_take_orders = false
 			order_timer.start()
 			#print(PFM.find_path(current_position,get_global_mouse_position()))
