@@ -111,27 +111,42 @@ func find_path(initial_start_position:Vector2,initial_end_position: Vector2, uni
 	var f_score: Dictionary[Vector2i,float]
 	var neighbour_node: PathfindingNode
 	var current_score: float 
-	nodes_to_check.insert(current_navmesh[start_position],0.0)	
-	_make_default_navmesh_dict_value(g_score,1.79769e308) #terrible, consider making it better somehow
-	g_score[start_position] = 0
-	_make_default_navmesh_dict_value(f_score,1.79769e308) #TODO check if this is a good idea
-	f_score[start_position] = (start_position-end_position).length()	#distance_to(end_position) will be our heuristic measure, ig, 				
+	var nodes_to_avoid : Array = Array()
+	#this is abhorent,terrible even, but otherwise I have a unreadable mess
+	_reset_find_path_components(g_score,f_score,current_node,came_from,nodes_to_check,start_position,end_position)
 	while !nodes_to_check.is_empty():
 		current_node = nodes_to_check.pop_min()
 		if current_node == current_navmesh[end_position]:
 			var output_path : Array = _recover_path(came_from,current_node)
 			if _validate_path_for_unit_size(output_path,unit_size):
-				return output_path	#return path
+				return output_path	
+			else:
+				output_path.pop_back()
+				output_path.pop_front()
+				nodes_to_avoid.append_array(output_path)
+				_reset_find_path_components(g_score,f_score,current_node,came_from,nodes_to_check,start_position,end_position)
 		for key in current_node.neighbours:
 			neighbour_node = current_node.neighbours[key]
 			current_score = g_score[current_node.position] + current_node.position.distance_squared_to(neighbour_node.position)
-			if current_score < g_score[neighbour_node.position]:
+			if current_score < g_score[neighbour_node.position] and !nodes_to_avoid.has(neighbour_node.position):
 				came_from[neighbour_node.position] = current_node
 				g_score[neighbour_node.position] = current_score
 				f_score[neighbour_node.position] = current_score + (current_node.position - neighbour_node.position).length() #(node_size * 2)
 				if !nodes_to_check.has(neighbour_node):
 					nodes_to_check.insert(neighbour_node,current_score)#neighbour_node.position.distance_squared_to(end_position))
 	return null
+
+
+func _reset_find_path_components(g_score:Dictionary[Vector2i,float],f_score:Dictionary[Vector2i,float],current_node:PathfindingNode,came_from:Dictionary[Vector2i,PathfindingNode],nodes_to_check:PathfindingNodeHeap,start_position:Vector2i,end_position:Vector2i)->void:
+	current_node = current_navmesh[start_position]
+	came_from.clear()
+	nodes_to_check.clear()
+	nodes_to_check.insert(current_navmesh[start_position],0.0)	
+	_make_default_navmesh_dict_value(g_score,1.79769e308) #terrible, consider making it better somehow
+	g_score[start_position] = 0
+	_make_default_navmesh_dict_value(f_score,1.79769e308)
+	f_score[start_position] = (start_position-end_position).length()
+	
 
 func _make_default_navmesh_dict_value(dictionary_to_modify:Dictionary[Vector2i,float],new_default_value:float)->void:
 	for key in current_navmesh:

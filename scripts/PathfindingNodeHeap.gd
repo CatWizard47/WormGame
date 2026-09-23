@@ -59,3 +59,6 @@ func has(node_to_check:PathfindingNode) -> bool:
 		if node.pathfinding_node == node_to_check:
 			return true
 	return false
+	
+func clear() ->void:
+	heap = Array()
