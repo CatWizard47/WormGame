@@ -4,11 +4,13 @@ class_name PathfindingManager extends Node2D	#needs to be a 2D node, due to worl
 @export var node_size: int = 10 #dist from the center so a node with size 10 is 20x20 square 
 								#needs to be suitably small or navmesh will be innacurate
 @export var maximum_sector_size: int = 100#in nodes width from the center so 2* this for absolute width | height
-var shape_rid: RID
+var node_shape_rid: RID
+var collision_shape_rid: RID
 var available_pathfinding_sectors: Array
 var space_state: PhysicsDirectSpaceState2D
 var next_node_vector:Vector2i
 var node_query_parameters: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
+var collision_query_parameters: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
 var current_navmesh:Dictionary[Vector2i, PathfindingNode] 
 var positions_checked: 	Array = Array()	#placed here in case of using generate_navmesh to append rather than generate
 signal finished_navmesh_generation
@@ -20,12 +22,14 @@ signal finished_navmesh_generation
 
 func _ready() -> void:
 	space_state = get_world_2d().direct_space_state
-	shape_rid = PhysicsServer2D.rectangle_shape_create()
-	PhysicsServer2D.shape_set_data(shape_rid,Vector2(node_size,node_size))
-	node_query_parameters.shape_rid = shape_rid 
+	node_shape_rid = PhysicsServer2D.rectangle_shape_create()
+	PhysicsServer2D.shape_set_data(node_shape_rid,Vector2(node_size,node_size))
+	node_query_parameters.shape_rid = node_shape_rid 
 	node_query_parameters.collision_mask = 8 #default value maybe will have to change it l8tr
 	current_navmesh.clear()	#probably unnecesary but whatevr
-	
+	collision_shape_rid = PhysicsServer2D.circle_shape_create()
+	collision_query_parameters.shape_rid = collision_shape_rid
+	collision_query_parameters.collision_mask = 8
 	#print(_check_neighboring_node_collisions(Vector2i(300,300)))
 
 
@@ -97,7 +101,7 @@ func find_nearest_node(position_to_check: Vector2) -> Variant:
 	
 	#uses A* as outlined b4hand
 	#h can be a simple distance measure start->end
-func find_path(initial_start_position:Vector2,initial_end_position: Vector2) -> Variant: #->Array: #of vector2i-s
+func find_path(initial_start_position:Vector2,initial_end_position: Vector2, unit_size:float = node_size) -> Variant: #->Array: #of vector2i-s
 	if find_nearest_node(initial_start_position) == null or find_nearest_node(initial_end_position) == null:
 		return null
 	var start_position: Vector2i = find_nearest_node(initial_start_position)	
@@ -117,7 +121,10 @@ func find_path(initial_start_position:Vector2,initial_end_position: Vector2) -> 
 	while !nodes_to_check.is_empty():
 		current_node = nodes_to_check.pop_min()
 		if current_node == current_navmesh[end_position]:
-			return _recover_path(came_from,current_node)	#return path
+			#TODO check if path is accomodating enough to unit size
+			var output_path = _recover_path(came_from,current_node)
+			if _validate_path(output_path,unit_size):
+				return output_path	#return path
 		for key in current_node.neighbours:
 			neighbour_node = current_node.neighbours[key]
 			current_score = g_score[current_node.position] + current_node.position.distance_squared_to(neighbour_node.position)
@@ -132,6 +139,15 @@ func find_path(initial_start_position:Vector2,initial_end_position: Vector2) -> 
 func _make_default_navmesh_dict_value(dictionary_to_modify:Dictionary[Vector2i,float],new_default_value:float)->void:
 	for key in current_navmesh:
 		dictionary_to_modify[key] = new_default_value
+
+
+func _validate_path(path: Array, unit_size: float) -> bool:
+	PhysicsServer2D.shape_set_data(collision_shape_rid,unit_size)
+	for checking_position: Vector2i in path:
+		collision_query_parameters.transform = Transform2D(0,checking_position)
+		if !space_state.intersect_shape(collision_query_parameters,1).is_empty():
+			return false
+	return true
 	
 	
 func _recover_path(came_from: Dictionary[Vector2i,PathfindingNode],current_node: PathfindingNode ) -> Array:
@@ -192,10 +208,10 @@ func _generate_pathfinding_node(dict_to_append_to:Dictionary[Vector2i,Pathfindin
 	node_query_parameters.transform = Transform2D(0,node_position)
 	if !dict_to_append_to.has(node_position):
 		if neighbour_array.size() < 4:
-			if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
+			if !_check_collisions(space_state.intersect_shape(node_query_parameters,1)):
 				dict_to_append_to[node_position] = PathfindingNode.new(node_position,true)
 		else:
-			if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
+			if !_check_collisions(space_state.intersect_shape(node_query_parameters,1)):
 				dict_to_append_to[node_position] = PathfindingNode.new(node_position,false)
 	#DEBUG_make_label_for_position(node_position) #DEBUG #COMM OUT L8TR
 	return neighbour_array
@@ -208,7 +224,7 @@ func _check_neighboring_node_collisions(position_to_check:Vector2i)-> Array:
 	for i: int in range(8):
 		next_node_vector = get_direction_vector(i) * node_size * 2
 		node_query_parameters.transform=Transform2D(0,position_to_check + next_node_vector)
-		if !_check_collisions(space_state.intersect_shape(node_query_parameters,32)):
+		if !_check_collisions(space_state.intersect_shape(node_query_parameters,1)):
 			output.append(i) #i is the exact same as node_direction enum
 	#print(output)
 	return output
@@ -253,7 +269,7 @@ func _process(_delta: float) -> void:
 	#maybe i just gotta make a navmesh first, then divide the thing into sectors
 
 func _remove_this()->void:
-	PhysicsServer2D.free_rid(shape_rid)
+	PhysicsServer2D.free_rid(node_shape_rid)
 
 func DEBUG_force_labels_on_nodes()->void:
 	for key in current_navmesh:

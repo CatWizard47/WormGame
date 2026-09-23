@@ -85,3 +85,17 @@ layout_mode = 2
 
 [node name="NextSalvoValue" type="Label" parent="HBoxWeaponDataContainer/Ammunition_container" unique_id=1930849784]
 layout_mode = 2
+
+[node name="TEMPKeybindContainer" type="HBoxContainer" parent="." unique_id=1190479796]
+layout_mode = 0
+offset_left = -797.0
+offset_top = -449.0
+offset_right = -58.0
+offset_bottom = -348.0
+
+[node name="Label" type="Label" parent="TEMPKeybindContainer" unique_id=1160731192]
+layout_mode = 2
+text = "[WS] - Throttle
+[AD] - loco_node rotation
+[Space] - whatever dev command is currently tested
+ "

@@ -1,4 +1,5 @@
 class_name  Drone extends Node2D 	#TODO when instantiating, change this to Resource -> direct world state in _init
+									#will also have to set_physics_process to true in this case
 @export var status: Status = Status.new(10,10,10)
 @export var sprite: Texture2D
 @export var collision_shape: RectangleShape2D
@@ -16,7 +17,7 @@ var next_position : Vector2
 var soft_collisions_query_params: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()	
 var soft_collisions_query_result: PackedFloat32Array
 var ray_collisions_query_params: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.new()
-var ray_collisions_query_result: Dictionary[String,Variant]
+var ray_collisions_query_result: Dictionary
 var object_to_avoid: Node = null
 var object_to_avoid_last_position:Vector2
 var space_state: PhysicsDirectSpaceState2D	#TODO consider changing this to init arg? 
