@@ -45,12 +45,14 @@ func _ready() -> void:
 
 
 func switch_weapon_group(new_weapon_group:int) -> void:
-	for turret:PlayerMainTurret in self.get("weapon_group_"+str(player_controlled_weapon_group)):
-		turret.toggle_active_state()
-	player_controlled_weapon_group = new_weapon_group
-	for turret:PlayerMainTurret in self.get("weapon_group_"+str(player_controlled_weapon_group)):
-		turret.toggle_active_state() 
-	ui_update_ammunition.emit(get_weapon_mag_state())
+	if player_controlled_weapon_group != new_weapon_group:
+		print(new_weapon_group)
+		for turret:PlayerMainTurret in self.get("weapon_group_"+str(player_controlled_weapon_group)):
+			turret.toggle_active_state()
+		player_controlled_weapon_group = new_weapon_group
+		for turret:PlayerMainTurret in self.get("weapon_group_"+str(player_controlled_weapon_group)):
+			turret.toggle_active_state() 
+		ui_update_ammunition.emit(get_weapon_mag_state())
 
 
 func get_weapon_mag_state() -> Array:
@@ -161,5 +163,16 @@ func _physics_process(delta: float) -> void:
 	_movement(delta)
 	if Input.is_action_pressed("M1_clicked"):
 		_fire_weapon_group()
+		
+		#there needs to be a better way 2 do it
+	if Input.is_action_pressed("1"):
+		switch_weapon_group(1)
+	if Input.is_action_pressed("2"):
+		switch_weapon_group(2)		
+	if Input.is_action_pressed("3"):
+		switch_weapon_group(3)
+	if Input.is_action_pressed("4"):
+		switch_weapon_group(4)
+		
 		#print(get_node("turret_nodes/player_main_turret").get_new_bullet_position())
 	#print("position = ",position, " velocity = ", velocity.length(), "speed = ", engine_power)	

@@ -97,5 +97,6 @@ offset_bottom = -348.0
 layout_mode = 2
 text = "[WS] - Throttle
 [AD] - loco_node rotation
+[1-4] - change weapon group 
 [Space] - whatever dev command is currently tested
  "
