@@ -153,6 +153,14 @@ func _make_default_navmesh_dict_value(dictionary_to_modify:Dictionary[Vector2i,f
 		dictionary_to_modify[key] = new_default_value
 
 
+func _validate_node_for_unit_size(checking_position:Vector2i,unit_size:float)->bool:
+	PhysicsServer2D.shape_set_data(collision_shape_rid,unit_size)
+	collision_query_parameters.transform = Transform2D(0,checking_position)
+	if !space_state.intersect_shape(collision_query_parameters,1).is_empty():
+		return false
+	return false
+	
+	
 func _validate_path_for_unit_size(path: Array, unit_size: float) -> bool:
 	PhysicsServer2D.shape_set_data(collision_shape_rid,unit_size)
 	for checking_position: Vector2i in path:

@@ -57,8 +57,15 @@ func Load(new_ammunition: ProjectileRes) -> bool:
 	return true
 
 
+func toggle_active_state()->void:
+	if is_weapon_active:
+		is_weapon_active = false
+	else:
+		is_weapon_active = true
+
+
 func fire() -> void: 
-	if can_fire_flag and abs(desired_rotation) < 0.01:
+	if can_fire_flag and abs(desired_rotation) < 0.01 and is_weapon_active:
 		print(get_n_ammunition_load(5))
 		current_burst_count = burst_fire_count
 		Burst_direction = Burst_direction * -1

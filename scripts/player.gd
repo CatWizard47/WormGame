@@ -44,7 +44,12 @@ func _ready() -> void:
 	#get_node("weapon_group_1/player_main_turret").allowed_ammunition_type = "TEST" #TEMP
 
 
-func switch_weapon_group(new_weapon_group:int) -> void: 
+func switch_weapon_group(new_weapon_group:int) -> void:
+	for turret:PlayerMainTurret in self.get("weapon_group_"+str(player_controlled_weapon_group)):
+		turret.toggle_active_state()
+	player_controlled_weapon_group = new_weapon_group
+	for turret:PlayerMainTurret in self.get("weapon_group_"+str(player_controlled_weapon_group)):
+		turret.toggle_active_state() 
 	ui_update_ammunition.emit(get_weapon_mag_state())
 
 
