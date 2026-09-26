@@ -7,6 +7,7 @@ extends RigidBody2D
 @export var locomotion_node_rotation_speed: float = 0.025 # in radians
 @export var test_projectile: ProjectileRes
 @export var player_viewport:Node
+var projectiles_to_load: Array = [test_projectile]
 var node_rids: Array = Array()
 var screen_size # Size of the game window. # temp
 var velocity: Vector2
@@ -143,14 +144,14 @@ func _fire_weapon_group()-> void:
 	#var weapon_group_node: Node = get_node("weapon_group_" + str(player_controlled_weapon_group))
 	#for node: Node in get_node("weapon_group_" + str(player_controlled_weapon_group)).get_children():
 	for node: Node in self.get(str("weapon_group_" + str(player_controlled_weapon_group))):
-		node.Load(test_projectile) #TEMP
-		node.Load(test_projectile)
-		node.Load(test_projectile)
-		node.Load(test_projectile)
-		node.Load(test_projectile)
 		node.fire()
 		ui_update_ammunition.emit(get_weapon_mag_state())
 
+
+func _load_ammunition(ammo_index:int) -> void:
+	for node: Node in self.get(str("weapon_group_" + str(player_controlled_weapon_group))):
+		node.Load(test_projectile) 
+		ui_update_ammunition.emit(get_weapon_mag_state())
 
 func _instantiate_projectile(projectile_position:Vector2, projectile_rotation:float, created_projectile:ProjectileRes) -> void:
 	#projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
@@ -165,14 +166,13 @@ func _physics_process(delta: float) -> void:
 		_fire_weapon_group()
 		
 		#there needs to be a better way 2 do it
-	if Input.is_action_pressed("1"):
-		switch_weapon_group(1)
-	if Input.is_action_pressed("2"):
-		switch_weapon_group(2)		
-	if Input.is_action_pressed("3"):
-		switch_weapon_group(3)
-	if Input.is_action_pressed("4"):
-		switch_weapon_group(4)
+		
+	for i:int in range(1,5):
+		if Input.is_action_pressed(str(i)):
+			if Input.is_action_pressed("alt"):
+				_load_ammunition(i-1)
+			else:
+				switch_weapon_group(i)
 		
 		#print(get_node("turret_nodes/player_main_turret").get_new_bullet_position())
 	#print("position = ",position, " velocity = ", velocity.length(), "speed = ", engine_power)	
