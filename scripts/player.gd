@@ -7,6 +7,7 @@ extends RigidBody2D
 @export var locomotion_node_rotation_speed: float = 0.025 # in radians
 @export var test_projectile: ProjectileRes
 @export var player_viewport:Node
+@export var ammo_timer:Timer
 var projectiles_to_load: Array = [test_projectile]
 var node_rids: Array = Array()
 var screen_size # Size of the game window. # temp
@@ -29,6 +30,7 @@ var weapon_group_3: Array = Array()
 var weapon_group_4: Array = Array()
 var player_controlled_weapon_group: int	
 var projectile_scene: Projectile
+var can_add_ammo_flag: bool = true
 signal ui_update_ammunition(magazine_state)	#mag_state is Array of Arrays containing at least 2 salvos of weapons in active groups
 signal ui_update_weapons(weapon_amount,salvo_counts) #wep amount is number of guns, salvo counts: Array of every weapons burst count
 
@@ -150,8 +152,20 @@ func _fire_weapon_group()-> void:
 
 func _load_ammunition(ammo_index:int) -> void:
 	for node: Node in self.get(str("weapon_group_" + str(player_controlled_weapon_group))):
+		print("Loaded!")
 		node.Load(test_projectile) 
+		can_add_ammo_flag = false
+		ammo_timer.start()
 		ui_update_ammunition.emit(get_weapon_mag_state())
+		
+#not sure if it's neccessary to do it like this, but makes the _physics_process more readable
+func check_for_ammunition_load_and_apply()->void:
+	for i:int in range(1,5):
+		if Input.is_action_pressed(str(i)):
+			if Input.is_action_pressed("alt"):
+				_load_ammunition(i-1)
+			else:
+				switch_weapon_group(i)
 
 func _instantiate_projectile(projectile_position:Vector2, projectile_rotation:float, created_projectile:ProjectileRes) -> void:
 	#projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
@@ -164,15 +178,13 @@ func _physics_process(delta: float) -> void:
 	_movement(delta)
 	if Input.is_action_pressed("M1_clicked"):
 		_fire_weapon_group()
-		
-		#there needs to be a better way 2 do it
-		
-	for i:int in range(1,5):
-		if Input.is_action_pressed(str(i)):
-			if Input.is_action_pressed("alt"):
-				_load_ammunition(i-1)
-			else:
-				switch_weapon_group(i)
+	if can_add_ammo_flag:
+		check_for_ammunition_load_and_apply()
 		
 		#print(get_node("turret_nodes/player_main_turret").get_new_bullet_position())
 	#print("position = ",position, " velocity = ", velocity.length(), "speed = ", engine_power)	
+
+
+	#0.2s might be too much, check back l8tr
+func _on_ammunition_add_timer_timeout() -> void:
+	can_add_ammo_flag = true
