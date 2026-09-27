@@ -45,6 +45,7 @@ func _ready() -> void:
 	player_controlled_weapon_group = weapon_groups.ONE #TEMP
 	ui_update_ammunition.connect(player_viewport.update_ammunition_counters)
 	ui_update_weapon_group_sizes.connect(player_viewport._prepare_weapon_display)
+	update_weapon_group_sizes()
 	#get_node("weapon_group_1/player_main_turret").allowed_ammunition_type = "TEST" #TEMP
 
 

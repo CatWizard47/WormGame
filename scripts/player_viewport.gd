@@ -6,7 +6,20 @@ var PlayerUnit: RigidBody2D
 @export var mouse_pos_value: Label
 @export var current_salvo_value: Label
 @export var next_salvo_value: Label
-
+#these contain at [0] the central Hbox container, and then Vbox containers for Labels and thend Values
+var weapon_group_display_containers_0: Array = Array()
+var weapon_group_display_containers_1: Array = Array()
+var weapon_group_display_containers_2: Array = Array()
+var weapon_group_display_containers_3: Array = Array()
+#all of these bellow are Label Node Arrays
+var weapon_group_display_values_0: Array = Array()
+var weapon_group_display_labels_0: Array = Array()
+var weapon_group_display_values_1: Array = Array()
+var weapon_group_display_labels_1: Array = Array()
+var weapon_group_display_values_2: Array = Array()
+var weapon_group_display_labels_2: Array = Array()
+var weapon_group_display_values_3: Array = Array()
+var weapon_group_display_labels_3: Array = Array()
 	#As a remainder, every player signal that deals with UI will be connected with functions here,
 	#they have to be connected from player script tho, due to ui being a child of the player node
 	#this is generally only to follow general style conventions 
@@ -36,7 +49,20 @@ func _adjust_ui_rotation()->void:
 	#ofc assumes weapons won't be changed during combat
 	#will have to hide all made items
 func _prepare_weapon_display(weapon_group_size_array:Array)->void:
-	pass
+	var screen_size: Rect2 = get_viewport_rect()
+	for i:int in range(4):
+		self.get("weapon_group_display_containers_"+str(i)).append(HBoxContainer.new())
+		self.get("weapon_group_display_containers_"+str(i))[0].position = screen_size.size * 0.7	#currently 70%
+		self.get("weapon_group_display_containers_"+str(i))[0].size = screen_size.size * 0.3
+		self.get("weapon_group_display_containers_"+str(i)).append(VBoxContainer.new())
+		self.get("weapon_group_display_containers_"+str(i)).append(VBoxContainer.new())
+		add_child(self.get("weapon_group_display_containers_"+str(i))[0]) #this should also instantiate all children of this thing
+		self.get("weapon_group_display_containers_"+str(i))[0].add_child(self.get("weapon_group_display_containers_"+str(i))[1])
+		self.get("weapon_group_display_containers_"+str(i))[0].add_child(self.get("weapon_group_display_containers_"+str(i))[2])
+		for j:int in range(weapon_group_size_array[i]):
+			
+			print(j)
+			pass
 	
 	#displays a given container, *hides* other ones
 func _change_displayed_weapon_group(weapon_group_to_display:int)->void:
