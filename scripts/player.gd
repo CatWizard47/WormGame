@@ -33,7 +33,7 @@ var projectile_scene: Projectile
 var can_add_ammo_flag: bool = true
 signal ui_update_ammunition(magazine_state)	#mag_state is Array of Arrays containing at least 2 salvos of weapons in active groups
 signal ui_update_weapons(weapon_amount,salvo_counts) #wep amount is number of guns, salvo counts: Array of every weapons burst count
-
+signal ui_update_weapon_group_sizes(size_array)
 
 func _ready() -> void:
 	screen_size = get_viewport_rect().size
@@ -41,9 +41,10 @@ func _ready() -> void:
 	locomotive_node_count = locomotive_nodes.size()
 	position = screen_size/4 #TEMP
 	_update_all_rids()
-	_update_weapon_groups()
+	_update_weapon_group_connections()
 	player_controlled_weapon_group = weapon_groups.ONE #TEMP
 	ui_update_ammunition.connect(player_viewport.update_ammunition_counters)
+	ui_update_weapon_group_sizes.connect(player_viewport._prepare_weapon_display)
 	#get_node("weapon_group_1/player_main_turret").allowed_ammunition_type = "TEST" #TEMP
 
 
@@ -56,6 +57,13 @@ func switch_weapon_group(new_weapon_group:int) -> void:
 		for turret:PlayerMainTurret in self.get("weapon_group_"+str(player_controlled_weapon_group)):
 			turret.toggle_active_state() 
 		ui_update_ammunition.emit(get_weapon_mag_state())
+
+
+func update_weapon_group_sizes() -> void:
+	var output: Array = Array()
+	for i:int in range(1,5):
+		output.append(self.get("weapon_group_"+str(i)).size())
+	ui_update_weapon_group_sizes.emit(output)
 
 
 func get_weapon_mag_state() -> Array:
@@ -72,7 +80,7 @@ func _update_locomotive_nodes()->void:
 			locomotive_nodes.append(node)
 
 
-func _update_weapon_groups()->void:	#potentially also terrible, but less than get_node every time a fire action is called
+func _update_weapon_group_connections()->void:	#potentially also terrible, but less than get_node every time a fire action is called
 	for i:int in range(1,5):
 		self.get("weapon_group_"+str(i)).clear
 		if !get_node("weapon_group_"+str(i)).get_children().is_empty():

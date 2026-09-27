@@ -1,6 +1,8 @@
 extends Control
 @export var label_node: Label
 @export var texture_node: Sprite2D
+var weapon_group_display_values_1: Array = Array()
+var weapon_group_display_labels_1: Array = Array()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -14,3 +16,4 @@ func change_text(text:String)->void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
+	

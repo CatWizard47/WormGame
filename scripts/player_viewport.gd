@@ -29,9 +29,20 @@ func update_viewport_position()->void:
 
 func _adjust_ui_rotation()->void:
 	rotation = -PlayerUnit.global_rotation
-		
+
+
+	#will make individual label and containers 4 each weapon & weapongroup
+	#will have to be called on player entering the game scene
+	#ofc assumes weapons won't be changed during combat
+	#will have to hide all made items
+func _prepare_weapon_display(weapon_group_size_array:Array)->void:
+	pass
 	
-	
+	#displays a given container, *hides* other ones
+func _change_displayed_weapon_group(weapon_group_to_display:int)->void:
+	pass
+
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:		#TEMP, 
 	_adjust_ui_rotation()
@@ -39,3 +50,5 @@ func _process(_delta: float) -> void:		#TEMP,
 	rotation_value.text = str(PlayerUnit.rotation)
 	loco_node_rotation_value.text = str(PlayerUnit.locomotive_rotation)
 	mouse_pos_value.text = str(get_global_mouse_position())
+	
+	
