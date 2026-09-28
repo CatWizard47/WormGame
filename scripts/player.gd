@@ -46,6 +46,7 @@ func _ready() -> void:
 	ui_update_ammunition.connect(player_viewport.update_ammunition_counters)
 	ui_update_weapon_group_sizes.connect(player_viewport._prepare_weapon_display)
 	update_weapon_group_sizes()
+	_apply_gun_id_to_turrets()
 	#get_node("weapon_group_1/player_main_turret").allowed_ammunition_type = "TEST" #TEMP
 
 
@@ -72,6 +73,12 @@ func get_weapon_mag_state() -> Array:
 	for turret:PlayerMainTurret in self.get("weapon_group_"+str(player_controlled_weapon_group)):
 		Output.append(turret.get_n_ammunition_load(turret.burst_fire_count * 2))
 	return Output
+
+
+func _apply_gun_id_to_turrets() -> void:
+	for i:int in range(1,5):
+		for j:int in range(self.get("weapon_group_"+str(i)).size()):
+			self.get("weapon_group_"+str(i))[j].ui_gun_id = Vector2i(i,j)
 
 
 func _update_locomotive_nodes()->void:
@@ -176,8 +183,9 @@ func check_for_ammunition_load_and_apply()->void:
 			else:
 				switch_weapon_group(i)
 
-func _instantiate_projectile(projectile_position:Vector2, projectile_rotation:float, created_projectile:ProjectileRes) -> void:
+func _instantiate_projectile(projectile_position:Vector2, projectile_rotation:float, created_projectile:ProjectileRes,ui_gun_id:Vector2i) -> void:
 	#projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
+	#print(ui_gun_id)
 	projectile_scene = Projectile.new(projectile_position, projectile_rotation, created_projectile,node_rids,12,get_global_mouse_position())
 	add_sibling(projectile_scene)
 

@@ -24,7 +24,8 @@ var current_burst_count: int
 var is_weapon_active: bool = true 				#starting value to be false in actual code
 var available_ammunition_types: Array 			#Types of ammunition as in ProjectileRes
 var loaded_ammunition: Array					#int array with amm
-signal projectile_fired(projectile_position, projectile_rotation, projectile_resource)
+var ui_gun_id: Vector2i =Vector2i(0,0) #weapon_group_and weapon_index within this group 	
+signal projectile_fired(projectile_position, projectile_rotation, projectile_resource, ui_gun_id)
 
 
 
@@ -125,7 +126,7 @@ func _on_cooldown_timer_timeout() -> void:
 func _on_burst_fire_cooldown_timer_timeout() -> void:
 	if !loaded_ammunition.is_empty() and current_burst_count > 0:
 		current_burst_count -= 1
-		projectile_fired.emit(get_new_bullet_position(),get_turret_rotation(),available_ammunition_types[loaded_ammunition.pop_back()])
+		projectile_fired.emit(get_new_bullet_position(),get_turret_rotation(),available_ammunition_types[loaded_ammunition.pop_back()],ui_gun_id)
 		get_node("BurstFireCooldownTimer").start()
 	elif !loaded_ammunition.is_empty():
 		can_fire_flag = false
