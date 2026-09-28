@@ -29,8 +29,9 @@ func _ready() -> void:
 		print("ERR")
 
 
-func update_ammunition_counters(Combined_magazine_state:Array)->void:
-	#will prolly need to figure out a procedural method of making and breaking H & Vbox cells 4 this 
+func update_ammunition_counters(combined_magazine_state:Array,projectile:Variant)->void:
+	#if projectile is Variant, remove projectile, else add provided to top
+	#will have to add projectiles to [1] or otherwise the lowest empty that isn't last, of the given vbox array, ofc 
 	pass
 	
 

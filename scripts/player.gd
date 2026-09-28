@@ -31,7 +31,8 @@ var weapon_group_4: Array = Array()
 var player_controlled_weapon_group: int	
 var projectile_scene: Projectile
 var can_add_ammo_flag: bool = true
-signal ui_update_ammunition(magazine_state)	#mag_state is Array of Arrays containing at least 2 salvos of weapons in active groups
+signal ui_update_ammunition(magazine_state,added_projectile)	#mag_state is Array of Arrays containing at least 2 salvos of weapons in active groups
+signal ui_switch_weapon_group(new_group)
 signal ui_update_weapons(weapon_amount,salvo_counts) #wep amount is number of guns, salvo counts: Array of every weapons burst count
 signal ui_update_weapon_group_sizes(size_array)
 
@@ -58,7 +59,7 @@ func switch_weapon_group(new_weapon_group:int) -> void:
 		player_controlled_weapon_group = new_weapon_group
 		for turret:PlayerMainTurret in self.get("weapon_group_"+str(player_controlled_weapon_group)):
 			turret.toggle_active_state() 
-		ui_update_ammunition.emit(get_weapon_mag_state())
+		ui_switch_weapon_group.emit(new_weapon_group)
 
 
 func update_weapon_group_sizes() -> void:
@@ -172,7 +173,7 @@ func _load_ammunition(ammo_index:int) -> void:
 		node.Load(test_projectile) 
 		can_add_ammo_flag = false
 		ammo_timer.start()
-		ui_update_ammunition.emit(get_weapon_mag_state())
+		ui_update_ammunition.emit(get_weapon_mag_state(),test_projectile)
 		
 #not sure if it's neccessary to do it like this, but makes the _physics_process more readable
 func check_for_ammunition_load_and_apply()->void:
@@ -186,7 +187,9 @@ func check_for_ammunition_load_and_apply()->void:
 func _instantiate_projectile(projectile_position:Vector2, projectile_rotation:float, created_projectile:ProjectileRes,ui_gun_id:Vector2i) -> void:
 	#projectile_scene = preload("res://Scenes/projectile.tscn").instantiate()
 	#print(ui_gun_id)
+	print(projectile_position, projectile_rotation, created_projectile,node_rids,12,get_global_mouse_position())
 	projectile_scene = Projectile.new(projectile_position, projectile_rotation, created_projectile,node_rids,12,get_global_mouse_position())
+	ui_update_ammunition.emit(get_weapon_mag_state(),test_projectile,null)
 	add_sibling(projectile_scene)
 
 

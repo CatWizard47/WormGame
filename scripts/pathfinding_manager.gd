@@ -122,8 +122,6 @@ func find_path(initial_start_position:Vector2,initial_end_position: Vector2, uni
 			if validation_array.is_empty():
 				return output_path	
 			else:
-				#output_path.pop_back()
-				#output_path.pop_front()
 				nodes_to_avoid.append_array(validation_array)
 				_reset_find_path_components(g_score,f_score,current_node,came_from,nodes_to_check,start_position,end_position)
 		for key in current_node.neighbours:

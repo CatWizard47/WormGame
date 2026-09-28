@@ -30,6 +30,7 @@ signal projectile_fired(projectile_position, projectile_rotation, projectile_res
 
 
 func _ready() -> void: 
+	#these 3 comms below are 4 objectification of turrets l4tr down the line
 	#get_node("Cooldown_timer").wait_time = shooting_cooldown	# might be necessary to keep, 
 	#get_node("TurretSprite").set_texture(turret_texture)
 	#get_node("GunSprite").set_texture(gun_texture)
@@ -67,7 +68,7 @@ func toggle_active_state()->void:
 
 func fire() -> void: 
 	if can_fire_flag and abs(desired_rotation) < 0.01 and is_weapon_active:
-		print(get_n_ammunition_load(5))
+		#print(get_n_ammunition_load(5))
 		current_burst_count = burst_fire_count
 		Burst_direction = Burst_direction * -1
 		get_node("BurstFireCooldownTimer").timeout.emit()
@@ -93,9 +94,11 @@ func get_new_bullet_position() -> Vector2:
 		Output += Vector2.from_angle(global_rotation+PI/2.0).normalized() * burst_fire_horizontal_translate * (current_burst_count - (burst_fire_count-1)/2.0) * Burst_direction
 	Output += Vector2.from_angle(global_rotation).normalized() * get_node("GunSprite").get_rect().size.y * 2
 	return Output
-	
+
+
 func get_turret_rotation() -> float:
 	return (global_rotation + deg_to_rad(randfn(0.0,innacuracy_degrees/2.0) ))
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(_delta: float) -> void:
