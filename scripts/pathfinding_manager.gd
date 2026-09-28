@@ -118,12 +118,13 @@ func find_path(initial_start_position:Vector2,initial_end_position: Vector2, uni
 		current_node = nodes_to_check.pop_min()
 		if current_node == current_navmesh[end_position]:
 			var output_path : Array = _recover_path(came_from,current_node)
-			if _validate_path_for_unit_size(output_path,unit_size):
+			var validation_array: Array = _validate_path_for_unit_size(output_path,unit_size)
+			if validation_array.is_empty():
 				return output_path	
 			else:
 				output_path.pop_back()
 				output_path.pop_front()
-				nodes_to_avoid.append_array(output_path)
+				nodes_to_avoid.append_array(validation_array)
 				_reset_find_path_components(g_score,f_score,current_node,came_from,nodes_to_check,start_position,end_position)
 		for key in current_node.neighbours:
 			neighbour_node = current_node.neighbours[key]
@@ -156,18 +157,21 @@ func _make_default_navmesh_dict_value(dictionary_to_modify:Dictionary[Vector2i,f
 func _validate_node_for_unit_size(checking_position:Vector2i,unit_size:float)->bool:
 	PhysicsServer2D.shape_set_data(collision_shape_rid,unit_size)
 	collision_query_parameters.transform = Transform2D(0,checking_position)
+	print(space_state.intersect_shape(collision_query_parameters,1))
+	DEBUG_make_label_for_position(checking_position)
 	if !space_state.intersect_shape(collision_query_parameters,1).is_empty():
 		return false
 	return false
 	
 	
-func _validate_path_for_unit_size(path: Array, unit_size: float) -> bool:
+func _validate_path_for_unit_size(path: Array, unit_size: float) -> Array:
+	var output:Array = Array()
 	PhysicsServer2D.shape_set_data(collision_shape_rid,unit_size)
 	for checking_position: Vector2i in path:
 		collision_query_parameters.transform = Transform2D(0,checking_position)
 		if !space_state.intersect_shape(collision_query_parameters,1).is_empty():
-			return false
-	return true
+			output.append(checking_position)
+	return output
 	
 	
 func _recover_path(came_from: Dictionary[Vector2i,PathfindingNode],current_node: PathfindingNode ) -> Array:
