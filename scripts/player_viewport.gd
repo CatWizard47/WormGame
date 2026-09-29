@@ -19,6 +19,11 @@ var weapon_group_display_array_1: Array = Array()
 var weapon_group_display_array_2: Array = Array()
 var weapon_group_display_array_3: Array = Array()
 
+var viewport_move_distance: float
+var camera_move_speed: float  = 3
+var maximum_camera_offset: float
+
+
 	#As a remainder, every player signal that deals with UI will be connected with functions here,
 	#they have to be connected from player script tho, due to ui being a child of the player node
 	#this is generally only to follow general style conventions 
@@ -27,7 +32,8 @@ func _ready() -> void:
 		PlayerUnit = get_parent()
 	else:
 		print("ERR")
-
+	viewport_move_distance = (get_viewport_rect().size).length() * 0.10
+	maximum_camera_offset = (get_viewport_rect().size).length() * 0.25
 
 func update_ammunition_counters(combined_magazine_state:Array,projectile:Variant)->void:
 	#if projectile is Variant, remove projectile, else add provided to top
@@ -37,7 +43,16 @@ func update_ammunition_counters(combined_magazine_state:Array,projectile:Variant
 
 func update_viewport_position()->void:
 	#the camera is to move with mouse movements, may have to do this with a toggle 
-	pass
+	var local_mouse_position:Vector2 = get_local_mouse_position()
+	if local_mouse_position.length() >= viewport_move_distance:
+		if position.length() < maximum_camera_offset:															#this is terribly bad 
+			camera_move_speed = (local_mouse_position.length() - viewport_move_distance) / (viewport_move_distance * 5) * 3 
+			camera_move_speed = camera_move_speed * (1 - position.length()/maximum_camera_offset)
+			camera_move_speed = clampf(camera_move_speed,-3,3) #ig?
+			print(camera_move_speed)
+			position += get_local_mouse_position().normalized() * camera_move_speed
+			if position.length() >= maximum_camera_offset:
+				position -= get_local_mouse_position().normalized() * camera_move_speed *1.01
 
 
 func _adjust_ui_rotation()->void:
@@ -67,9 +82,12 @@ func _change_displayed_weapon_group(weapon_group_to_display:int)->void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:		#TEMP, 
 	_adjust_ui_rotation()
+	update_viewport_position()
+	#print(get_local_mouse_position().length())
+	#print(viewport_move_distance," ",viewport_move_distance*5)
 	position_value.text = str(PlayerUnit.position)
 	rotation_value.text = str(PlayerUnit.rotation)
 	loco_node_rotation_value.text = str(PlayerUnit.locomotive_rotation)
-	mouse_pos_value.text = str(get_global_mouse_position())
+	mouse_pos_value.text = str(get_local_mouse_position())
 	
 	
