@@ -19,9 +19,9 @@ var weapon_group_display_array_1: Array = Array()
 var weapon_group_display_array_2: Array = Array()
 var weapon_group_display_array_3: Array = Array()
 
-var viewport_move_distance: float
+var viewport_maximum_move_distance: Vector2
 var maximum_camera_offset: float
-var viewport_movement_multiplier: int = 400	#
+var viewport_movement_multiplier: int = 200	#
 
 	#As a remainder, every player signal that deals with UI will be connected with functions here,
 	#they have to be connected from player script tho, due to ui being a child of the player node
@@ -31,8 +31,9 @@ func _ready() -> void:
 		PlayerUnit = get_parent()
 	else:
 		print("ERR")
-	viewport_move_distance = (get_viewport_rect().size).length() * 0.10
+	viewport_maximum_move_distance = get_viewport_rect().size
 	maximum_camera_offset = (get_viewport_rect().size).length() * 0.25
+	#print(maximum_camera_offset)
 
 func update_ammunition_counters(combined_magazine_state:Array,projectile:Variant)->void:
 	#if projectile is Variant, remove projectile, else add provided to top
@@ -42,16 +43,13 @@ func update_ammunition_counters(combined_magazine_state:Array,projectile:Variant
 
 func update_viewport_position()->void:
 	#the camera is to move with mouse movements, may have to do this with a toggle 
-	var local_mouse_position:Vector2 = get_local_mouse_position()
-	if local_mouse_position.length() <= maximum_camera_offset:
-		position = local_mouse_position.normalized() * (local_mouse_position.length() / maximum_camera_offset) * viewport_movement_multiplier
-		position = position.rotated(-PlayerUnit.global_rotation)
-		if position.length() >= maximum_camera_offset:
-			position -= position * 0.05
-
-
-func _adjust_ui_rotation()->void:
 	rotation = -PlayerUnit.global_rotation
+	var local_mouse_position:Vector2 = get_local_mouse_position()
+	local_mouse_position = local_mouse_position.clamp(-viewport_maximum_move_distance,viewport_maximum_move_distance)
+	position = local_mouse_position.normalized() * (local_mouse_position.length() / maximum_camera_offset) * viewport_movement_multiplier
+	position = position.rotated(-PlayerUnit.global_rotation)
+
+
 
 	#will make individual label and containers 4 each weapon & weapongroup
 	#will have to be called on player entering the game scene
@@ -75,10 +73,7 @@ func _change_displayed_weapon_group(weapon_group_to_display:int)->void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:		#TEMP, 
-	_adjust_ui_rotation()
 	update_viewport_position()
-	#print(get_local_mouse_position().length())
-	#print(viewport_move_distance," ",viewport_move_distance*5)
 	position_value.text = str(PlayerUnit.position)
 	rotation_value.text = str(PlayerUnit.rotation)
 	loco_node_rotation_value.text = str(PlayerUnit.locomotive_rotation)
