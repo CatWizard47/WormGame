@@ -46,18 +46,20 @@ func update_viewport_position()->void:
 	var local_mouse_position:Vector2 = get_local_mouse_position()
 	if local_mouse_position.length() >= viewport_move_distance:
 		if position.length() < maximum_camera_offset:															#this is terribly bad 
-			camera_move_speed = (local_mouse_position.length() - viewport_move_distance) / (viewport_move_distance * 5) * 3 
-			camera_move_speed = camera_move_speed * (1 - position.length()/maximum_camera_offset)
-			camera_move_speed = clampf(camera_move_speed,-3,3) #ig?
-			print(camera_move_speed)
-			position += get_local_mouse_position().normalized() * camera_move_speed
-			if position.length() >= maximum_camera_offset:
-				position -= get_local_mouse_position().normalized() * camera_move_speed *1.01
+			#camera_move_speed = (local_mouse_position.length() - viewport_move_distance) / (viewport_move_distance * 5) * 3 
+			#camera_move_speed = camera_move_speed * (1 - position.length()/maximum_camera_offset)
+			#camera_move_speed = clampf(camera_move_speed,-3,3) #ig?
+			#print(camera_move_speed)
+		
+			position = local_mouse_position.normalized() * (local_mouse_position.length() / maximum_camera_offset) * 200
+			position = position.rotated(-PlayerUnit.global_rotation)
+			#position += get_local_mouse_position().normalized() * camera_move_speed
+			#if position.length() >= maximum_camera_offset:
+			#	position -= get_local_mouse_position().normalized() * camera_move_speed *1.01
 
 
 func _adjust_ui_rotation()->void:
 	rotation = -PlayerUnit.global_rotation
-
 
 	#will make individual label and containers 4 each weapon & weapongroup
 	#will have to be called on player entering the game scene
