@@ -164,7 +164,7 @@ func _fire_weapon_group()-> void:
 	#for node: Node in get_node("weapon_group_" + str(player_controlled_weapon_group)).get_children():
 	for node: Node in self.get(str("weapon_group_" + str(player_controlled_weapon_group))):
 		node.fire()
-		ui_update_ammunition.emit(get_weapon_mag_state())
+		ui_update_ammunition.emit(get_weapon_mag_state(),null)
 
 
 func _load_ammunition(ammo_index:int) -> void:
@@ -189,7 +189,7 @@ func _instantiate_projectile(projectile_position:Vector2, projectile_rotation:fl
 	#print(ui_gun_id)
 	print(projectile_position, projectile_rotation, created_projectile,node_rids,12,get_global_mouse_position())
 	projectile_scene = Projectile.new(projectile_position, projectile_rotation, created_projectile,node_rids,12,get_global_mouse_position())
-	ui_update_ammunition.emit(get_weapon_mag_state(),test_projectile,null)
+	ui_update_ammunition.emit(get_weapon_mag_state(),test_projectile)
 	add_sibling(projectile_scene)
 
 

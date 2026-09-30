@@ -20,9 +20,8 @@ var weapon_group_display_array_2: Array = Array()
 var weapon_group_display_array_3: Array = Array()
 
 var viewport_move_distance: float
-var camera_move_speed: float  = 3
 var maximum_camera_offset: float
-
+var viewport_movement_multiplier: int = 400	#
 
 	#As a remainder, every player signal that deals with UI will be connected with functions here,
 	#they have to be connected from player script tho, due to ui being a child of the player node
@@ -44,18 +43,11 @@ func update_ammunition_counters(combined_magazine_state:Array,projectile:Variant
 func update_viewport_position()->void:
 	#the camera is to move with mouse movements, may have to do this with a toggle 
 	var local_mouse_position:Vector2 = get_local_mouse_position()
-	if local_mouse_position.length() >= viewport_move_distance:
-		if position.length() < maximum_camera_offset:															#this is terribly bad 
-			#camera_move_speed = (local_mouse_position.length() - viewport_move_distance) / (viewport_move_distance * 5) * 3 
-			#camera_move_speed = camera_move_speed * (1 - position.length()/maximum_camera_offset)
-			#camera_move_speed = clampf(camera_move_speed,-3,3) #ig?
-			#print(camera_move_speed)
-		
-			position = local_mouse_position.normalized() * (local_mouse_position.length() / maximum_camera_offset) * 200
-			position = position.rotated(-PlayerUnit.global_rotation)
-			#position += get_local_mouse_position().normalized() * camera_move_speed
-			#if position.length() >= maximum_camera_offset:
-			#	position -= get_local_mouse_position().normalized() * camera_move_speed *1.01
+	if local_mouse_position.length() <= maximum_camera_offset:
+		position = local_mouse_position.normalized() * (local_mouse_position.length() / maximum_camera_offset) * viewport_movement_multiplier
+		position = position.rotated(-PlayerUnit.global_rotation)
+		if position.length() >= maximum_camera_offset:
+			position -= position * 0.05
 
 
 func _adjust_ui_rotation()->void:
