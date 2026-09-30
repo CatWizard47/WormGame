@@ -21,7 +21,8 @@ var weapon_group_display_array_3: Array = Array()
 
 var viewport_maximum_move_distance: Vector2
 var maximum_camera_offset: float
-var viewport_movement_multiplier: int = 200	#
+var viewport_maximum_offset_multiplier: int = 200	#
+var camera_move_speed_multiplier: int = 20 	#consider making this more dynamic
 
 	#As a remainder, every player signal that deals with UI will be connected with functions here,
 	#they have to be connected from player script tho, due to ui being a child of the player node
@@ -45,10 +46,15 @@ func update_viewport_position()->void:
 	#the camera is to move with mouse movements, may have to do this with a toggle 
 	rotation = -PlayerUnit.global_rotation
 	var local_mouse_position:Vector2 = get_local_mouse_position()
+	var desired_position: Vector2
 	local_mouse_position = local_mouse_position.clamp(-viewport_maximum_move_distance,viewport_maximum_move_distance)
-	position = local_mouse_position.normalized() * (local_mouse_position.length() / maximum_camera_offset) * viewport_movement_multiplier
-	position = position.rotated(-PlayerUnit.global_rotation)
+	desired_position = local_mouse_position.normalized() * (local_mouse_position.length() / maximum_camera_offset) * viewport_maximum_offset_multiplier
+	desired_position =  desired_position.rotated(-PlayerUnit.global_rotation)
+	position = ( (viewport_maximum_offset_multiplier * position) + desired_position ) / ( viewport_maximum_offset_multiplier + 1 )
 
+	#TODO consider if this *smooth* movement is right, 
+	#position = local_mouse_position.normalized() * (local_mouse_position.length() / maximum_camera_offset) * viewport_maximum_offset_multiplier
+	#position = position.rotated(-PlayerUnit.global_rotation)
 
 
 	#will make individual label and containers 4 each weapon & weapongroup
